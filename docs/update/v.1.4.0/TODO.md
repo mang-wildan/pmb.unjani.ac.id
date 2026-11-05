@@ -209,8 +209,8 @@ curl -s $B/ | perl -0pe 's/<script\b.*?<\/script>//gs' > /tmp/b-dom.html
 
 ## FASE 2 — Halaman topik (K2)
 
-- [ ] **T.2.0** Ekstrak data biaya ke `src/lib/dataBiaya.ts`, tanpa mengubah perilaku
-  - **file:** `src/lib/dataBiaya.ts` (buat), `src/app/[locale]/(public)/page.tsx` · **butuh:** T.1.11 · **model:** `claude-sonnet-5-5` · **effort:** `medium` · **agent:** - · **commit:** -
+- [x] **T.2.0** Ekstrak data biaya ke `src/lib/dataBiaya.ts`, tanpa mengubah perilaku
+  - **file:** `src/lib/dataBiaya.ts` (buat), `src/app/[locale]/(public)/page.tsx` · **butuh:** T.1.11 · **model:** `claude-sonnet-5-5` · **effort:** `medium` · **agent:** claude-sonnet-5-5 · **commit:** 51cfd40
   1. Simpan HTML section kalkulator sebelum perubahan:
      ```bash
      curl -s $B/ | perl -0ne 'print $1 if /(<section id="kalkulator".*?<\/section>)/s' > /tmp/kalk-sebelum.html
