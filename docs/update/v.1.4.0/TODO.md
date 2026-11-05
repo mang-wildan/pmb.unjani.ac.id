@@ -158,7 +158,7 @@ curl -s $B/ | perl -0pe 's/<script\b.*?<\/script>//gs' > /tmp/b-dom.html
      ```
 
 - [x] **T.1.7** Markup ramah crawler: heading jalur dan FAQ, angka hero statis — FR-SEO-06 butir 1–3
-  - **file:** `src/components/public/JalurAccordion.tsx`, `JalurList.tsx`, `FAQAccordion.tsx`, `Hero.tsx`, `messages/*.json` (`jalurPage.persyaratan`) · **butuh:** T.1.0 · **model:** `claude-sonnet-5-5` · **effort:** `medium` · **agent:** claude-sonnet-5-5 · **commit:** COMMIT_HASH
+  - **file:** `src/components/public/JalurAccordion.tsx`, `JalurList.tsx`, `FAQAccordion.tsx`, `Hero.tsx`, `messages/*.json` (`jalurPage.persyaratan`) · **butuh:** T.1.0 · **model:** `claude-sonnet-5-5` · **effort:** `medium` · **agent:** claude-sonnet-5-5 · **commit:** a5223f0
   1. Implementasikan FR-SEO-06 butir 1–3. Props baru: `JalurAccordion`/`JalurList` mendapat `tingkatJudul?: 'h2' | 'h3'`, dan `FAQAccordion` mendapat `tampilkanTab?: boolean`. Default keduanya mempertahankan perilaku beranda.
   2. Ambil HTML tanpa script (lihat Persiapan), lalu cek:
      ```bash
