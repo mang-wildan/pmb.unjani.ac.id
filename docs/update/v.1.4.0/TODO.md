@@ -193,8 +193,8 @@ curl -s $B/ | perl -0pe 's/<script\b.*?<\/script>//gs' > /tmp/b-dom.html
   2. Implementasikan sesuai FR-SEO-08.
   3. Jalankan ulang cek. Expected: `LULUS`.
 
-- [ ] **T.1.10** Prioritas gambar hero (bersyarat) — FR-SEO-06 butir 4
-  - **file:** `src/components/public/HeroSlider.tsx` (hanya bila perlu) · **butuh:** T.1.1 · **model:** `claude-haiku-5-5` · **effort:** `low` · **agent:** - · **commit:** -
+- [x] **T.1.10** Prioritas gambar hero (bersyarat) — FR-SEO-06 butir 4
+  - **file:** `src/components/public/HeroSlider.tsx` (hanya bila perlu) · **butuh:** T.1.1 · **model:** `claude-haiku-5-5` · **effort:** `low` · **agent:** claude-sonnet-5-5 · **commit:** cadecc7
   1. Lihat hasil `fetchpriority` di baseline T.1.1, lalu cek dev: `curl -s $B/ | grep -c 'fetchpriority="high"'`.
   2. Bila hasilnya ≥ 1: centang task tanpa perubahan, dan catat "tidak perlu" di RILIS-CHECKLIST.
   3. Bila 0: tambahkan `fetchPriority={indeks === 0 ? 'high' : undefined}` pada `<Image>`, lalu cek ulang. Expected: ≥ 1.
