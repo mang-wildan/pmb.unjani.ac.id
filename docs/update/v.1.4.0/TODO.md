@@ -142,7 +142,7 @@ curl -s $B/ | perl -0pe 's/<script\b.*?<\/script>//gs' > /tmp/b-dom.html
      - `curl -s $B/kontak | grep -o '<meta name="description" content="[^"]*"'` menampilkan teks §6.4.
 
 - [x] **T.1.6** Structured data: logo, Organization, Article, NewsArticle — FR-SEO-05
-  - **file:** `src/lib/seo.ts`, `src/app/layout.tsx`, `src/app/[locale]/(public)/kontak/page.tsx`, `.../artikel/[slug]/page.tsx`, `.../pengumuman/[slug]/page.tsx` · **butuh:** T.1.3 · **model:** `claude-sonnet-5-5` · **effort:** `medium` · **agent:** claude-sonnet-5-5 · **commit:** COMMIT_HASH
+  - **file:** `src/lib/seo.ts`, `src/app/layout.tsx`, `src/app/[locale]/(public)/kontak/page.tsx`, `.../artikel/[slug]/page.tsx`, `.../pengumuman/[slug]/page.tsx` · **butuh:** T.1.3 · **model:** `claude-sonnet-5-5` · **effort:** `medium` · **agent:** claude-sonnet-5-5 · **commit:** 0108c7d
   1. Tambah `LOGO_URL` dan `organizationJsonLd(settings)` dengan bentuk SPEC §6.5.
   2. Di `layout.tsx`, ganti kedua `<Script afterInteractive>` dengan `<JsonLd data={[organizationJsonLd(settings), websiteJsonLd()]} />`.
   3. Hapus `organizationJsonLd()` dari `/kontak`.
