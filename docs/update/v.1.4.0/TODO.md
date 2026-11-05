@@ -129,8 +129,8 @@ curl -s $B/ | perl -0pe 's/<script\b.*?<\/script>//gs' > /tmp/b-dom.html
      curl -s $B/sitemap.xml | grep -c '/en/pengumuman/S2<'                # 1
      ```
 
-- [ ] **T.1.5** Title dan meta beranda, plus meta description pendek — FR-SEO-04 butir 7–8 (P1, M5)
-  - **file:** `src/app/[locale]/(public)/page.tsx` (`generateMetadata`), `messages/id.json`, `messages/en.json` · **butuh:** T.1.3 · **model:** `claude-sonnet-5-5` · **effort:** `low` · **agent:** - · **commit:** -
+- [x] **T.1.5** Title dan meta beranda, plus meta description pendek — FR-SEO-04 butir 7–8 (P1, M5)
+  - **file:** `src/app/[locale]/(public)/page.tsx` (`generateMetadata`), `messages/id.json`, `messages/en.json` · **butuh:** T.1.3 · **model:** `claude-sonnet-5-5` · **effort:** `low` · **agent:** claude-sonnet-5-5 · **commit:** COMMIT_HASH
   1. Tambah atau ubah kunci `home.metaTitleSufiks`, `home.metaDesc`, `pengumumanPage.metaDesc`, `kontakPage.metaDesc`, dan `artikelPage.metaDesc`, persis SPEC §6.4.
   2. Di `generateMetadata`:
      - Baca `PageContent.findOne({ kunci: 'hero' }).select('data').lean()` dengan `.catch(() => null)`. Sebelumnya: `connectDb().catch(() => null)`.
