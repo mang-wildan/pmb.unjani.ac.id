@@ -122,3 +122,12 @@ Catatan dan temuan:
 3. **Kalkulator** menampilkan keadaan kosong ("Biaya pendidikan sedang disusun"), sama persis dengan production, karena biaya 2027/2028 belum diinput (T.3.4, D-04). Kode kalkulator tidak diubah di Fase 1, tetapi proses menghitung **tidak dapat diuji** sampai data biaya ada. T.2.0 membandingkan HTML section kalkulator sebelum/sesudah ekstraksi.
 4. T.1.4 diuji dengan pasangan nyata (pengumuman `mekanisme-ods` tanpa terjemahan, artikel ber-`judul_en`), bukan slug `S1`/`S2` dari TODO.
 5. Tidak diuji karena memerlukan menulis data di DB bersama: skenario data kosong (T.2.1, T.2.3, T.2.4) dan MongoDB mati (T.2.7).
+
+## Fase 2
+
+### T.2.0 Ekstrak data biaya (6 November 2026)
+
+- Dibuat `src/lib/dataBiaya.ts`: `muatDataBiaya(acuan)` dan `muatKalkulatorKosong(locale)`. Isinya dipindah apa adanya dari `page.tsx`. Beranda sekarang memanggil keduanya. Import `Biaya`/`Kelas`/tipe kalkulator yang tak terpakai dibuang dari `page.tsx`.
+- `tsc --noEmit` bersih; eslint pada `page.tsx` dan `dataBiaya.ts`: 0 masalah.
+- Section `#kalkulator` beranda sebelum dan sesudah (build production di salinan, DB Atlas baca-saja): `diff` kosong, keduanya 2354 byte. `/en` juga `200`.
+- **Terbatas:** data biaya aktif di DB saat ini kosong, jadi hanya jalur keadaan kosong yang teruji. Jalur dengan data (records, `prodiOptions`, peta) tidak diuji; kodenya disalin tanpa perubahan logika. Ulangi diff ini setelah biaya 2027/2028 diinput (T.3.4).

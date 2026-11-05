@@ -13,8 +13,6 @@ import { FAQ } from '@/models/FAQ';
 import { Fakultas } from '@/models/Fakultas';
 import '@/models/Jenjang';
 import { ProgramStudi } from '@/models/ProgramStudi';
-import { Biaya } from '@/models/Biaya';
-import '@/models/Kelas';
 import type { InstagramPostItem } from '@/components/public/InstagramFeed';
 import { Popup } from '@/models/Popup';
 import ProgramStudiExplorer from '@/components/public/ProgramStudiExplorer';
@@ -31,14 +29,8 @@ import Reveal from '@/components/public/Reveal';
 import { SectionHeading } from '@/components/ui/Card';
 import JsonLd from '@/components/public/JsonLd';
 import { buildMetadata, breadcrumbJsonLd, type PublicLocale } from '@/lib/seo';
-import KalkulatorForm, {
-  type BiayaRecord,
-  type KelasOpt,
-  type JadwalOpt,
-  type KalkulatorKosong,
-  type ProdiInfo,
-} from '@/components/public/KalkulatorForm';
-import type { SearchableSelectOption } from '@/components/ui/SearchableSelect';
+import KalkulatorForm from '@/components/public/KalkulatorForm';
+import { muatDataBiaya, muatKalkulatorKosong } from '@/lib/dataBiaya';
 
 export const revalidate = 60;
 
@@ -107,7 +99,7 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
     popups,
     jumlahFakultas,
     jumlahProgramStudi,
-    rawBiaya,
+    dataBiaya,
     fakultasList,
     prodiList,
   ] =
@@ -169,35 +161,8 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
         .catch(() => []),
       Fakultas.countDocuments().catch(() => 0),
       ProgramStudi.countDocuments().catch(() => 0),
-      // FR-53: biaya hanya dari jadwal berstatus aktif yang belum berakhir, termasuk yang belum
-      // dimulai. "Berakhir" mengikuti halaman Jadwal admin: tanggal selesai sudah lewat; hari ini
-      // masih dihitung. Jadwal nonaktif atau yang sudah lewat tidak menyumbang biaya ke landing,
-      // meskipun datanya tetap ada di menu Biaya admin. kalkulatorRecords, prodiOptions, prodiMap,
-      // kelasMap, dan jadwalMap semuanya diturunkan dari hasil ini.
-      Jadwal.find({ status: true, selesai: { $gte: activeScheduleStart } })
-        .select('_id')
-        .lean()
-        .then((jadwalBerlaku) =>
-          jadwalBerlaku.length === 0
-            ? []
-            : Biaya.find({ jadwal_id: { $in: jadwalBerlaku.map((j) => j._id) } })
-                .populate({
-                  path: 'programStudi_id',
-                  select: 'nama singkatan jenjang_id akreditasi fileAkreditasi fakultas_id',
-                  populate: [
-                    { path: 'fakultas_id', select: 'nama' },
-                    { path: 'jenjang_id', select: 'nama singkatan' },
-                  ],
-                })
-                .populate('jalur_id', 'nama')
-                .populate('jadwal_id', 'judul tahun ke')
-                .populate('kelas_id', 'nama singkatan')
-                .lean(),
-        )
-        .catch((error) => {
-          console.error('[landing] Failed to load biaya records', error);
-          return [];
-        }),
+      // FR-53 dan transformasinya ada di muatDataBiaya (src/lib/dataBiaya.ts).
+      muatDataBiaya(now),
       Fakultas.find().sort({ nama: 1 }).lean().catch(() => []),
       ProgramStudi.find()
         .populate('jenjang_id', 'nama singkatan warna')
@@ -211,74 +176,7 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
     ...(upcomingJadwal ? [{ ...(upcomingJadwal as any), isSoon: true }] : []),
   ];
 
-  // Process Biaya data for KalkulatorForm
-  const kalkulatorRecords: BiayaRecord[] = (rawBiaya as any[])
-    .filter((b) => b.programStudi_id && b.jalur_id && b.jadwal_id)
-    .map((b) => ({
-      _id: String(b._id),
-      prodi_id: String(b.programStudi_id._id),
-      jalur_id: String(b.jalur_id._id),
-      jalur_nama: String(b.jalur_id.nama),
-      kelas_id: b.kelas_id ? String(b.kelas_id._id) : null,
-      jadwal_id: String(b.jadwal_id._id),
-      biaya: Number(b.biaya),
-      biayaPerSemester: b.biayaPerSemester != null ? Number(b.biayaPerSemester) : null,
-      biayaTambahan: b.biayaTambahan != null ? Number(b.biayaTambahan) : null,
-      persentase:
-        Array.isArray(b.persentase) && b.persentase.length > 0
-          ? (b.persentase as string[])
-          : ['100%'],
-    }));
-
-  const prodiSeen = new Set<string>();
-  const prodiOptions: SearchableSelectOption[] = [];
-  for (const b of rawBiaya as any[]) {
-    if (!b.programStudi_id) continue;
-    const id = String(b.programStudi_id._id);
-    if (prodiSeen.has(id)) continue;
-    prodiSeen.add(id);
-    const p = b.programStudi_id;
-    prodiOptions.push({
-      value: id,
-      label: `${p.singkatan} — ${p.nama}`,
-      sublabel: p.jenjang_id?.singkatan,
-    });
-  }
-  prodiOptions.sort((a, b) => a.label.localeCompare(b.label, 'id'));
-
-  const prodiMap: Record<string, ProdiInfo> = {};
-  const kelasMap: Record<string, KelasOpt> = {};
-  const jadwalMap: Record<string, JadwalOpt> = {};
-  for (const b of rawBiaya as any[]) {
-    if (b.programStudi_id) {
-      const p = b.programStudi_id;
-      const pid = String(p._id);
-      if (!prodiMap[pid]) {
-        prodiMap[pid] = {
-          id: pid,
-          nama: p.nama,
-          singkatan: p.singkatan,
-          jenjang: p.jenjang_id?.singkatan || '',
-          akreditasi: p.akreditasi || '',
-          hasAkreditasiFile: !!p.fileAkreditasi?.filename,
-          fakultas_nama: p.fakultas_id?.nama || '',
-        };
-      }
-    }
-    if (b.kelas_id) {
-      const k = b.kelas_id;
-      kelasMap[String(k._id)] = { _id: String(k._id), nama: k.nama, singkatan: k.singkatan };
-    }
-    if (b.jadwal_id) {
-      const j = b.jadwal_id;
-      jadwalMap[String(j._id)] = {
-        _id: String(j._id),
-        judul: j.judul,
-        tahun: j.tahun,
-        ke: Number(j.ke ?? 1),
-      };
-    }
-  }
+  const { records: kalkulatorRecords, prodiOptions, prodiMap, kelasMap, jadwalMap } = dataBiaya;
 
   const heroData = (hero?.data || {}) as {
     judul?: string;
@@ -288,17 +186,7 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
   };
   const urlDaftar = settings?.urlPendaftaran || 'https://pendaftaran.unjani.ac.id/loginnew';
 
-  // FR-54: keadaan kosong kalkulator (TBD-16). Nomor WhatsApp dari Pengaturan; bila kosong,
-  // hanya tautan ke halaman kontak yang tampil. wa.me butuh kode negara tanpa '+' atau '0' awal,
-  // jadi nomor lokal "0812..." diubah menjadi "62812...".
-  const nomorWhatsApp = (settings?.whatsapp || '').replace(/\D/g, '').replace(/^0/, '62');
-  const kalkulatorKosong: KalkulatorKosong = {
-    judul: t('kalkulatorKosongJudul'),
-    pesan: t('kalkulatorKosongPesan'),
-    labelWhatsApp: t('kalkulatorKosongWhatsApp'),
-    labelKontak: t('kalkulatorKosongKontak'),
-    urlWhatsApp: nomorWhatsApp ? `https://wa.me/${nomorWhatsApp}` : null,
-  };
+  const kalkulatorKosong = await muatKalkulatorKosong(locale);
 
   const activeGelombangList = (activeJadwal as any[]);
 
