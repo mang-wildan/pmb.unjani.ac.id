@@ -81,23 +81,44 @@ Penghalang cek `curl`: `next dev` gagal dengan `No prebuild or local build of @p
 
 Catatan lint baseline (T.1.1): `yarn lint` (`eslint .`) ikut memindai `node_modules-windows-backup/`, sehingga sangat lambat dan angkanya tidak bermakna. Baseline perlu diukur ulang setelah folder itu dipindah atau di-ignore.
 
-### T.1.11 Checkpoint Fase 1 — BELUM LULUS (5 November 2026)
+### T.1.11 Checkpoint Fase 1 — LULUS (6 November 2026)
 
-Yang sudah terbukti (setelah semua kode Fase 1 selesai, termasuk T.1.10):
+Metode: salinan proyek di folder sementara (bukan folder proyek), dengan `node_modules` Windows dari `node_modules-windows-backup/` ditambah paket `qrcode` beserta dependensinya (salinan itu tidak punya `qrcode`; paketnya diambil dari `node_modules` proyek). Di salinan itu `src/lib/db.ts` ditambah `mongoose.set('autoIndex', false)` dan `autoCreate false` agar server tidak menulis indeks. Data dibaca dari cluster Atlas di `.env` secara **baca-saja**: tidak ada data yang diubah. Folder proyek tidak diubah, dan salinan `.env` dihapus setelah uji.
 
 | Langkah | Hasil |
 |---|---|
-| `npx tsc --noEmit` | bersih (exit 0) |
-| Lint (`eslint .` dengan `--ignore-pattern "node_modules-windows-backup/**"`) | 0 error, **18 warning** = sama dengan baseline T.1.1 (tidak melebihi) |
-| Uji offline T.1.3, T.1.9, dan render T.1.7/T.1.10 | `LULUS` (lihat tabel Fase 1) |
+| `npx tsc --noEmit` | bersih |
+| Lint (`--ignore-pattern "node_modules-windows-backup/**"`) | 0 error, 18 warning = baseline |
+| `next build` (di salinan) | sukses (`Compiled successfully`, exit 0) |
 
-Yang belum bisa dikerjakan di lingkungan ini:
+Cek `curl` terhadap build production lokal (`next start`, port 9532):
 
-| Langkah | Penghalang |
-|---|---|
-| `yarn build` | `@next/swc-linux-x64-gnu` gagal dimuat di Windows: `node_modules` terpasang untuk Linux |
-| Cek `curl` T.1.2–T.1.10 terhadap dev | `next dev` gagal: `No prebuild or local build of @parcel/watcher found. Tried @parcel/watcher-win32-x64`; MongoDB lokal tidak aktif; data uji S1/S2 belum ada |
-| Regresi `/`, `/en`, `/pengumuman`, `/artikel`, `/kontak`, `/admin/login` = `200` dan kalkulator beranda | butuh server berjalan |
-| Cek manual accordion (mouse dan keyboard) | butuh browser dan server berjalan |
+| Task | Perintah / pengamatan | Hasil |
+|---|---|---|
+| T.1.2 | `/robots.txt` | `Allow: /`, `Allow: /api/files/`, `Disallow: /admin`, `Disallow: /api`; baris `Host:` = 0 |
+| T.1.4 | `Accept-Language: en` ke `/` | `200` (bukan 307) |
+| T.1.4 | `/en/pengumuman/mekanisme-ods` (pengumuman tanpa `judul_en`) | `<meta name="robots" content="noindex, nofollow">` |
+| T.1.4 | `/pengumuman/mekanisme-ods`: `hreflang="en"` | 0; robots `index, follow` |
+| T.1.4 | `/en/pengumuman/mekanisme-ods` di `sitemap.xml` | 0 |
+| T.1.4 | `/en/artikel/kuliah-di-unjani-pilihan-tepat-untuk-masa-depan-yang-lebih-cerah` (artikel ber-`judul_en`) | `index, follow`, ada di sitemap (1) |
+| T.1.5 | `<title>` `/` | `PMB UNJANI Tahun Akademik 2027/2028 – Pendaftaran Kuliah di Cimahi &amp; Bandung` |
+| T.1.5 | `<title>` `/en` | `PMB UNJANI Tahun Akademik 2027/2028 – Study in Cimahi &amp; Bandung, Indonesia` |
+| T.1.5 | meta description `/kontak` | teks SPEC §6.4 |
+| T.1.6 | `CollegeOrUniversity` di `/` dan `/kontak` | 1 dan 1; `id="jsonld-org"` = 0 |
+| T.1.6 | `/logo-pmb-unjani%20(1).png` | `200` |
+| T.1.6 | artikel `pmb-unjani-20272028-pmdk-1-and-gelombang-1-dibuka` | `datePublished` = `dateModified` = `2026-11-04T06:00:00.000Z` (Modified ≥ Published) |
+| T.1.7 | `>Persyaratan</h3>` | 0 |
+| T.1.7 | `<h3><button` di beranda | 25 (14 jalur + 11 FAQ) |
+| T.1.7 | statistik hero | `11` dan `48`, angka polos |
+| T.1.8 | `wa.me/…` di `/kontak` | semua `wa.me/628112497890` |
+| T.1.10 | `grep -ic 'fetchpriority="high"'` di beranda | 2 (≥ 1) |
+| Regresi | `/`, `/en`, `/pengumuman`, `/artikel`, `/kontak`, `/admin/login` | semuanya `200` |
 
-Cara membuka blokir: pasang ulang `node_modules` untuk Windows (folder `node_modules-windows-backup/` tampaknya berisi versi Windows) atau jalankan di mesin/WSL dengan `node_modules` Linux yang sesuai, siapkan MongoDB dengan data minimal (lihat TODO "Persiapan uji lokal"), lalu jalankan ulang T.1.2–T.1.10 dan tempel outputnya di sini. Catatan: gunakan `grep -ic 'fetchpriority="high"'` (React menulis `fetchPriority`).
+Cek manual di browser (Chrome): tiap tombol jalur dan FAQ membuka dan menutup dengan klik (`aria-expanded` `false → true → false`); fokus lewat keyboard lalu Enter membuka accordion jalur; `Persyaratan <nama jalur>` dirender sebagai `h4` (12 judul).
+
+Catatan dan temuan:
+1. **Title beranda** memuat `Tahun Akademik 2027/2028`, bukan `2027/2028`, karena isi `PageContent` hero `tahunAjaran` di DB adalah `Tahun Akademik 2027/2028`. Kode mengikuti SPEC. Kalau ingin title seperti contoh SPEC, ubah field itu di admin menjadi `2027/2028` (pekerjaan konten, bukan kode).
+2. **Sitemap** 17 `<loc>` (baseline production 24): selisih 7 adalah varian `/en` untuk pengumuman/artikel tanpa `judul_en`, sesuai D-07.
+3. **Kalkulator** menampilkan keadaan kosong ("Biaya pendidikan sedang disusun"), sama persis dengan production, karena biaya 2027/2028 belum diinput (T.3.4, D-04). Kode kalkulator tidak diubah di Fase 1, tetapi proses menghitung **tidak dapat diuji** sampai data biaya ada. T.2.0 membandingkan HTML section kalkulator sebelum/sesudah ekstraksi.
+4. T.1.4 diuji dengan pasangan nyata (pengumuman `mekanisme-ods` tanpa terjemahan, artikel ber-`judul_en`), bukan slug `S1`/`S2` dari TODO.
+5. Tidak diuji karena memerlukan menulis data di DB bersama: skenario data kosong (T.2.1, T.2.3, T.2.4) dan MongoDB mati (T.2.7).
