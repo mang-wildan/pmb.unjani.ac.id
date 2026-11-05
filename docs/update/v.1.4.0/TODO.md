@@ -75,8 +75,8 @@ curl -s $B/ | perl -0pe 's/<script\b.*?<\/script>//gs' > /tmp/b-dom.html
   - **butuh:** - · **model:** — (pemilik produk) · **effort:** - · **agent:** claude-sonnet-5-5 (dicatat atas perintah pemilik) · **commit:** a0463eb
   1. Pemilik menyetujui atau mengoreksi D-02 sampai D-11 di SPEC §3. Kolom "Asal" diganti menjadi `Pemilik, <tanggal>`.
 
-- [ ] **T.1.1** Baseline sebelum perubahan
-  - **file:** `docs/update/v.1.4.0/RILIS-CHECKLIST.md` (buat) · **butuh:** - · **model:** `claude-haiku-5-5` · **effort:** `low` · **agent:** - · **commit:** -
+- [x] **T.1.1** Baseline sebelum perubahan
+  - **file:** `docs/update/v.1.4.0/RILIS-CHECKLIST.md` (buat) · **butuh:** - · **model:** `claude-haiku-5-5` · **effort:** `low` · **agent:** claude-sonnet-5-5 · **commit:** COMMIT_HASH
   1. Buat RILIS-CHECKLIST.md dengan bagian "Baseline 1.4.0". Tempel output perintah berikut apa adanya:
      ```bash
      curl -sI http://pmb.unjani.ac.id/ | head -3

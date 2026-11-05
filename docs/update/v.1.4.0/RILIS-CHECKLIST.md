@@ -15,7 +15,48 @@ Bukti verifikasi per task. Rujukan: SPEC.md dan TODO.md (folder ini).
 | Jumlah `<loc>` sitemap | 24 |
 | `fetchpriority="high"` di beranda | 0 |
 | `Accept-Language: en` ke `/` | `307` → `https://pmb.unjani.ac.id/en` (deteksi bahasa aktif) |
-| Baseline lint lokal | lihat T.1.1 di bawah |
+| Baseline lint lokal | **18 warning, 0 error** (lihat catatan di bawah tabel) |
+
+Output mentah (production, 5 November 2026, ±17.37 WIB; dijalankan sebelum perubahan Fase 1 dideploy):
+
+```text
+$ curl -sI http://pmb.unjani.ac.id/ | head -3
+HTTP/1.1 200 OK
+Server: nginx
+Date: Thu, 05 Nov 2026 10:37:23 GMT
+$ curl -sI https://www.pmb.unjani.ac.id/ | head -3
+HTTP/1.1 301 Moved Permanently
+Server: nginx
+Date: Thu, 05 Nov 2026 10:37:23 GMT
+$ curl -sI $P/ | grep -i -E "^(link|strict-transport-security):"
+Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+Link: <http://pmb.unjani.ac.id/>; rel="alternate"; hreflang="id", <http://pmb.unjani.ac.id/en>; rel="alternate"; hreflang="en", <http://pmb.unjani.ac.id/>; rel="alternate"; hreflang="x-default"
+Link: </_next/static/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2>; rel=preload; as="font"; crossorigin=""; type="font/woff2", </_next/static/media/fba5a26ea33df6a3-s.p.18rizl4rsrl42.woff2>; rel=preload; as="font"; crossorigin=""; type="f …[dipotong]
+$ curl -s $P/ | grep -o "<title>[^<]*"
+<title>PMB UNJANI
+$ curl -s $P/robots.txt
+User-Agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api
+
+Host: https://pmb.unjani.ac.id
+Sitemap: https://pmb.unjani.ac.id/sitemap.xml
+$ curl -s $P/sitemap.xml | grep -c "<loc>"
+24
+$ curl -s $P/ | grep -c fetchpriority="high"
+0
+$ curl -s -o /dev/null -w "%{http_code} %{redirect_url}" -H "Accept-Language: en" $P/
+307 https://pmb.unjani.ac.id/en
+$ eslint . --ignore-pattern "node_modules-windows-backup/**"
+✖ 18 problems (0 errors, 18 warnings)
+  0 errors and 4 warnings potentially fixable with the `--fix` option.
+```
+
+Catatan:
+- Baris `Link` kedua (preload font) dipotong karena panjang.
+- Lint dijalankan lewat `node node_modules/eslint/bin/eslint.js` dengan `--ignore-pattern` untuk folder `node_modules-windows-backup/` (565 MB, tidak ada di repo). Tanpa itu `yarn lint` ikut memindainya dan tidak selesai dalam batas waktu.
+- Jumlah 18 warning dicatat setelah kode Fase 1 ditulis. Fase 1 tidak menambah warning: lint terarah pada folder yang diubah hanya menampilkan 8 warning, semuanya di file yang tidak disentuh. Angka 18 juga sama dengan hasil lint rilis v1.4.1.
 
 ## Fase 1
 
