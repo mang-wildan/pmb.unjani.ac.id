@@ -92,7 +92,7 @@ curl -s $B/ | perl -0pe 's/<script\b.*?<\/script>//gs' > /tmp/b-dom.html
   2. Expected: semua output tercatat. Tidak ada perubahan di kode.
 
 - [x] **T.1.2** robots.txt: izinkan PDF publik dan hapus `Host` — FR-SEO-03
-  - **file:** `src/app/robots.ts` · **butuh:** T.1.0 · **model:** `claude-haiku-5-5` · **effort:** `low` · **agent:** claude-sonnet-5-5 · **commit:** COMMIT_HASH
+  - **file:** `src/app/robots.ts` · **butuh:** T.1.0 · **model:** `claude-haiku-5-5` · **effort:** `low` · **agent:** claude-sonnet-5-5 · **commit:** 078a7ba
   1. Ubah sesuai FR-SEO-03.
   2. Cek: `curl -s $B/robots.txt` memuat `Allow: /api/files/` dan `Disallow: /api`, tanpa baris `Host:`.
 
