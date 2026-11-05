@@ -131,3 +131,19 @@ Catatan dan temuan:
 - `tsc --noEmit` bersih; eslint pada `page.tsx` dan `dataBiaya.ts`: 0 masalah.
 - Section `#kalkulator` beranda sebelum dan sesudah (build production di salinan, DB Atlas baca-saja): `diff` kosong, keduanya 2354 byte. `/en` juga `200`.
 - **Terbatas:** data biaya aktif di DB saat ini kosong, jadi hanya jalur keadaan kosong yang teruji. Jalur dengan data (records, `prodiOptions`, peta) tidak diuji; kodenya disalin tanpa perubahan logika. Ulangi diff ini setelah biaya 2027/2028 diinput (T.3.4).
+
+### T.2.1 `/biaya-kuliah` dan `TabelBiaya` (6 November 2026)
+
+Dibuat: `biaya-kuliah/page.tsx`, `components/public/TabelBiaya.tsx`, kunci `biayaPage.*` (id dan en, persis SPEC §6.4). `tsc` dan eslint bersih. Diuji dengan `next dev` di salinan (DB Atlas baca-saja).
+
+| Cek | Hasil |
+|---|---|
+| `/biaya-kuliah`, `/en/biaya-kuliah` | `200`, `200` |
+| `<h1` | 1 (id dan en) |
+| `<title>` | `Biaya Kuliah UNJANI per Program Studi — PMB UNJANI`; en: `UNJANI Tuition Fees by Study Program — PMB UNJANI` |
+| canonical | `https://pmb.unjani.ac.id/biaya-kuliah`; en: `.../en/biaya-kuliah` |
+| BreadcrumbList | ada |
+| Data kosong (DB nyata: nol biaya aktif) | `200`, `<table` = 0, `/api/files/` ada (dokumen biaya tetap tampil) |
+| Dengan data (**data contoh** disuntik hanya di salinan lewat env) | 1 `<table>`, caption, 6 kolom, 2 baris urut prodi→jalur→kelas (kelas kosong `—` lebih dulu), format `Rp 5.000.000`, semester kosong `—` |
+
+Catatan: cek "nonaktifkan semua jadwal" tidak dijalankan (butuh menulis ke DB bersama); keadaan kosong terbukti dari DB nyata yang memang tanpa biaya aktif. Data contoh bukan data produksi.

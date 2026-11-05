@@ -151,12 +151,19 @@
     "faseLainnya": "Other"
   },
   "biayaPage": {
-    "metaTitle": "Tuition Fees",
-    "metaDesc": "Official tuition fee documents per study program at UNJANI.",
+    "metaTitle": "UNJANI Tuition Fees by Study Program",
+    "metaDesc": "UNJANI tuition fees by study program, admission path, and class: base fee and estimated cost per semester, with a fee calculator and official documents.",
     "eyebrow": "Official Documents",
     "title": "Tuition Fees",
-    "desc": "Download official tuition fee documents from the PMB UNJANI committee.",
-    "empty": "No tuition fee files have been uploaded yet."
+    "desc": "Base fee and estimated cost per semester for every study program, admission path, class, and wave currently open.",
+    "empty": "No tuition fee files have been uploaded yet.",
+    "tabelJudul": "Tuition fees by study program",
+    "kolomProdi": "Study Program",
+    "kolomJalur": "Path",
+    "kolomKelas": "Class",
+    "kolomGelombang": "Wave",
+    "kolomPokok": "Base Fee",
+    "kolomSemester": "Estimated per Semester"
   },
   "manualPage": {
     "metaTitle": "Registration Guidebook",

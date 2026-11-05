@@ -151,12 +151,19 @@
     "faseLainnya": "Lainnya"
   },
   "biayaPage": {
-    "metaTitle": "Biaya Pendidikan",
-    "metaDesc": "Dokumen resmi biaya pendidikan per program studi di UNJANI.",
+    "metaTitle": "Biaya Kuliah UNJANI per Program Studi",
+    "metaDesc": "Biaya kuliah UNJANI per program studi, jalur masuk, dan kelas: biaya pokok dan estimasi per semester, dilengkapi kalkulator dan dokumen resmi.",
     "eyebrow": "Dokumen Resmi",
     "title": "Biaya Pendidikan",
-    "desc": "Unduh dokumen resmi biaya pendidikan dari panitia PMB UNJANI.",
-    "empty": "Belum ada file biaya diunggah."
+    "desc": "Biaya pokok dan estimasi biaya per semester untuk setiap program studi, jalur masuk, kelas, dan gelombang yang sedang dibuka.",
+    "empty": "Belum ada file biaya diunggah.",
+    "tabelJudul": "Tabel biaya kuliah per program studi",
+    "kolomProdi": "Program Studi",
+    "kolomJalur": "Jalur",
+    "kolomKelas": "Kelas",
+    "kolomGelombang": "Gelombang",
+    "kolomPokok": "Biaya Pokok",
+    "kolomSemester": "Estimasi per Semester"
   },
   "manualPage": {
     "metaTitle": "Buku Panduan Pendaftaran",
