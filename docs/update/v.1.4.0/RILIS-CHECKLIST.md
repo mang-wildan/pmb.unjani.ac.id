@@ -64,7 +64,7 @@ Status 5 November 2026. Kode T.1.2 sampai T.1.9 sudah ditulis. Hanya cek yang bi
 
 | Task | Status | Bukti |
 |---|---|---|
-| T.1.2 robots.txt | kode selesai, cek `curl` tertunda | - |
+| T.1.2 robots.txt | **lulus** (setara `curl`) | `resolveRobots()` bawaan Next (serializer yang sama dengan `/robots.txt`) pada isi `robots.ts` menghasilkan `Allow: /`, `Allow: /api/files/`, `Disallow: /admin`, `Disallow: /api`, `Sitemap: …`, tanpa baris `Host:`. Cek `curl $B/robots.txt` menyusul di T.1.11 |
 | T.1.3 `buildMetadata` | **lulus** | assert `LULUS` (Node 25, type stripping), `tsc --noEmit` bersih |
 | T.1.4 bahasa dan noindex | kode selesai, cek `curl` tertunda | - |
 | T.1.5 title dan meta beranda | kode selesai, cek `curl` tertunda | - |
