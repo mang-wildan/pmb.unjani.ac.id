@@ -97,7 +97,7 @@ curl -s $B/ | perl -0pe 's/<script\b.*?<\/script>//gs' > /tmp/b-dom.html
   2. Cek: `curl -s $B/robots.txt` memuat `Allow: /api/files/` dan `Disallow: /api`, tanpa baris `Host:`.
 
 - [x] **T.1.3** `buildMetadata`: x-default, `og:locale`, dan opsi `hanyaId` — FR-SEO-04 butir 1–3 `[SEO-IRREVERSIBLE]`
-  - **file:** `src/lib/seo.ts` · **butuh:** T.1.0 · **model:** `claude-opus-5-5` · **effort:** `medium` · **agent:** claude-sonnet-5-5 · **commit:** COMMIT_HASH
+  - **file:** `src/lib/seo.ts` · **butuh:** T.1.0 · **model:** `claude-opus-5-5` · **effort:** `medium` · **agent:** claude-sonnet-5-5 · **commit:** 05576cd
   1. Jalankan cek di bawah. Expected sebelum perubahan: `AssertionError`.
      ```bash
      npx tsx -e 'Promise.all([import("node:assert"), import("./src/lib/seo.ts")]).then(([{ default: a }, { buildMetadata: b, SITE_URL: u }]) => {
@@ -177,7 +177,7 @@ curl -s $B/ | perl -0pe 's/<script\b.*?<\/script>//gs' > /tmp/b-dom.html
      - `grep -rn Universtas src` → kosong.
 
 - [x] **T.1.9** `toSlug`: potong per kata, tanpa `&`→`and`, dan idempoten — FR-SEO-08
-  - **file:** `src/lib/slug.ts` · **butuh:** T.1.0 · **model:** `claude-sonnet-5-5` · **effort:** `low` · **agent:** claude-sonnet-5-5 · **commit:** COMMIT_HASH
+  - **file:** `src/lib/slug.ts` · **butuh:** T.1.0 · **model:** `claude-sonnet-5-5` · **effort:** `low` · **agent:** claude-sonnet-5-5 · **commit:** 05576cd
   1. Jalankan cek di bawah. Expected sebelum perubahan: `AssertionError` di assert pertama.
      ```bash
      npx tsx -e 'Promise.all([import("node:assert"), import("./src/lib/slug.ts")]).then(([{ default: a }, { toSlug: s }]) => {
