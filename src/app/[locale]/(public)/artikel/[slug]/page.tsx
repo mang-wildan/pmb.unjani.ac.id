@@ -157,7 +157,7 @@ export default async function ArtikelDetailPage({
           '@context': 'https://schema.org', '@type': 'Article', headline: judul,
           description: artikel.metaDescription || stripHtml(isi, 200), image: absoluteImage,
           datePublished: published, dateModified: modified,
-          author: { '@type': 'Organization', name: artikel.createdBy?.nama || 'PMB UNJANI' },
+          author: { '@type': 'Organization', name: artikel.createdBy?.nama || SITE_NAME },
           mainEntityOfPage: `${SITE_URL}${pathArtikel}`,
           publisher: { '@type': 'Organization', name: SITE_NAME, logo: { '@type': 'ImageObject', url: LOGO_URL } },
         },
