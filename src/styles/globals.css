@@ -1,0 +1,545 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* SweetAlert2 brand styling */
+.swal-popup {
+  border-radius: 1rem !important;
+  font-family: inherit !important;
+  padding: 1.75rem !important;
+}
+.swal-popup .swal2-actions {
+  gap: 0.625rem !important;
+}
+.swal-btn-confirm {
+  background-color: #24b47f;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.6rem 1.5rem;
+  border-radius: 9999px;
+  transition: background 0.15s;
+}
+.swal-btn-confirm:hover { background-color: #1e9c6d; }
+.swal-btn-cancel {
+  background-color: #f3f4f6;
+  color: #556167;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.6rem 1.5rem;
+  border-radius: 9999px;
+  transition: background 0.15s;
+}
+.swal-btn-cancel:hover { background-color: #e5e7eb; }
+.swal-btn-deny {
+  background-color: #fee2e2;
+  color: #dc2626;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.6rem 1.5rem;
+  border-radius: 9999px;
+  transition: background 0.15s;
+}
+.swal-btn-deny:hover { background-color: #fecaca; }
+
+:root {
+  --brand: #24b47f;
+  --brand-600: #1e9c6d;
+  --brand-700: #178058;
+  --accent: #ffcc34;
+  --accent-600: #e6b618;
+  --surface: #ffffff;
+  --ink: #0e1a14;
+  --ink-muted: #556167;
+
+  /* Token gerak (FR-33). Dipakai komponen landing; durasi masuk total dibatasi 600ms. */
+  --gerak-cepat: 150ms;
+  --gerak-sedang: 300ms;
+  --gerak-masuk: 600ms;
+  --gerak-fade-reduksi: 200ms;
+  --gerak-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Smooth scroll hanya bila pengguna tidak meminta gerak dikurangi (FR-33). */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/*
+ * Reduced motion bertingkat (FR-33, tier di SRS §2):
+ * - Tier 1 (gerakan besar: blob, float, geser, kilau): dihentikan oleh jaring pengaman di bawah.
+ * - Tier 2 (masuk kecil: fade-up, scale-in): diganti fade <=200ms tanpa geser/skala.
+ * - Tier 3 (warna, fokus, indikator loading): tidak disentuh. Karena itu jaring pengaman hanya
+ *   menyasar animasi, bukan transisi, dan mengecualikan indikator loading.
+ * Media query dievaluasi ulang browser saat preferensi berubah, tanpa memuat ulang halaman.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  /* :where() = spesifisitas 0, sehingga aturan tier 2 di bawah tetap menang. */
+  :where(*:not(.ld-ripple div):not(.animate-spin)),
+  :where(*)::before,
+  :where(*)::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .animate-fade-up,
+  .animate-scale-in {
+    animation-name: gerak-fade !important;
+    animation-duration: var(--gerak-fade-reduksi) !important;
+    animation-timing-function: ease-out !important;
+  }
+}
+
+/*
+ * Tombol Daftar melayang (FR-35): muncul dengan transisi opacity/transform lewat @starting-style.
+ * Browser tanpa dukungan @starting-style / allow-discrete langsung menampilkan/menyembunyikan.
+ * Reduced motion: jarak geser 0 sehingga hanya fade (tier 2).
+ */
+.tombol-melayang {
+  --geser-melayang: 1rem;
+  transition-property: opacity, transform, background-color, display;
+  transition-duration: var(--gerak-sedang);
+  transition-timing-function: var(--gerak-ease);
+  transition-behavior: allow-discrete;
+}
+
+.tombol-melayang[data-tampil='false'] {
+  display: none;
+  opacity: 0;
+  transform: translateY(var(--geser-melayang));
+}
+
+@starting-style {
+  .tombol-melayang[data-tampil='true'] {
+    opacity: 0;
+    transform: translateY(var(--geser-melayang));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tombol-melayang {
+    --geser-melayang: 0px;
+    transition-duration: var(--gerak-fade-reduksi);
+  }
+}
+
+/*
+ * Gerak per section (FR-36), dikendalikan atribut data-reveal dari komponen Reveal leluhur:
+ * - tanpa JS / sudah di layar ('awal', 'tampil'): tampil penuh tanpa animasi;
+ * - 'tunggu' (di bawah layar): garis dan bar kosong;
+ * - 'masuk': terisi dengan transisi transform (scaleX).
+ * Reduced motion: tanpa transisi isi (langsung penuh, hanya fade dari Reveal).
+ */
+.garis-eyebrow,
+.bar-progres {
+  transform-origin: left center;
+}
+
+.garis-eyebrow {
+  transform: scaleX(1);
+}
+
+.bar-progres {
+  transform: scaleX(var(--progres, 1));
+}
+
+[data-reveal='tunggu'] .garis-eyebrow,
+[data-reveal='tunggu'] .bar-progres {
+  transform: scaleX(0);
+}
+
+[data-reveal='masuk'] .garis-eyebrow {
+  transition: transform var(--gerak-masuk) var(--gerak-ease) 150ms;
+}
+
+[data-reveal='masuk'] .bar-progres {
+  transition: transform 900ms var(--gerak-ease) 250ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal='masuk'] .garis-eyebrow,
+  [data-reveal='masuk'] .bar-progres {
+    transition: none;
+  }
+}
+
+/*
+ * Kartu terangkat (FR-37): hover hanya transform; bayangan hover lewat ::after yang di-fade
+ * (opacity), bukan transisi box-shadow. Aktif hanya di perangkat ber-hover, sehingga di layar
+ * sentuh kartu tidak tertinggal terangkat. Fokus keyboard (:has(:focus-visible)) mendapat efek
+ * setara. Reduced motion: tanpa angkat, hanya bayangan.
+ * Elemen pemakai tidak boleh overflow-hidden (bayangan ::after akan terpotong).
+ */
+.kartu-angkat {
+  position: relative;
+  transition-property: transform, border-color;
+  transition-duration: var(--gerak-sedang);
+  transition-timing-function: var(--gerak-ease);
+}
+
+.kartu-angkat::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 22px 45px -20px rgba(14, 26, 20, 0.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--gerak-sedang) var(--gerak-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .kartu-angkat:hover {
+    transform: translateY(-4px);
+  }
+  .kartu-angkat:hover::after {
+    opacity: 1;
+  }
+}
+
+.kartu-angkat:has(:focus-visible) {
+  transform: translateY(-4px);
+}
+
+.kartu-angkat:has(:focus-visible)::after {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kartu-angkat:hover,
+  .kartu-angkat:has(:focus-visible) {
+    transform: none;
+  }
+}
+
+/*
+ * <details> persyaratan prodi (FR-45): membuka halus lewat ::details-content bila browser mendukung
+ * (interpolate-size + ::details-content). Tanpa dukungan, details tetap terbuka/tertutup langsung.
+ * Reduced motion: tanpa transisi.
+ */
+@supports selector(details::details-content) and (interpolate-size: allow-keywords) {
+  .detail-persyaratan {
+    interpolate-size: allow-keywords;
+  }
+
+  .detail-persyaratan::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition:
+      block-size var(--gerak-sedang) var(--gerak-ease),
+      content-visibility var(--gerak-sedang) allow-discrete;
+  }
+
+  .detail-persyaratan[open]::details-content {
+    block-size: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .detail-persyaratan::details-content {
+      transition: none;
+    }
+  }
+}
+
+/* Indikator berulang (ping) dijeda saat di luar layar (FR-37), lihat IndikatorPing.tsx. */
+/* Spesifisitas (0,2,1) agar mengalahkan shorthand animation dari kelas animate-ping. */
+span[data-terlihat='false'][data-terlihat] {
+  animation-play-state: paused;
+}
+
+/* Didefinisikan di luar media query agar selalu tersedia untuk lapisan tier 2. */
+@keyframes gerak-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+body {
+  color: var(--ink);
+  background: var(--surface);
+}
+
+.prose-brand :where(a) {
+  color: var(--brand-700);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.prose-brand :where(h1, h2, h3, h4) {
+  color: var(--ink);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.prose-brand :where(h2) {
+  font-size: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.prose-brand :where(h3) {
+  font-size: 1.25rem;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose-brand :where(h4) {
+  font-size: 1.05rem;
+  margin-top: 1rem;
+  margin-bottom: 0.4rem;
+}
+
+.prose-brand :where(ul, ol) {
+  margin-top: 0.7rem;
+  margin-bottom: 0.7rem;
+  padding-left: 1.5rem;
+}
+
+.prose-brand :where(ul) { list-style: disc; }
+.prose-brand :where(ol) { list-style: decimal; }
+.prose-brand :where(li) { margin: 0.25rem 0; }
+
+.prose-brand :where(p) {
+  margin-top: 0.6rem;
+  margin-bottom: 0.6rem;
+  line-height: 1.7;
+}
+
+.prose-brand :where(blockquote) {
+  border-left: 3px solid var(--brand);
+  color: var(--ink-muted);
+  font-style: italic;
+  margin: 1rem 0;
+  padding-left: 1rem;
+}
+
+.prose-brand :where(pre) {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin: 1rem 0;
+  overflow-x: auto;
+  padding: 0.875rem 1rem;
+}
+
+.prose-brand :where(code) {
+  background: #f0fdf8;
+  border: 1px solid #bbf7d0;
+  border-radius: 4px;
+  color: var(--brand-700);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.85em;
+  padding: 0.1em 0.35em;
+}
+
+.prose-brand :where(pre code) {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  padding: 0;
+}
+
+.prose-brand :where(img) {
+  border-radius: 8px;
+  display: block;
+  height: auto;
+  margin: 1rem 0;
+  max-width: 100%;
+}
+
+.prose-brand :where(hr) {
+  border: 0;
+  border-top: 1px solid #e2e8f0;
+  margin: 1.25rem 0;
+}
+
+/* Tiptap rich text editor */
+[data-rich-editor] .rich-editor-content {
+  min-height: inherit;
+}
+
+[data-rich-editor] .ProseMirror {
+  caret-color: var(--brand-700);
+  color: var(--ink);
+  font-size: 0.875rem;
+  line-height: 1.7;
+  min-height: inherit;
+  outline: none;
+  padding: 0.75rem 0.875rem;
+}
+
+[data-rich-editor] .ProseMirror > *:first-child { margin-top: 0; }
+[data-rich-editor] .ProseMirror > *:last-child { margin-bottom: 0; }
+
+[data-rich-editor] .ProseMirror p {
+  margin-top: 0.35rem;
+  margin-bottom: 0.35rem;
+}
+
+[data-rich-editor] .ProseMirror h2 {
+  color: var(--ink);
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-top: 0.9rem;
+  margin-bottom: 0.35rem;
+}
+
+[data-rich-editor] .ProseMirror h3 {
+  color: var(--ink);
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-top: 0.75rem;
+  margin-bottom: 0.3rem;
+}
+
+[data-rich-editor] .ProseMirror h4 {
+  color: var(--ink);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-top: 0.65rem;
+  margin-bottom: 0.25rem;
+}
+
+[data-rich-editor] .ProseMirror ul,
+[data-rich-editor] .ProseMirror ol {
+  margin: 0.45rem 0;
+  padding-left: 1.35rem;
+}
+
+[data-rich-editor] .ProseMirror ul { list-style: disc; }
+[data-rich-editor] .ProseMirror ol { list-style: decimal; }
+[data-rich-editor] .ProseMirror li { margin: 0.15rem 0; }
+
+[data-rich-editor] .ProseMirror blockquote {
+  border-left: 3px solid var(--brand);
+  color: var(--ink-muted);
+  font-style: italic;
+  margin: 0.6rem 0;
+  padding-left: 0.875rem;
+}
+
+[data-rich-editor] .ProseMirror code {
+  background: #f0fdf8;
+  border: 1px solid #bbf7d0;
+  border-radius: 4px;
+  color: var(--brand-700);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.85em;
+  padding: 0.1em 0.35em;
+}
+
+[data-rich-editor] .ProseMirror pre {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.82em;
+  margin: 0.5rem 0;
+  overflow-x: auto;
+  padding: 0.75rem 1rem;
+}
+
+[data-rich-editor] .ProseMirror pre code {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  padding: 0;
+}
+
+[data-rich-editor] .ProseMirror hr {
+  border: 0;
+  border-top: 1px solid #e2e8f0;
+  margin: 0.75rem 0;
+}
+
+[data-rich-editor] .ProseMirror a {
+  color: var(--brand-700);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+[data-rich-editor] .ProseMirror img {
+  border-radius: 8px;
+  display: block;
+  height: auto;
+  margin: 0.5rem 0;
+  max-width: 100%;
+}
+
+[data-rich-editor] .ProseMirror img.ProseMirror-selectednode {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.focus-ring {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(36, 180, 127, 0.22);
+}
+
+.bg-grid {
+  background-image: radial-gradient(rgba(36, 180, 127, 0.14) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.ld-ripple {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.ld-ripple div {
+  /* FR-38: ukuran dan posisi final tetap; yang dianimasikan hanya transform (scale) dan opacity,
+     sehingga tidak ada Layout per frame. Ukuran akhir sama dengan versi lama (72px); lingkaran
+     kini tetap berpusat di wadah 80px (versi lama bergeser dari pusat 40px ke 36px). */
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 72px;
+  height: 72px;
+  border: 4px solid var(--brand);
+  opacity: 0;
+  border-radius: 50%;
+  transform: scale(0);
+  will-change: transform, opacity;
+  animation: ld-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+.ld-ripple div:nth-child(2) {
+  animation-delay: -0.5s;
+}
+
+@keyframes ld-ripple {
+  0%,
+  4.9% {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  5% {
+    transform: scale(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}

@@ -1,0 +1,1 @@
+File ini hanya sebagai placeholder folder /public. robots.txt dan sitemap.xml dilayani oleh src/app/robots.ts dan src/app/sitemap.ts.

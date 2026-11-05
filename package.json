@@ -1,0 +1,63 @@
+{
+  "name": "pmb-unjani",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Landing page & CMS Penerimaan Mahasiswa Baru UNJANI",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "scripts": {
+    "predev": "node scripts/clean-next-dev.js",
+    "dev": "next dev -p 9532",
+    "build": "next build",
+    "start": "next start -p 9532",
+    "lint": "eslint .",
+    "seed": "tsx scripts/seed.ts",
+    "audit:prod": "yarn audit --groups dependencies --level high"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.2.0",
+    "@tiptap/extension-image": "^2.27.2",
+    "@tiptap/extension-link": "^2.6.6",
+    "@tiptap/pm": "^2.6.6",
+    "@tiptap/react": "^2.6.6",
+    "@tiptap/starter-kit": "^2.6.6",
+    "bcryptjs": "^2.4.3",
+    "clsx": "^2.1.1",
+    "dayjs": "^1.11.13",
+    "dotenv": "^16.4.5",
+    "file-type": "^16.5.4",
+    "formidable": "^3.5.2",
+    "jose": "^5.9.6",
+    "lru-cache": "^11.0.2",
+    "mongoose": "^8.24.5",
+    "next": "16.3.8",
+    "next-intl": "^4.9.1",
+    "nodemon": "^3.1.14",
+    "qrcode": "^1.5.4",
+    "react": "19.2.5",
+    "react-dom": "19.2.5",
+    "sanitize-html": "^2.18.0",
+    "sharp": "^0.35.5",
+    "slugify": "^1.6.6",
+    "sweetalert2": "^11.26.24",
+    "uuid": "^11.0.5",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/formidable": "^3.4.5",
+    "@types/node": "^22.7.4",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@types/sanitize-html": "^2.13.0",
+    "@types/uuid": "^10.0.0",
+    "autoprefixer": "^10.4.20",
+    "eslint": "9.39.4",
+    "eslint-config-next": "16.3.8",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.13",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.2"
+  }
+}
