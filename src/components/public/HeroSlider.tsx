@@ -120,6 +120,7 @@ export default function HeroSlider({
               fill
               draggable={false}
               priority={indeks === 0}
+              fetchPriority={indeks === 0 ? 'high' : undefined}
               loading={indeks === 0 ? undefined : 'eager'}
               sizes="(max-width: 768px) 100vw, 50vw"
               onLoad={() => tandaiDimuat(indeks)}
