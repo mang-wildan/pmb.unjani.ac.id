@@ -80,3 +80,24 @@ Lint pada folder yang diubah (`src/app`, `src/lib`, `src/i18n`, `src/components/
 Penghalang cek `curl`: `next dev` gagal dengan `No prebuild or local build of @parcel/watcher found. Tried @parcel/watcher-win32-x64`. `node_modules` tampaknya terpasang untuk platform lain, padahal ada folder `node_modules-windows-backup`. MongoDB lokal (27017) juga tidak aktif.
 
 Catatan lint baseline (T.1.1): `yarn lint` (`eslint .`) ikut memindai `node_modules-windows-backup/`, sehingga sangat lambat dan angkanya tidak bermakna. Baseline perlu diukur ulang setelah folder itu dipindah atau di-ignore.
+
+### T.1.11 Checkpoint Fase 1 — BELUM LULUS (5 November 2026)
+
+Yang sudah terbukti (setelah semua kode Fase 1 selesai, termasuk T.1.10):
+
+| Langkah | Hasil |
+|---|---|
+| `npx tsc --noEmit` | bersih (exit 0) |
+| Lint (`eslint .` dengan `--ignore-pattern "node_modules-windows-backup/**"`) | 0 error, **18 warning** = sama dengan baseline T.1.1 (tidak melebihi) |
+| Uji offline T.1.3, T.1.9, dan render T.1.7/T.1.10 | `LULUS` (lihat tabel Fase 1) |
+
+Yang belum bisa dikerjakan di lingkungan ini:
+
+| Langkah | Penghalang |
+|---|---|
+| `yarn build` | `@next/swc-linux-x64-gnu` gagal dimuat di Windows: `node_modules` terpasang untuk Linux |
+| Cek `curl` T.1.2–T.1.10 terhadap dev | `next dev` gagal: `No prebuild or local build of @parcel/watcher found. Tried @parcel/watcher-win32-x64`; MongoDB lokal tidak aktif; data uji S1/S2 belum ada |
+| Regresi `/`, `/en`, `/pengumuman`, `/artikel`, `/kontak`, `/admin/login` = `200` dan kalkulator beranda | butuh server berjalan |
+| Cek manual accordion (mouse dan keyboard) | butuh browser dan server berjalan |
+
+Cara membuka blokir: pasang ulang `node_modules` untuk Windows (folder `node_modules-windows-backup/` tampaknya berisi versi Windows) atau jalankan di mesin/WSL dengan `node_modules` Linux yang sesuai, siapkan MongoDB dengan data minimal (lihat TODO "Persiapan uji lokal"), lalu jalankan ulang T.1.2–T.1.10 dan tempel outputnya di sini. Catatan: gunakan `grep -ic 'fetchpriority="high"'` (React menulis `fetchPriority`).

@@ -200,7 +200,7 @@ curl -s $B/ | perl -0pe 's/<script\b.*?<\/script>//gs' > /tmp/b-dom.html
   3. Bila 0: tambahkan `fetchPriority={indeks === 0 ? 'high' : undefined}` pada `<Image>`, lalu cek ulang. Expected: ≥ 1.
 
 - [ ] **T.1.11** CHECKPOINT FASE 1
-  - **file:** `RILIS-CHECKLIST.md` · **butuh:** T.1.2 sampai T.1.10 · **model:** `claude-sonnet-5-5` · **effort:** `medium` · **agent:** - · **commit:** -
+  - **file:** `RILIS-CHECKLIST.md` · **butuh:** T.1.2 sampai T.1.10 · **model:** `claude-sonnet-5-5` · **effort:** `medium` · **agent:** claude-sonnet-5-5 (sebagian: tsc dan lint lulus; build dan cek `curl` terhalang, lihat RILIS-CHECKLIST) · **commit:** -
   1. `npx tsc --noEmit` bersih. `yarn lint`: 0 error dan jumlah warning tidak melebihi baseline T.1.1. `yarn build` sukses.
   2. Ulangi semua cek T.1.2–T.1.10, lalu tempel outputnya ke RILIS-CHECKLIST.
   3. Regresi: `/`, `/en`, `/pengumuman`, `/artikel`, `/kontak`, dan `/admin/login` mengembalikan `200`. Kalkulator beranda masih bisa menghitung.
