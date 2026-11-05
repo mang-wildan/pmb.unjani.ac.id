@@ -222,7 +222,7 @@ curl -s $B/ | perl -0pe 's/<script\b.*?<\/script>//gs' > /tmp/b-dom.html
   4. Ulangi perintah langkah 1 ke `/tmp/kalk-sesudah.html`, lalu `diff /tmp/kalk-sebelum.html /tmp/kalk-sesudah.html`. Expected: tidak ada output.
 
 - [x] **T.2.1** Halaman `/biaya-kuliah` dan `TabelBiaya` — FR-SEO-09
-  - **file:** `src/app/[locale]/(public)/biaya-kuliah/page.tsx` (buat), `src/components/public/TabelBiaya.tsx` (buat), `messages/*.json` (`biayaPage.*`) · **butuh:** T.2.0 · **model:** `claude-sonnet-5-5` · **effort:** `medium` · **agent:** claude-sonnet-5-5 · **commit:** COMMIT_HASH
+  - **file:** `src/app/[locale]/(public)/biaya-kuliah/page.tsx` (buat), `src/components/public/TabelBiaya.tsx` (buat), `messages/*.json` (`biayaPage.*`) · **butuh:** T.2.0 · **model:** `claude-sonnet-5-5` · **effort:** `medium` · **agent:** claude-sonnet-5-5 · **commit:** a56b9a2
   1. Tambah kunci `biayaPage` dari SPEC §6.4: `metaTitle`, `metaDesc`, `desc`, `tabelJudul`, dan `kolom*`.
   2. Buat `TabelBiaya` sesuai SPEC §6.2, lalu halaman sesuai baris `/biaya-kuliah` di FR-SEO-09.
   3. Cek dengan data biaya aktif:
