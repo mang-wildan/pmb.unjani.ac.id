@@ -66,7 +66,7 @@ Status 5 November 2026. Kode T.1.2 sampai T.1.9 sudah ditulis. Hanya cek yang bi
 |---|---|---|
 | T.1.2 robots.txt | **lulus** (setara `curl`) | `resolveRobots()` bawaan Next (serializer yang sama dengan `/robots.txt`) pada isi `robots.ts` menghasilkan `Allow: /`, `Allow: /api/files/`, `Disallow: /admin`, `Disallow: /api`, `Sitemap: …`, tanpa baris `Host:`. Cek `curl $B/robots.txt` menyusul di T.1.11 |
 | T.1.3 `buildMetadata` | **lulus** | assert `LULUS` (Node 25, type stripping), `tsc --noEmit` bersih |
-| T.1.4 bahasa dan noindex | kode selesai, cek `curl` tertunda | - |
+| T.1.4 bahasa dan noindex | **lulus offline**, cek `curl` 1–6 diulang di T.1.11 | `routing.ts:8` `localeDetection: false` (opsi dikenal `next-intl/dist/.../routing/config.js`); `hanyaId: !judul_en?.trim()` di `pengumuman/[slug]` dan `artikel/[slug]`; assert `buildMetadata` (T.1.3) untuk `hanyaId` → `noindex` dan hreflang hanya `id`+`x-default`; assert `localizedEntries(path, data, adaEn)` dari `sitemap.ts` (ditranspilasi dengan `typescript`): `adaEn=false` hanya URL `id`, `true` memuat `/en/…` → `LULUS`; `tsc --noEmit` bersih. Belum diuji: integrasi dengan DB (butuh dev server dan data S1/S2) |
 | T.1.5 title dan meta beranda | kode selesai, cek `curl` tertunda | - |
 | T.1.6 structured data | kode selesai, cek `curl` tertunda | `grep -rn 'logo.svg' src` kosong |
 | T.1.7 markup jalur dan FAQ | kode selesai, cek `curl` dan manual tertunda | - |

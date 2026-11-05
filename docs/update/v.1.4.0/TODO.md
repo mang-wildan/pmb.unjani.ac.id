@@ -114,8 +114,8 @@ curl -s $B/ | perl -0pe 's/<script\b.*?<\/script>//gs' > /tmp/b-dom.html
   2. Implementasikan sesuai SPEC §6.2. `seo.ts` hanya boleh memakai `import type` agar tetap bebas Mongoose.
   3. Jalankan ulang cek. Expected: `LULUS`. Lalu `npx tsc --noEmit` harus bersih.
 
-- [ ] **T.1.4** Bahasa: matikan deteksi browser, dan `/en` tanpa terjemahan jadi noindex — FR-SEO-04 butir 4–6 `[SEO-IRREVERSIBLE]`
-  - **file:** `src/i18n/routing.ts`, `src/app/[locale]/(public)/pengumuman/[slug]/page.tsx`, `src/app/[locale]/(public)/artikel/[slug]/page.tsx`, `src/app/sitemap.ts` · **butuh:** T.1.3 · **model:** `claude-opus-5-5` · **effort:** `medium` · **agent:** - · **commit:** -
+- [x] **T.1.4** Bahasa: matikan deteksi browser, dan `/en` tanpa terjemahan jadi noindex — FR-SEO-04 butir 4–6 `[SEO-IRREVERSIBLE]`
+  - **file:** `src/i18n/routing.ts`, `src/app/[locale]/(public)/pengumuman/[slug]/page.tsx`, `src/app/[locale]/(public)/artikel/[slug]/page.tsx`, `src/app/sitemap.ts` · **butuh:** T.1.3 · **model:** `claude-opus-5-5` · **effort:** `medium` · **agent:** claude-sonnet-5-5 · **commit:** COMMIT_HASH
   1. Tambah `localeDetection: false` di `routing.ts`.
   2. Di `generateMetadata` kedua halaman detail: ikut-select `judul_en`, lalu teruskan `hanyaId: !doc.judul_en?.trim()`.
   3. Di sitemap: `localizedEntries(path, data, adaEn = true)`, select `judul_en`, dan teruskan `Boolean(item.judul_en?.trim())`.
