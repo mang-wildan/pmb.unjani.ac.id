@@ -170,7 +170,7 @@ curl -s $B/ | perl -0pe 's/<script\b.*?<\/script>//gs' > /tmp/b-dom.html
   3. Cek manual di browser: accordion jalur dan FAQ tetap bisa dibuka dan ditutup dengan mouse dan keyboard (Tab, Enter).
 
 - [x] **T.1.8** Link WhatsApp di kontak dan ejaan — FR-SEO-07
-  - **file:** `src/app/[locale]/(public)/kontak/page.tsx:94`, `src/app/[locale]/(public)/page.tsx:583`, `src/components/public/WhatsAppFloatingButton.tsx:5` · **butuh:** T.1.0 · **model:** `claude-haiku-5-5` · **effort:** `low` · **agent:** claude-sonnet-5-5 · **commit:** COMMIT_HASH
+  - **file:** `src/app/[locale]/(public)/kontak/page.tsx:94`, `src/app/[locale]/(public)/page.tsx:583`, `src/components/public/WhatsAppFloatingButton.tsx:5` · **butuh:** T.1.0 · **model:** `claude-haiku-5-5` · **effort:** `low` · **agent:** claude-sonnet-5-5 · **commit:** 7560e6e
   1. Ubah sesuai FR-SEO-07.
   2. Cek:
      - `curl -s $B/kontak | grep -o 'wa.me/[0-9]*'` → semua diawali `wa.me/62`.
