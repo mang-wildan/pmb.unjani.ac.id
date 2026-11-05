@@ -39,16 +39,16 @@
 | ID | Keputusan | Asal |
 |---|---|---|
 | D-01 | Folder route redirect `src/app/[locale]/(public)/jalur-seleksi`, `biaya-pendidikan`, dan `jadwal` **dihapus** dan tidak dihidupkan lagi. Redirect URL lamanya dipindah ke `redirects()` di `next.config.mjs`, menuju halaman baru. | Pemilik, 5 Nov 2026 |
-| D-02 | Slug halaman baru: `/biaya-kuliah`, `/jalur-masuk`, `/jadwal-pmb`, `/faq`. Jadwal memakai `/jadwal-pmb` karena `/jadwal` tidak boleh dihidupkan lagi (D-01). | Usulan |
-| D-03 | Beranda tetap utuh pada rilis ini (semua section dan kalkulator tetap ada). Yang berubah hanya title/meta, markup heading, dan tautan ke halaman topik. Pemangkasan beranda ditunda sampai ada data Search Console. | Usulan |
-| D-04 | Biaya tetap mengikuti FR-53: biaya dari jadwal yang sudah berakhir tidak tampil, termasuk di `/biaya-kuliah`. Saat datanya kosong, halaman tetap tampil dengan dokumen PDF biaya dan kontak. Usulan audit untuk menampilkan biaya 2026 sebagai "acuan" **tidak diambil**, karena berisiko menampilkan harga basi. Pengisian biaya 2027/2028 menjadi tugas konten (T.3.4). | Usulan |
-| D-05 | Animasi hitung angka statistik di hero (`CountUp` di `Hero.tsx`) dihapus, angka ditampilkan statis. `CountUp.tsx` tetap ada karena masih dipakai `KalkulatorForm.tsx`. | Usulan |
-| D-06 | URL lama tanpa padanan tetap mengembalikan 404 (perilaku ini sudah benar). Tidak memasang 410. | Usulan |
-| D-07 | Konten `/en` yang belum diterjemahkan (`judul_en` kosong) diberi `noindex`, dikeluarkan dari sitemap, dan tidak dirujuk hreflang. | Usulan |
-| D-08 | Pengunjung tidak dialihkan otomatis ke `/en` berdasarkan bahasa browser (`localeDetection: false`). Pilihan bahasa tetap tersedia lewat `LanguageSwitcher`. | Usulan |
-| D-09 | Slug artikel yang sudah terbit tidak diganti. Form artikel tidak punya field slug, sehingga mengganti slug berarti mengubah DB sekaligus menambah redirect. Perbaikan `toSlug` hanya berlaku untuk slug baru. | Usulan |
-| D-10 | Logo di schema memakai file yang sudah ada dengan URL ter-encode: `/logo-pmb-unjani%20(1).png`. Rename file ditunda. | Usulan |
-| D-11 | Stub `/kalkulator` dan `/manual-book` (redirect ke `/`) tidak disentuh, karena di luar permintaan. | Usulan |
+| D-02 | Slug halaman baru: `/biaya-kuliah`, `/jalur-masuk`, `/jadwal-pmb`, `/faq`. Jadwal memakai `/jadwal-pmb` karena `/jadwal` tidak boleh dihidupkan lagi (D-01). | Pemilik, 5 Nov 2026 |
+| D-03 | Beranda tetap utuh pada rilis ini (semua section dan kalkulator tetap ada). Yang berubah hanya title/meta, markup heading, dan tautan ke halaman topik. Pemangkasan beranda ditunda sampai ada data Search Console. | Pemilik, 5 Nov 2026 |
+| D-04 | Biaya tetap mengikuti FR-53: biaya dari jadwal yang sudah berakhir tidak tampil, termasuk di `/biaya-kuliah`. Saat datanya kosong, halaman tetap tampil dengan dokumen PDF biaya dan kontak. Usulan audit untuk menampilkan biaya 2026 sebagai "acuan" **tidak diambil**, karena berisiko menampilkan harga basi. Pengisian biaya 2027/2028 menjadi tugas konten (T.3.4). | Pemilik, 5 Nov 2026 |
+| D-05 | Animasi hitung angka statistik di hero (`CountUp` di `Hero.tsx`) dihapus, angka ditampilkan statis. `CountUp.tsx` tetap ada karena masih dipakai `KalkulatorForm.tsx`. | Pemilik, 5 Nov 2026 |
+| D-06 | URL lama tanpa padanan tetap mengembalikan 404 (perilaku ini sudah benar). Tidak memasang 410. | Pemilik, 5 Nov 2026 |
+| D-07 | Konten `/en` yang belum diterjemahkan (`judul_en` kosong) diberi `noindex`, dikeluarkan dari sitemap, dan tidak dirujuk hreflang. | Pemilik, 5 Nov 2026 |
+| D-08 | Pengunjung tidak dialihkan otomatis ke `/en` berdasarkan bahasa browser (`localeDetection: false`). Pilihan bahasa tetap tersedia lewat `LanguageSwitcher`. | Pemilik, 5 Nov 2026 |
+| D-09 | Slug artikel yang sudah terbit tidak diganti. Form artikel tidak punya field slug, sehingga mengganti slug berarti mengubah DB sekaligus menambah redirect. Perbaikan `toSlug` hanya berlaku untuk slug baru. | Pemilik, 5 Nov 2026 |
+| D-10 | Logo di schema memakai file yang sudah ada dengan URL ter-encode: `/logo-pmb-unjani%20(1).png`. Rename file ditunda. | Pemilik, 5 Nov 2026 |
+| D-11 | Stub `/kalkulator` dan `/manual-book` (redirect ke `/`) tidak disentuh, karena di luar permintaan. | Pemilik, 5 Nov 2026 |
 
 ## 4. Ruang Lingkup
 
