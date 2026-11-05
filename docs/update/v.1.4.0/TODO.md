@@ -72,7 +72,7 @@ curl -s $B/ | perl -0pe 's/<script\b.*?<\/script>//gs' > /tmp/b-dom.html
 ## FASE 1 — Fondasi (perbaikan kecil, belum ada halaman baru)
 
 - [x] **T.1.0** Gerbang keputusan `[MANUSIA]`
-  - **butuh:** - · **model:** — (pemilik produk) · **effort:** - · **agent:** claude-sonnet-5-5 (dicatat atas perintah pemilik) · **commit:** COMMIT_HASH
+  - **butuh:** - · **model:** — (pemilik produk) · **effort:** - · **agent:** claude-sonnet-5-5 (dicatat atas perintah pemilik) · **commit:** a0463eb
   1. Pemilik menyetujui atau mengoreksi D-02 sampai D-11 di SPEC §3. Kolom "Asal" diganti menjadi `Pemilik, <tanggal>`.
 
 - [ ] **T.1.1** Baseline sebelum perubahan
