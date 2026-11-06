@@ -105,7 +105,8 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
   ] =
     await Promise.all([
       settingsPromise,
-      JalurSeleksi.find({ aktif: true }).sort({ urutan: 1, nama: 1 }).lean(),
+      // DB mati: setiap query jatuh ke nilai kosong agar beranda tetap 200 (fokus review butir 4).
+      JalurSeleksi.find({ aktif: true }).sort({ urutan: 1, nama: 1 }).lean().catch(() => []),
       Jadwal.find({
         status: true,
         mulai: { $lte: activeScheduleEnd },
@@ -114,7 +115,8 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
         .populate('jalur', 'nama')
         .sort({ mulai: 1 })
         .limit(6)
-        .lean(),
+        .lean()
+        .catch(() => []),
       Jadwal.findOne({
         status: true,
         mulai: { $gt: activeScheduleEnd },
@@ -126,11 +128,13 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
       // G-1: panel menampilkan semua dokumen aktif (tanpa batas dan tanpa tautan "Lihat semua").
       Dokumen.find({ kategori: 'biaya', aktif: true })
         .sort({ urutan: 1, updatedAt: -1 })
-        .lean(),
+        .lean()
+        .catch(() => []),
       Dokumen.find({ kategori: 'manual-book', aktif: true })
         .sort({ urutan: 1, updatedAt: -1 })
-        .lean(),
-      Pengumuman.find({ aktif: true }).sort({ pinned: -1, publishedAt: -1 }).limit(3).lean(),
+        .lean()
+        .catch(() => []),
+      Pengumuman.find({ aktif: true }).sort({ pinned: -1, publishedAt: -1 }).limit(3).lean().catch(() => []),
       Artikel.find(filterArtikelLayakTampilPublik(now))
         .select('slug judul judul_en isi isi_en coverImage publishedAt createdBy')
         .populate('createdBy', 'nama -_id')
@@ -141,7 +145,7 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
           console.error('[landing] Gagal memuat artikel', error);
           return [];
         }),
-      PageContent.findOne({ kunci: 'hero' }).lean(),
+      PageContent.findOne({ kunci: 'hero' }).lean().catch(() => null),
       FAQ.find({ aktif: true }).sort({ kategori: 1, urutan: 1 }).lean().catch(() => []),
       settingsPromise.then((item) =>
         item?.instagramFeedAktif !== false

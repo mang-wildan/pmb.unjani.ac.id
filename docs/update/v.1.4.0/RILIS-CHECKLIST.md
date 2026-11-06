@@ -233,3 +233,60 @@ Navbar (`/jalur-masuk`, `/biaya-kuliah`), Footer kolom Informasi (`/biaya-kuliah
 | `/` dan `/en` | `200` |
 
 Catatan: satu run dev sempat `500` karena `next/font/google` gagal mengambil font (galat jaringan `Module not found: @vercel/turbopack-next/internal/font/google/font`); run ulang `200` tanpa perubahan kode.
+
+### T.2.7 Checkpoint Fase 2 (6 November 2026)
+
+**1. Statis dan build**
+- `npx tsc --noEmit`: bersih.
+- Lint (`--ignore-pattern "node_modules-windows-backup/**"`): 0 error, 18 warning = baseline.
+- `next build` (salinan, `node_modules` Windows): sukses setelah dua percobaan pertama gagal karena RAM mesin habis (`FATAL ERROR: ... out of memory`, sisa RAM 0,3 GB). Bukan masalah kode; percobaan ketiga lulus tanpa perubahan apa pun.
+
+**2. Semua cek T.1.x dan T.2.x terhadap build production lokal (`next start`, DB Atlas baca-saja)**
+
+```text
+/ 200
+/en 200
+/pengumuman 200
+/artikel 200
+/kontak 200
+/admin/login 200
+/biaya-kuliah 200
+/en/biaya-kuliah 200
+/jalur-masuk 200
+/en/jalur-masuk 200
+/jadwal-pmb 200
+/en/jadwal-pmb 200
+/faq 200
+/en/faq 200
+T.1.2 robots: allow-files=1 disallow-api=1 host=0
+T.1.4 accept-lang en: 200
+T.1.4 /en/pengumuman/mekanisme-ods: <meta name="robots" content="noindex, nofollow"; di sitemap: 0; hreflang-en di versi id: 0
+T.1.4 /en/artikel/kuliah-di-unjani-...: <meta name="robots" content="index, follow"; di sitemap: 1
+T.1.5 title id: <title>PMB UNJANI Tahun Akademik 2027/2028 – Pendaftaran Kuliah di Cimahi &amp; Bandung
+T.1.5 title en: <title>PMB UNJANI Tahun Akademik 2027/2028 – Study in Cimahi &amp; Bandung, Indonesia
+T.1.6 org home=1 kontak=1 jsonld-org=0 logo=200
+T.1.7 Persyaratan-h3=0 h3button=25 dd=11 48 
+T.1.8 wa: wa.me/628112497890 
+T.1.10 fetchpriority -ic: 2
+T.2.1 biaya: h1=1 title=<title>Biaya Kuliah UNJANI per Program Studi — PMB UNJANI table=0 files=1
+T.2.2 jalur-masuk: h1=1 h2button=14
+T.2.3 jadwal-pmb: h1=1 status-label=6
+T.2.4 faq: h1=1 FAQPage=1 Question=22 h3button=22
+T.2.6 sitemap 4 rute=8 kontak-anchor=0 beranda-link=4 en-jalur=2
+T.2.5 redirect OK: 14/14; /jadwal/ -L: 200 2; /en/jadwal/ -L: http://localhost:9532/en/jadwal-pmb; kalkulator: 308; 404: 404
+```
+
+**3. Fokus review butir 1, 2, 3, 5**
+- Butir 1 (slug idempoten): assert T.1.9 `LULUS`.
+- Butir 2 (redirect): 14/14 rule `308`; `/jadwal/` tiba dalam 2 hop; `/en/jadwal/` berakhir di `/en/jadwal-pmb`; tidak ada loop.
+- Butir 3 (data kosong): `/biaya-kuliah` dengan nol biaya aktif (data nyata) `200` tanpa `<table`; jadwal dan FAQ kosong terbukti lewat uji DB mati di bawah (halaman `200`, tanpa `FAQPage`, `Belum ada jadwal dipublikasikan.`).
+- Butir 5 (`/en` tanpa `judul_en`): `noindex` dan keluar dari sitemap; konten ber-`judul_en` tetap `index` dan ada di sitemap.
+
+**4. MongoDB mati** (disimulasikan: `MONGO_URI` dan `MONGO_DIRECT_URI` diarahkan ke `mongodb://127.0.0.1:1/x`, bukan mematikan DB bersama)
+- Percobaan pertama: empat halaman baru `200`, tetapi **`/` 500** (`MongooseError: Operation \`jalurseleksis.find()\` buffering timed out after 10000ms`). Penyebab: 6 query lama di `Promise.all` beranda tanpa `.catch`.
+- Perbaikan: `.catch(() => [])`/`.catch(() => null)` pada `JalurSeleksi`, `Jadwal` aktif, `Dokumen` biaya, `Dokumen` manual, `Pengumuman`, `PageContent` hero di `page.tsx`.
+- Setelah perbaikan: `/`, `/en`, `/biaya-kuliah`, `/jalur-masuk`, `/jadwal-pmb`, `/faq` semuanya `200`.
+
+**5. Regresi manual** (Chrome, build production lokal)
+- Desktop (lebar 1070): beranda tampil normal; section `hero`, `jalur`, `jadwal`, `kalkulator`, `program-studi` ada; navbar menuju `/#manual-book`, `/jalur-masuk`, `/biaya-kuliah`, `/pengumuman`, `/kontak`, portal pendaftaran; footer menuju `/biaya-kuliah`, `/jalur-masuk`, `/jadwal-pmb`, `/faq`, `/pengumuman`, `/kontak`; accordion jalur membuka (`aria-expanded` `true`); kalkulator dalam keadaan kosong seperti production; `/admin/login` `200`.
+- **Belum dilakukan:** tampilan ponsel, klik language switcher, dan popup (tidak ada popup aktif saat uji). Ekstensi Chrome gagal tiga kali ("tab not in group"), jadi dihentikan. Perlu dicek manusia sebelum T.4.1.
