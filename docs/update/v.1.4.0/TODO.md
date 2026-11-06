@@ -364,8 +364,8 @@ curl -s $B/ | perl -0pe 's/<script\b.*?<\/script>//gs' > /tmp/b-dom.html
 
 ## FASE 4 — Rilis
 
-- [ ] **T.4.0** Perbarui dokumen route
-  - **file:** `docs/ARCHITECTURE.md` §3, `docs/UI-CURRENT.md` · **butuh:** T.2.7 · **model:** `claude-haiku-5-5` · **effort:** `low` · **agent:** - · **commit:** -
+- [x] **T.4.0** Perbarui dokumen route
+  - **file:** `docs/ARCHITECTURE.md` §3, `docs/UI-CURRENT.md` · **butuh:** T.2.7 · **model:** `claude-haiku-5-5` · **effort:** `low` · **agent:** claude-sonnet-5-5 · **commit:** COMMIT_HASH
   1. Hapus 3 route lama. Tambah `/biaya-kuliah`, `/jalur-masuk`, `/jadwal-pmb`, dan `/faq`. Catat bahwa redirect lama kini ada di `next.config.mjs` `redirects()`.
 
 - [ ] **T.4.1** Deploy production

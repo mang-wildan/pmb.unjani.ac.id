@@ -49,7 +49,9 @@ Middleware global bernama `proxy` (konvensi Next 16) di src/proxy.ts, matcher se
 
 ### Halaman publik (prefix locale `id`/`en`, handler = page.tsx di folder tsb)
 
-`/`, `/biaya-pendidikan`, `/jadwal`, `/jalur-seleksi`, `/kalkulator`, `/kontak`, `/manual-book`, `/pengumuman`, `/pengumuman/[slug]` — semua di src/app/[locale]/(public)/. Plus src/app/not-found.tsx.
+`/`, `/biaya-kuliah`, `/jalur-masuk`, `/jadwal-pmb`, `/faq`, `/kalkulator`, `/kontak`, `/manual-book`, `/pengumuman`, `/pengumuman/[slug]`, `/artikel`, `/artikel/[slug]` — semua di src/app/[locale]/(public)/. Plus src/app/not-found.tsx.
+
+Route lama `/biaya-pendidikan`, `/jadwal`, dan `/jalur-seleksi` sudah dihapus. URL lama dan URL WordPress dialihkan permanen (308) lewat `redirects()` di next.config.mjs (14 rule, SPEC v1.4.0 §6.3). `/kalkulator` dan `/manual-book` tetap stub `permanentRedirect('/')`.
 
 ### Halaman admin (tanpa locale, handler = page.tsx di src/app/admin/)
 

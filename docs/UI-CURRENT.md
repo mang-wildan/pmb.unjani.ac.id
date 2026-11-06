@@ -20,7 +20,12 @@ Dokumen deskriptif kondisi UI per versi 1.2.0. Dipakai sebagai baseline analisis
 | `/pengumuman` | pengumuman/page.tsx | |
 | `/pengumuman/[slug]` | pengumuman/[slug]/page.tsx | |
 | `/kontak` | kontak/page.tsx | |
-| `/biaya-pendidikan`, `/jadwal`, `/jalur-seleksi`, `/kalkulator`, `/manual-book` | masing-masing page.tsx (5 baris) | **Hanya `permanentRedirect('/')`** — konten aslinya sudah dilebur ke landing |
+| `/biaya-kuliah` | biaya-kuliah/page.tsx | Kalkulator, `TabelBiaya` (tabel HTML), dokumen biaya |
+| `/jalur-masuk` | jalur-masuk/page.tsx | `JalurList` dengan judul `h2` |
+| `/jadwal-pmb` | jadwal-pmb/page.tsx | `JadwalTable` (jadwal aktif, status `statusJadwal`) |
+| `/faq` | faq/page.tsx | FAQ per kategori + JSON-LD `FAQPage` |
+| `/kalkulator`, `/manual-book` | masing-masing page.tsx (5 baris) | **Hanya `permanentRedirect('/')`** (stub, tidak diubah) |
+| `/biaya-pendidikan`, `/jadwal`, `/jalur-seleksi` | — (folder dihapus) | Dialihkan 308 lewat `redirects()` di next.config.mjs ke `/biaya-kuliah`, `/jadwal-pmb`, `/jalur-masuk` |
 | 404 | src/app/not-found.tsx | |
 
 ### Admin (src/app/admin/, dibungkus layout.tsx + AdminShell bila ada sesi)
@@ -65,7 +70,9 @@ Dokumen deskriptif kondisi UI per versi 1.2.0. Dipakai sebagai baseline analisis
 | Reveal | landing + FakultasProdiSection |
 | PengumumanList | landing + /pengumuman |
 | JsonLd | landing, /pengumuman, /pengumuman/[slug], /kontak |
-| **JadwalTable, KalkulatorEmbed** | **Tidak diimpor file mana pun** — tampak sisa halaman /jadwal & /kalkulator yang kini redirect |
+| JadwalTable | /jadwal-pmb |
+| TabelBiaya | /biaya-kuliah |
+| **KalkulatorEmbed** | **Tidak diimpor file mana pun** — tampak sisa halaman /kalkulator yang kini redirect |
 
 ## 4. Pola Form, Validasi & Tampilan Error
 
@@ -85,7 +92,8 @@ Penilaian dari keberadaan kelas breakpoint Tailwind (`sm:`/`md:`/`lg:`) dan meka
 |---|---|---|
 | `/` landing | mobile-ready | Kelas breakpoint di page.tsx (4) dan komponen section-nya (Hero 3, Footer 3, JadwalHighlights 3, KalkulatorForm 8, Navbar 5 + menu mobile) |
 | `/pengumuman`, `/pengumuman/[slug]`, `/kontak` | mobile-ready | Layout container sederhana + breakpoint (1-2 per file) + Navbar/Footer responsif |
-| 5 halaman redirect | n/a | Hanya permanentRedirect |
+| `/biaya-kuliah`, `/jalur-masuk`, `/jadwal-pmb`, `/faq` | belum diperiksa | Halaman baru v1.4.0; pakai `container` dan komponen responsif yang sama dengan landing |
+| 2 halaman stub (`/kalkulator`, `/manual-book`) | n/a | Hanya permanentRedirect |
 | `/admin/login` | mobile-ready | 5 kelas breakpoint (src/app/admin/login/page.tsx) |
 | Kerangka admin (Sidebar/Topbar) | mobile-ready | Sidebar = drawer mobile: `fixed inset-y-0 ... md:relative md:translate-x-0` + overlay `md:hidden` (src/components/admin/Sidebar.tsx:71,95; AdminShell.tsx:21) |
 | `/admin` dashboard | mobile-ready | 11 kelas breakpoint + `overflow-x-auto` (src/app/admin/page.tsx) |
