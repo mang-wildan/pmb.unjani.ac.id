@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/id';
 import { getTranslations } from 'next-intl/server';
 import type { JadwalDoc } from '@/models/Jadwal';
+import { statusJadwal, hariMenujuMulai } from '@/lib/statusPeriode';
 
 function fmt(d: Date | string, locale: string) {
   return dayjs(d)
@@ -35,7 +36,7 @@ export default async function JadwalTable({
             <th className="px-5 py-3 text-left font-semibold">{t('jalur') ?? 'Jalur'}</th>
             <th className="px-5 py-3 text-left font-semibold">{t('mulai')}</th>
             <th className="px-5 py-3 text-left font-semibold">{t('selesai')}</th>
-            <th className="px-5 py-3 text-left font-semibold">{t('status') ?? 'Status'}</th>
+            <th className="px-5 py-3 text-left font-semibold">{t('status')}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-brand-50">
@@ -44,7 +45,14 @@ export default async function JadwalTable({
             const jalurNames: string[] = jalurList.map((x: any) =>
               typeof x === 'object' && x !== null ? x.nama : String(x),
             );
-            const isActive = (j as any).status !== false;
+            const status = statusJadwal(j as any);
+            const hariMulai = hariMenujuMulai((j as any).mulai);
+            const labelStatus =
+              status === 'berjalan'
+                ? t('sedangBerlangsung')
+                : status === 'akan-datang' && hariMulai != null
+                  ? t('mulaiDalam', { days: hariMulai })
+                  : null;
 
             return (
               <tr key={String(j._id)} className="hover:bg-brand-50/40">
@@ -74,13 +82,13 @@ export default async function JadwalTable({
                   {fmt((j as any).selesai as Date, locale)}
                 </td>
                 <td className="px-5 py-3">
-                  <span
-                    className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                      isActive ? 'bg-brand-50 text-brand-700' : 'bg-gray-100 text-gray-600'
-                    }`}
-                  >
-                    {isActive ? (t('statusAktif') ?? 'Aktif') : (t('statusNonaktif') ?? 'Nonaktif')}
-                  </span>
+                  {labelStatus ? (
+                    <span className="inline-flex rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700">
+                      {labelStatus}
+                    </span>
+                  ) : (
+                    <span className="text-xs text-ink-muted/60">—</span>
+                  )}
                 </td>
               </tr>
             );

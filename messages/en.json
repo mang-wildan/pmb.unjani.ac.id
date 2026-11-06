@@ -117,8 +117,8 @@
     "persyaratan": "{nama} requirements"
   },
   "jadwalPage": {
-    "metaTitle": "Admission Schedule",
-    "metaDesc": "Official UNJANI PMB schedule: registration, exams, announcements, and re-registration.",
+    "metaTitle": "Admission Schedule and Registration Waves",
+    "metaDesc": "Official admission schedule of Universitas Jenderal Achmad Yani (UNJANI): current and upcoming registration periods and waves, with their dates.",
     "eyebrow": "PMB Calendar",
     "title": "Admission Schedule",
     "desc": "Mark important dates so you don't miss anything.",
@@ -148,7 +148,8 @@
     "faseUjian": "Exam",
     "fasePengumuman": "Announcement",
     "faseRegistrasi": "Re-registration",
-    "faseLainnya": "Other"
+    "faseLainnya": "Other",
+    "status": "Status"
   },
   "biayaPage": {
     "metaTitle": "UNJANI Tuition Fees by Study Program",

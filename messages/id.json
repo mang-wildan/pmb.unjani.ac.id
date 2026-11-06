@@ -117,8 +117,8 @@
     "persyaratan": "Persyaratan {nama}"
   },
   "jadwalPage": {
-    "metaTitle": "Jadwal Penerimaan",
-    "metaDesc": "Jadwal resmi tahapan PMB UNJANI: pendaftaran, ujian, pengumuman, dan registrasi.",
+    "metaTitle": "Jadwal PMB dan Gelombang Pendaftaran",
+    "metaDesc": "Jadwal resmi PMB Universitas Jenderal Achmad Yani (UNJANI): periode dan gelombang pendaftaran yang sedang dan akan dibuka, lengkap dengan tanggal.",
     "eyebrow": "Kalender PMB",
     "title": "Jadwal Penerimaan",
     "desc": "Tandai tanggal penting agar tidak terlewat.",
@@ -148,7 +148,8 @@
     "faseUjian": "Ujian",
     "fasePengumuman": "Pengumuman",
     "faseRegistrasi": "Registrasi",
-    "faseLainnya": "Lainnya"
+    "faseLainnya": "Lainnya",
+    "status": "Status"
   },
   "biayaPage": {
     "metaTitle": "Biaya Kuliah UNJANI per Program Studi",

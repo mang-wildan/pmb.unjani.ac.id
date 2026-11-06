@@ -160,3 +160,17 @@ Catatan: cek "nonaktifkan semua jadwal" tidak dijalankan (butuh menulis ke DB be
 | anchor `<article id="<slug>">` | 14 (cek gulir di browser tidak dijalankan; anchor sama dengan yang dipakai beranda) |
 | title | `Jalur Masuk UNJANI dan Persyaratannya — PMB UNJANI`; en: `UNJANI Admission Paths and Requirements — PMB UNJANI` |
 | canonical | `https://pmb.unjani.ac.id/jalur-masuk` |
+
+### T.2.3 `/jadwal-pmb` (6 November 2026)
+
+`jadwal-pmb/page.tsx` baru; kolom status `JadwalTable` kini memakai `statusJadwal()` (`berjalan` → `sedangBerlangsung`, `akan-datang` → `mulaiDalam` dengan `hariMenujuMulai`, selain itu `—`); kunci `jadwalPage.metaTitle`/`metaDesc` (SPEC §6.4) dan `jadwalPage.status` (kunci ini sebelumnya tidak ada, header kolom memakai fallback yang tidak pernah jalan). `tsc` dan eslint bersih. Diuji dengan `next dev` di salinan (DB Atlas baca-saja, data nyata).
+
+| Cek | Hasil |
+|---|---|
+| `/jadwal-pmb`, `/en/jadwal-pmb` | `200`, `200` |
+| `<h1` | 1 |
+| title | `Jadwal PMB dan Gelombang Pendaftaran — PMB UNJANI`; en: `Admission Schedule and Registration Waves — PMB UNJANI` |
+| canonical | `https://pmb.unjani.ac.id/jadwal-pmb` |
+| tabel | 2 baris nyata (Periode PMDK 2027, APOTEKER GENAP 2026/2027 GELOMBANG 1), status `Sedang berlangsung` (en: `In progress`) |
+
+Tidak teruji: label `Mulai dalam N hari` (tidak ada jadwal yang akan datang di DB) dan keadaan kosong `Belum ada jadwal dipublikasikan.` (butuh menonaktifkan jadwal di DB bersama). Cabang kosong adalah kode lama `JadwalTable` yang tidak diubah.
