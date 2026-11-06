@@ -338,3 +338,54 @@ redirect OK 14/14; /jadwal/ -L: 200 2; kalkulator: 308; 404: 404
 ```
 
 Catatan untuk deploy berikutnya: jalankan `yarn build` sebagai `www` (atau `chown -R www:www .next` setelahnya), lalu restart lewat aaPanel (Node Project `PMB_UNJANI`), bukan `pm2 restart pmb-unjani`. Folder server belum repo git; kode disalin manual.
+
+## Fase 3
+
+### T.3.0 nginx: HTTPS dan apex satu hop (6 November 2026)
+
+Diterapkan pemilik di aaPanel:
+- `www.pmb.unjani.ac.id.conf`: blok `if ($uri !~ "^/\.well-known/") { return 301 https://pmb.unjani.ac.id$request_uri; }` di awal `server`; include redirect lama (`return 301 http://pmb.unjani.ac.id...`) dikomentari.
+- `node_PMB_UNJANI.conf`: `http` → `https://pmb.unjani.ac.id$request_uri` (301, kecuali `/.well-known/`), plus `proxy_set_header X-Forwarded-Proto $scheme;`.
+
+Verifikasi dari luar:
+
+```text
+$ curl -sI http://pmb.unjani.ac.id/kontak
+HTTP/1.1 301 Moved Permanently
+Location: https://pmb.unjani.ac.id/kontak
+$ curl -sI http://www.pmb.unjani.ac.id/kontak
+HTTP/1.1 301 Moved Permanently
+Location: https://pmb.unjani.ac.id/kontak
+$ curl -sI https://www.pmb.unjani.ac.id/kontak
+HTTP/1.1 301 Moved Permanently
+Location: https://pmb.unjani.ac.id/kontak
+$ curl -sI http://pmb.unjani.ac.id/
+HTTP/1.1 301 Moved Permanently
+Location: https://pmb.unjani.ac.id/
+$ curl -sI https://www.pmb.unjani.ac.id/
+HTTP/1.1 301 Moved Permanently
+Location: https://pmb.unjani.ac.id/
+$ curl -sI http://www.pmb.unjani.ac.id/biaya-kuliah?x=1
+HTTP/1.1 301 Moved Permanently
+Location: https://pmb.unjani.ac.id/biaya-kuliah?x=1
+$ curl -sL (jumlah hop)
+http://pmb.unjani.ac.id/kontak -> 200 hops=1 https://pmb.unjani.ac.id/kontak
+http://www.pmb.unjani.ac.id/kontak -> 200 hops=1 https://pmb.unjani.ac.id/kontak
+https://www.pmb.unjani.ac.id/kontak -> 200 hops=1 https://pmb.unjani.ac.id/kontak
+$ curl -sI https://pmb.unjani.ac.id/
+HTTP/1.1 200 OK
+Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+Link: <https://pmb.unjani.ac.id/>; rel="alternate"; hreflang="id", <https://pmb.unjani.ac.id/en>; rel="alternate"; hreflang="en", <https://pmb.unjani.ac.id/>; rel="alternate"; hreflang="x-default"
+well-known http: 404 
+well-known www http: 301 https://pmb.unjani.ac.id/.well-known/acme-challenge/tes
+https / 200
+https /biaya-kuliah 200
+https /faq 200
+https /admin/login 200
+```
+
+Hasil:
+- `http://pmb…`, `http://www.pmb…`, `https://www.pmb…` → `301` ke `https://pmb.unjani.ac.id/<path>` dalam **1 hop**; query string ikut.
+- `https://pmb.unjani.ac.id/` `200` dengan `strict-transport-security`.
+- Header `Link` hreflang kini memakai `https://` (temuan baseline T.1.1 selesai berkat `X-Forwarded-Proto`).
+- `/.well-known/` di apex tidak dialihkan (404 untuk file uji yang memang tidak ada). Di `www`, file uji yang tidak ada berakhir 301; file tantangan ACME yang benar-benar ada dilayani lebih dulu oleh blok Lua aaPanel (`well-known/www.pmb.unjani.ac.id.conf`) sehingga perpanjangan SSL www tidak terhalang.
