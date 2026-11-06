@@ -320,7 +320,7 @@ curl -s $B/ | perl -0pe 's/<script\b.*?<\/script>//gs' > /tmp/b-dom.html
 ## FASE 3 — Server dan konten `[MANUSIA]` (boleh paralel setelah T.1.0)
 
 - [x] **T.3.0** nginx: HTTPS dan apex, satu hop — FR-SEO-01 `[MANUSIA]` `[SEO-IRREVERSIBLE]`
-  - **butuh:** T.1.0 · **model:** — (admin server) · **effort:** - · **agent:** pemilik (nginx) + claude-opus-5-5 (verifikasi) · **commit:** COMMIT_HASH
+  - **butuh:** T.1.0 · **model:** — (admin server) · **effort:** - · **agent:** pemilik (nginx) + claude-opus-5-5 (verifikasi) · **commit:** 1224599
   1. Terapkan SPEC §6.6, termasuk menghapus rule www→http yang lama. Jalankan `nginx -t`, lalu reload.
   2. Cek kriteria terima FR-SEO-01, lalu tempel output ke RILIS-CHECKLIST.
 
