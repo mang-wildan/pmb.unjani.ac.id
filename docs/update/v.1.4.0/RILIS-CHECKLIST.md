@@ -174,3 +174,19 @@ Catatan: cek "nonaktifkan semua jadwal" tidak dijalankan (butuh menulis ke DB be
 | tabel | 2 baris nyata (Periode PMDK 2027, APOTEKER GENAP 2026/2027 GELOMBANG 1), status `Sedang berlangsung` (en: `In progress`) |
 
 Tidak teruji: label `Mulai dalam N hari` (tidak ada jadwal yang akan datang di DB) dan keadaan kosong `Belum ada jadwal dipublikasikan.` (butuh menonaktifkan jadwal di DB bersama). Cabang kosong adalah kode lama `JadwalTable` yang tidak diubah.
+
+### T.2.4 `/faq` dan FAQPage JSON-LD (6 November 2026)
+
+`faq/page.tsx` baru (per kategori: `<h2>` + `FAQAccordion tampilkanTab={false}`), `faqPageJsonLd()` di `seo.ts`, kunci `faqPage.*` (SPEC §6.4). `tsc` dan eslint bersih. Assert `faqPageJsonLd([]) === null` dan `...mainEntity[0].acceptedAnswer.text === "A"` → `LULUS` (sebelum implementasi tidak dijalankan: fungsi belum ada, jadi pasti gagal). `next dev` di salinan, DB Atlas baca-saja, data nyata.
+
+| Cek | Hasil |
+|---|---|
+| `/faq`, `/en/faq` | `200`, `200` |
+| `<h1` | 1 |
+| title | `Pertanyaan Seputar Pendaftaran (FAQ) — PMB UNJANI`; en: `Admissions FAQ — PMB UNJANI` |
+| canonical | `https://pmb.unjani.ac.id/faq` |
+| `"@type":"FAQPage"` | 1 |
+| `"@type":"Question"` | 22 |
+| `<h3><button` (HTML tanpa script) | 22 = jumlah Question; `<h2` = 3 kategori; tanpa bar tab |
+
+Tidak teruji: keadaan kosong (nol FAQ aktif, butuh menonaktifkan data di DB bersama). Kodenya: `faqPageJsonLd([])` mengembalikan `null` (teruji) dan halaman tidak menyertakan JSON-LD itu serta tidak merender kategori kosong.

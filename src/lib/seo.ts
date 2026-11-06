@@ -142,3 +142,17 @@ export function websiteJsonLd() {
     inLanguage: 'id-ID',
   };
 }
+
+/** JSON-LD FAQPage. Teks sama dengan yang tampil di halaman; null bila tidak ada pertanyaan. */
+export function faqPageJsonLd(items: { pertanyaan: string; jawaban: string }[]) {
+  if (items.length === 0) return null;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map((item) => ({
+      '@type': 'Question',
+      name: item.pertanyaan,
+      acceptedAnswer: { '@type': 'Answer', text: item.jawaban },
+    })),
+  };
+}

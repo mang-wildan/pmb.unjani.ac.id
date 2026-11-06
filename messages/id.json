@@ -288,5 +288,12 @@
     "unduhDokumen": "Unduh {judul}",
     "kosong": "Dokumen sedang disiapkan panitia.",
     "kosongKontak": "Hubungi PMB"
+  },
+  "faqPage": {
+    "metaTitle": "Pertanyaan Seputar Pendaftaran (FAQ)",
+    "metaDesc": "Jawaban atas pertanyaan yang sering diajukan tentang pendaftaran mahasiswa baru UNJANI: cara daftar, ujian CBT, One Day Services, biaya, dan jadwal.",
+    "eyebrow": "Tanya Jawab",
+    "title": "Pertanyaan Seputar PMB UNJANI",
+    "desc": "Jawaban singkat untuk pertanyaan yang paling sering diajukan calon mahasiswa dan orang tua."
   }
 }

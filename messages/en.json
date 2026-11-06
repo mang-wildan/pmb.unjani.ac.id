@@ -288,5 +288,12 @@
     "unduhDokumen": "Download {judul}",
     "kosong": "Documents are being prepared by the committee.",
     "kosongKontak": "Contact PMB"
+  },
+  "faqPage": {
+    "metaTitle": "Admissions FAQ",
+    "metaDesc": "Answers to frequently asked questions about UNJANI new student admissions: how to apply, the CBT exam, One Day Services, fees, and schedules.",
+    "eyebrow": "Q&A",
+    "title": "UNJANI Admissions FAQ",
+    "desc": "Short answers to the questions prospective students and parents ask most often."
   }
 }

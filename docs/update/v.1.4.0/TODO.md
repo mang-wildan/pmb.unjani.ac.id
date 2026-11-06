@@ -254,8 +254,8 @@ curl -s $B/ | perl -0pe 's/<script\b.*?<\/script>//gs' > /tmp/b-dom.html
      - Tabel memuat `Sedang berlangsung` atau `Mulai dalam`.
      - Data kosong: nonaktifkan semua jadwal di admin dev. Expected: `200` dan memuat `Belum ada jadwal dipublikasikan.`
 
-- [ ] **T.2.4** Halaman `/faq` dan FAQPage JSON-LD — FR-SEO-09
-  - **file:** `src/app/[locale]/(public)/faq/page.tsx` (buat), `src/lib/seo.ts` (`faqPageJsonLd`), `messages/*.json` (`faqPage.*`) · **butuh:** T.1.7, T.1.11 · **model:** `claude-sonnet-5-5` · **effort:** `low` · **agent:** - · **commit:** -
+- [x] **T.2.4** Halaman `/faq` dan FAQPage JSON-LD — FR-SEO-09
+  - **file:** `src/app/[locale]/(public)/faq/page.tsx` (buat), `src/lib/seo.ts` (`faqPageJsonLd`), `messages/*.json` (`faqPage.*`) · **butuh:** T.1.7, T.1.11 · **model:** `claude-sonnet-5-5` · **effort:** `low` · **agent:** claude-sonnet-5-5 · **commit:** COMMIT_HASH
   1. Jalankan `npx tsx -e` dengan assert `faqPageJsonLd([]) === null`, dan `faqPageJsonLd([{ pertanyaan: "Q", jawaban: "A" }]).mainEntity[0].acceptedAnswer.text === "A"`. Expected sebelum implementasi: gagal.
   2. Implementasikan `faqPageJsonLd` dan halaman sesuai baris `/faq` di FR-SEO-09. Jalankan ulang assert. Expected: lulus.
   3. Cek:
