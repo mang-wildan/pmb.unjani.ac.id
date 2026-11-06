@@ -218,3 +218,18 @@ OK /jadwal-pmb-september
 /halaman-tidak-ada-xyz: 404
 /admin/jalur-seleksi:   307 -> /admin/login (admin tidak terpengaruh)
 ```
+
+### T.2.6 Internal link dan sitemap (6 November 2026)
+
+Navbar (`/jalur-masuk`, `/biaya-kuliah`), Footer kolom Informasi (`/biaya-kuliah`, `/jalur-masuk`, `/jadwal-pmb`, `/faq`), tautan di bawah section beranda (jalur, jadwal, kalkulator, FAQ), dan empat rute baru di `sitemap.ts`. Kunci baru: `home.biayaLink`, `home.faqLink`, `footer.faq`. Tombol hero "Hitung Biaya" tetap `/#kalkulator` (D-03). `tsc` dan eslint bersih. Diuji dengan `next dev` di salinan (DB Atlas baca-saja).
+
+| Cek | Hasil |
+|---|---|
+| `sitemap.xml`: `/(biaya-kuliah\|jalur-masuk\|jadwal-pmb\|faq)</loc>` | 8 |
+| `/kontak`: `href="/#jalur"` atau `href="/#kalkulator"` | 0 |
+| beranda: `href="/(jalur-masuk\|jadwal-pmb\|biaya-kuliah\|faq)"` unik | 4 baris |
+| `/en`: `href="/en/jalur-masuk"` | 2; `href="/en/faq"` ada |
+| tombol hero `/#kalkulator` | masih ada (D-03) |
+| `/` dan `/en` | `200` |
+
+Catatan: satu run dev sempat `500` karena `next/font/google` gagal mengambil font (galat jaringan `Module not found: @vercel/turbopack-next/internal/font/google/font`); run ulang `200` tanpa perubahan kode.

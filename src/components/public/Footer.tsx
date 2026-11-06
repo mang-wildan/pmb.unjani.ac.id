@@ -122,8 +122,23 @@ export default async function Footer({ settings }: { settings: PublicSettings | 
           <h3 className="font-semibold text-ink mb-3">{t('informasi')}</h3>
           <ul className="space-y-2 text-sm text-ink-muted">
             <li>
-              <Link href="/#kalkulator" className="hover:text-brand-700">
+              <Link href="/biaya-kuliah" className="hover:text-brand-700">
                 {t('kalkulatorPmb')}
+              </Link>
+            </li>
+            <li>
+              <Link href="/jalur-masuk" className="hover:text-brand-700">
+                {t('jalurSeleksi')}
+              </Link>
+            </li>
+            <li>
+              <Link href="/jadwal-pmb" className="hover:text-brand-700">
+                {t('jadwal')}
+              </Link>
+            </li>
+            <li>
+              <Link href="/faq" className="hover:text-brand-700">
+                {t('faq')}
               </Link>
             </li>
             <li>

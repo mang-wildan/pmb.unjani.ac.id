@@ -10,8 +10,8 @@ import LanguageSwitcher from './LanguageSwitcher';
 
 const navLinks = [
   { href: '/#manual-book', key: 'manualBook' },
-  { href: '/#jalur', key: 'jalurSeleksi' },
-  { href: '/#kalkulator', key: 'biaya' },
+  { href: '/jalur-masuk', key: 'jalurSeleksi' },
+  { href: '/biaya-kuliah', key: 'biaya' },
   { href: '/pengumuman', key: 'pengumuman' },
   { href: '/kontak', key: 'kontak' },
 ] as const;

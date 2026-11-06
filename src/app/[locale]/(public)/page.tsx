@@ -330,6 +330,14 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
           <div className="mt-10">
             <JalurList items={jalur as any} locale={locale} />
           </div>
+          <div className="mt-6">
+            <Link
+              href="/jalur-masuk"
+              className="inline-flex items-center gap-2 font-semibold text-brand-700 hover:text-brand-600"
+            >
+              {t('jalurLink')}
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -344,6 +352,14 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
         {/* Kartu jadwal masuk bertahap di JadwalHighlights (FR-36). */}
         <div className="mt-10">
           <JadwalHighlights items={jadwal as any} locale={locale} />
+        </div>
+        <div className="mt-6">
+          <Link
+            href="/jadwal-pmb"
+            className="inline-flex items-center gap-2 font-semibold text-brand-700 hover:text-brand-600"
+          >
+            {t('jadwalLink')}
+          </Link>
         </div>
       </section>
 
@@ -369,6 +385,14 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
             kosong={kalkulatorKosong}
           />
         </Reveal>
+        <div className="mt-6">
+          <Link
+            href="/biaya-kuliah"
+            className="inline-flex items-center gap-2 font-semibold text-brand-700 hover:text-brand-600"
+          >
+            {t('biayaLink')}
+          </Link>
+        </div>
       </section>
 
       {fakultasSectionItems.length > 0 && (
@@ -447,6 +471,14 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
           <Reveal delayMs={120} className="mt-10">
             <FAQAccordion items={localizedFaq} />
           </Reveal>
+          <div className="mt-6">
+            <Link
+              href="/faq"
+              className="inline-flex items-center gap-2 font-semibold text-brand-700 hover:text-brand-600"
+            >
+              {t('faqLink')}
+            </Link>
+          </div>
         </div>
       </section>
 

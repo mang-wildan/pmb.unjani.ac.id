@@ -84,7 +84,9 @@
     "jadwalProgresLabel": "Progres masa pendaftaran",
     "jadwalProgres": "{persen}% masa pendaftaran berjalan, sisa {hari} hari",
     "metaTitleSufiks": "Pendaftaran Kuliah di Cimahi & Bandung",
-    "metaDesc": "Pendaftaran mahasiswa baru Universitas Jenderal Achmad Yani (UNJANI) Cimahi dan Bandung telah dibuka. Cek jalur masuk, biaya kuliah, jadwal, dan daftar online."
+    "metaDesc": "Pendaftaran mahasiswa baru Universitas Jenderal Achmad Yani (UNJANI) Cimahi dan Bandung telah dibuka. Cek jalur masuk, biaya kuliah, jadwal, dan daftar online.",
+    "biayaLink": "Lihat tabel biaya kuliah lengkap →",
+    "faqLink": "Lihat semua pertanyaan →"
   },
   "footer": {
     "informasi": "Informasi",
@@ -104,7 +106,8 @@
     "admin": "Admin",
     "email": "Email:",
     "telepon": "Telepon:",
-    "copyright": "© {year} Universitas Jenderal Achmad Yani. Hak cipta dilindungi undang-undang."
+    "copyright": "© {year} Universitas Jenderal Achmad Yani. Hak cipta dilindungi undang-undang.",
+    "faq": "FAQ"
   },
   "jalurPage": {
     "metaTitle": "Jalur Masuk UNJANI dan Persyaratannya",

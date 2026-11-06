@@ -296,8 +296,8 @@ curl -s $B/ | perl -0pe 's/<script\b.*?<\/script>//gs' > /tmp/b-dom.html
      ls "src/app/[locale]/(public)"                                               # tanpa jalur-seleksi, biaya-pendidikan, jadwal
      ```
 
-- [ ] **T.2.6** Internal link dan sitemap — FR-SEO-10
-  - **file:** `src/components/public/Navbar.tsx`, `Footer.tsx`, `src/app/[locale]/(public)/page.tsx`, `src/app/sitemap.ts`, `messages/*.json` (`home.biayaLink`, `home.faqLink`, `footer.faq`) · **butuh:** T.2.1 sampai T.2.4 · **model:** `claude-sonnet-5-5` · **effort:** `low` · **agent:** - · **commit:** -
+- [x] **T.2.6** Internal link dan sitemap — FR-SEO-10
+  - **file:** `src/components/public/Navbar.tsx`, `Footer.tsx`, `src/app/[locale]/(public)/page.tsx`, `src/app/sitemap.ts`, `messages/*.json` (`home.biayaLink`, `home.faqLink`, `footer.faq`) · **butuh:** T.2.1 sampai T.2.4 · **model:** `claude-sonnet-5-5` · **effort:** `low` · **agent:** claude-sonnet-5-5 · **commit:** COMMIT_HASH
   1. Ubah sesuai FR-SEO-10 butir 1–4.
   2. Cek:
      ```bash

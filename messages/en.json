@@ -84,7 +84,9 @@
     "jadwalProgresLabel": "Registration period progress",
     "jadwalProgres": "{persen}% of the registration period has passed, {hari} days left",
     "metaTitleSufiks": "Study in Cimahi & Bandung, Indonesia",
-    "metaDesc": "New student admissions at Universitas Jenderal Achmad Yani (UNJANI), Cimahi and Bandung, are open. Check admission paths, tuition fees, schedules, and apply online."
+    "metaDesc": "New student admissions at Universitas Jenderal Achmad Yani (UNJANI), Cimahi and Bandung, are open. Check admission paths, tuition fees, schedules, and apply online.",
+    "biayaLink": "See the full tuition fee table →",
+    "faqLink": "See all questions →"
   },
   "footer": {
     "informasi": "Information",
@@ -104,7 +106,8 @@
     "admin": "Admin",
     "email": "Email:",
     "telepon": "Phone:",
-    "copyright": "© {year} Universitas Jenderal Achmad Yani. All rights reserved."
+    "copyright": "© {year} Universitas Jenderal Achmad Yani. All rights reserved.",
+    "faq": "FAQ"
   },
   "jalurPage": {
     "metaTitle": "UNJANI Admission Paths and Requirements",
