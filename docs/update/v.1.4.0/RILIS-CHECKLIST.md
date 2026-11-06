@@ -389,3 +389,65 @@ Hasil:
 - `https://pmb.unjani.ac.id/` `200` dengan `strict-transport-security`.
 - Header `Link` hreflang kini memakai `https://` (temuan baseline T.1.1 selesai berkat `X-Forwarded-Proto`).
 - `/.well-known/` di apex tidak dialihkan (404 untuk file uji yang memang tidak ada). Di `www`, file uji yang tidak ada berakhir 301; file tantangan ACME yang benar-benar ada dilayani lebih dulu oleh blok Lua aaPanel (`well-known/www.pmb.unjani.ac.id.conf`) sehingga perpanjangan SSL www tidak terhalang.
+
+### T.4.2 Verifikasi production dan Search Console (6 November 2026) — SEBAGIAN
+
+**1. Kriteria terima SPEC §5 terhadap `https://pmb.unjani.ac.id`: semua lulus**
+
+```text
+== FR-SEO-01
+http://pmb.unjani.ac.id/kontak -> 301 https://pmb.unjani.ac.id/kontak
+http://www.pmb.unjani.ac.id/kontak -> 301 https://pmb.unjani.ac.id/kontak
+https://www.pmb.unjani.ac.id/kontak -> 301 https://pmb.unjani.ac.id/kontak
+HSTS: 1
+== FR-SEO-02
+redirect 14/14; /en/jadwal -L: https://pmb.unjani.ac.id/en/jadwal-pmb; /jadwal/ -L: 200 2; 404: 404
+== FR-SEO-03
+User-Agent: *
+Allow: /
+Allow: /api/files/
+Disallow: /admin
+Disallow: /api
+
+Sitemap: https://pmb.unjani.ac.id/sitemap.xml
+== FR-SEO-04
+title id: <title>PMB UNJANI Tahun Akademik 2027/2028 – Pendaftaran Kuliah di Cimahi &amp; Bandung
+title en: <title>PMB UNJANI Tahun Akademik 2027/2028 – Study in Cimahi &amp; Bandung, Indonesia
+kontak x-default: 
+kontak og:locale: property="og:locale" content="id_ID" en: property="og:locale" content="en_US"
+Accept-Language en: 200
+/en/pengumuman/mekanisme-ods: <meta name="robots" content="noindex, nofollow"; sitemap: 0
+artikel ber-judul_en: <meta name="robots" content="index, follow"; sitemap: 1
+== FR-SEO-05
+logo.svg di beranda: 0 org home: 1 kontak: 1
+artikel /artikel/pmb-unjani-20272028-pmdk-1-and-gelombang-1-dibuka: "datePublished":"2026-11-04T06:00:00.000Z" "dateModified":"2026-11-04T06:00:00.000Z"  author: "author":{"@type":"Organization"
+== FR-SEO-06
+Persyaratan-h3: 0 h3button: 25 dd: 11 48  fetchpriority -ic: 2
+== FR-SEO-07
+wa: wa.me/628112497890 
+== FR-SEO-09
+/biaya-kuliah 200/en=200 h1=1 canon="https://pmb.unjani.ac.id/biaya-kuliah" title=Biaya Kuliah UNJANI per Program Studi — PMB UNJANI bc=1
+/jalur-masuk 200/en=200 h1=1 canon="https://pmb.unjani.ac.id/jalur-masuk" title=Jalur Masuk UNJANI dan Persyaratannya — PMB UNJANI bc=1
+/jadwal-pmb 200/en=200 h1=1 canon="https://pmb.unjani.ac.id/jadwal-pmb" title=Jadwal PMB dan Gelombang Pendaftaran — PMB UNJANI bc=1
+/faq 200/en=200 h1=1 canon="https://pmb.unjani.ac.id/faq" title=Pertanyaan Seputar Pendaftaran (FAQ) — PMB UNJANI bc=1
+biaya table: 0 (nol biaya aktif) files: 1
+faq FAQPage: 1 Question: 22
+== FR-SEO-10
+sitemap 4 rute: 8 kontak anchor lama: 0
+```
+
+Tambahan (atribut React ditulis `hrefLang`, jadi grep harus `-i`):
+- `/kontak`: `<link rel="alternate" hrefLang="x-default" href="https://pmb.unjani.ac.id/kontak"/>` ada.
+- `/pengumuman/mekanisme-ods` (tanpa `judul_en`): hanya `hrefLang="id"` dan `x-default`, tanpa `en`.
+- Artikel ber-`judul_en`: `hrefLang="en"` ada.
+- Title memuat `Tahun Akademik 2027/2028` karena isi field hero `tahunAjaran` (lihat T.1.11).
+
+**2. Rich Results Test**
+- `/faq`: **2 item valid terdeteksi** (FAQ dan breadcrumb), tanpa error. Di-crawl 6 Nov 2026 15.56.
+- `/artikel/pmb-unjani-20272028-pmdk-1-and-gelombang-1-dibuka`: percobaan pertama "URL tidak tersedia untuk Google / Gagal meng-crawl". Dari luar dengan user-agent Googlebot halaman itu `200` (0,58 s, 79 KB), jadi kemungkinan kegagalan sementara di sisi alat. **Perlu diulang.**
+- 1 pengumuman (mis. `/pengumuman/mekanisme-ods`): **belum diuji**. Ekstensi Chrome kehilangan tab berulang kali sehingga uji dihentikan.
+
+**3. Search Console: belum (pemilik)**
+- Kirim ulang `https://pmb.unjani.ac.id/sitemap.xml`.
+- URL Inspection → Request indexing untuk `/biaya-kuliah`, `/jalur-masuk`, `/jadwal-pmb`, `/faq`.
+- Catat daftar 404 dari laporan Pages.
