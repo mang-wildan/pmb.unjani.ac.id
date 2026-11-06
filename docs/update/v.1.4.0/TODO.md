@@ -369,7 +369,7 @@ curl -s $B/ | perl -0pe 's/<script\b.*?<\/script>//gs' > /tmp/b-dom.html
   1. Hapus 3 route lama. Tambah `/biaya-kuliah`, `/jalur-masuk`, `/jadwal-pmb`, dan `/faq`. Catat bahwa redirect lama kini ada di `next.config.mjs` `redirects()`.
 
 - [x] **T.4.1** Deploy production
-  - **butuh:** T.2.7, T.4.0 · **model:** `claude-sonnet-5-5` · **effort:** `medium` (atau admin server) · **agent:** claude-opus-5-5 + pemilik (build) · **commit:** COMMIT_HASH
+  - **butuh:** T.2.7, T.4.0 · **model:** `claude-sonnet-5-5` · **effort:** `medium` (atau admin server) · **agent:** claude-opus-5-5 + pemilik (build) · **commit:** 0a98239
   1. Simpan build dan folder lama untuk rollback.
   2. Build di server, lalu `pm2 restart pmb-unjani`.
   3. Smoke test: `$P/`, keempat halaman baru, dan `/admin/login` mengembalikan `200`.
