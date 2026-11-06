@@ -190,3 +190,31 @@ Tidak teruji: label `Mulai dalam N hari` (tidak ada jadwal yang akan datang di D
 | `<h3><button` (HTML tanpa script) | 22 = jumlah Question; `<h2` = 3 kategori; tanpa bar tab |
 
 Tidak teruji: keadaan kosong (nol FAQ aktif, butuh menonaktifkan data di DB bersama). Kodenya: `faqPageJsonLd([])` mengembalikan `null` (teruji) dan halaman tidak menyertakan JSON-LD itu serta tidak merender kategori kosong.
+
+### T.2.5 Hapus folder lama dan `redirects()` (6 November 2026) `[SEO-IRREVERSIBLE]`
+
+Folder `jalur-seleksi/`, `biaya-pendidikan/`, `jadwal/` dihapus (isinya hanya stub `permanentRedirect('/')`). `next.config.mjs` mendapat `async redirects()` berisi 14 rule SPEC §6.3, semua `permanent: true`. Cadangan: riwayat git (folder bisa dikembalikan dari commit sebelumnya), jadi zip tidak dibuat. Efek permanen di browser/Google baru terjadi setelah deploy (T.4.1).
+
+`tsc` bersih (setelah `.next/types` usang dihapus; berkas itu hasil generate yang masih merujuk folder lama). Diuji dengan `next dev` di salinan:
+
+```text
+OK /jalur-seleksi
+OK /en/jalur-seleksi
+OK /biaya-pendidikan
+OK /en/biaya-pendidikan
+OK /jadwal
+OK /en/jadwal
+OK /prodi
+OK /infomasi-biaya
+OK /semuajalur
+OK /jalur-lanjutan
+OK /jalur-pmdk-3
+OK /jalur-magister
+OK /jalur-ods
+OK /jadwal-pmb-september
+/jadwal/ -L:      200, 2 redirect
+/en/jadwal/ -L:   200, 2 redirect, berakhir di /en/jadwal-pmb
+/kalkulator:      308 -> / (stub D-11 tidak berubah)
+/halaman-tidak-ada-xyz: 404
+/admin/jalur-seleksi:   307 -> /admin/login (admin tidak terpengaruh)
+```

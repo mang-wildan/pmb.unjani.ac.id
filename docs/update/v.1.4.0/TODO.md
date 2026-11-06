@@ -264,8 +264,8 @@ curl -s $B/ | perl -0pe 's/<script\b.*?<\/script>//gs' > /tmp/b-dom.html
      - Di HTML tanpa script, jumlah `<h3[^>]*><button` = jumlah FAQ aktif.
   4. Data kosong: nonaktifkan semua FAQ. Expected: `200` dan `grep -c FAQPage` = `0`. Setelah itu aktifkan kembali.
 
-- [ ] **T.2.5** Hapus 3 folder lama dan pindahkan redirect ke `next.config.mjs` — FR-SEO-02, D-01 `[SEO-IRREVERSIBLE]`
-  - **file:** hapus `src/app/[locale]/(public)/jalur-seleksi/`, `biaya-pendidikan/`, `jadwal/`; ubah `next.config.mjs` · **butuh:** T.2.1 sampai T.2.4 · **model:** `claude-opus-5-5` · **effort:** `medium` · **agent:** - · **commit:** -
+- [x] **T.2.5** Hapus 3 folder lama dan pindahkan redirect ke `next.config.mjs` — FR-SEO-02, D-01 `[SEO-IRREVERSIBLE]`
+  - **file:** hapus `src/app/[locale]/(public)/jalur-seleksi/`, `biaya-pendidikan/`, `jadwal/`; ubah `next.config.mjs` · **butuh:** T.2.1 sampai T.2.4 · **model:** `claude-opus-5-5` · **effort:** `medium` · **agent:** claude-opus-5-5 · **commit:** COMMIT_HASH
   1. Cadangkan folder proyek (zip), karena folder ini bukan repo git.
   2. Hapus ketiga folder. Tambahkan `async redirects()` berisi tabel SPEC §6.3. Restart `yarn dev`.
   3. Cek semua rule:

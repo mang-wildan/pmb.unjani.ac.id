@@ -63,6 +63,26 @@ const nextConfig = {
       },
     ];
   },
+  // FR-SEO-02 / D-01: URL lama (folder route lama dan URL WordPress) dialihkan permanen (308).
+  // Dievaluasi sebelum src/proxy.ts, jadi next-intl tidak ikut campur.
+  async redirects() {
+    return [
+      ['/jalur-seleksi', '/jalur-masuk'],
+      ['/en/jalur-seleksi', '/en/jalur-masuk'],
+      ['/biaya-pendidikan', '/biaya-kuliah'],
+      ['/en/biaya-pendidikan', '/en/biaya-kuliah'],
+      ['/jadwal', '/jadwal-pmb'],
+      ['/en/jadwal', '/en/jadwal-pmb'],
+      ['/prodi', '/'],
+      ['/infomasi-biaya', '/biaya-kuliah'],
+      ['/semuajalur', '/jalur-masuk'],
+      ['/jalur-lanjutan', '/jalur-masuk'],
+      ['/jalur-pmdk-3', '/jalur-masuk'],
+      ['/jalur-magister', '/jalur-masuk'],
+      ['/jalur-ods', '/pengumuman/mekanisme-ods'],
+      ['/jadwal-pmb-september', '/jadwal-pmb'],
+    ].map(([source, destination]) => ({ source, destination, permanent: true }));
+  },
   serverExternalPackages: ['mongoose', 'bcryptjs', 'formidable', 'file-type'],
 };
 
