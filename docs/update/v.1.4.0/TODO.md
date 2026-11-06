@@ -246,7 +246,7 @@ curl -s $B/ | perl -0pe 's/<script\b.*?<\/script>//gs' > /tmp/b-dom.html
      - `$B/jalur-masuk#<slug-jalur>` di browser menggulir ke jalur tersebut.
 
 - [x] **T.2.3** Halaman `/jadwal-pmb` — FR-SEO-09
-  - **file:** `src/app/[locale]/(public)/jadwal-pmb/page.tsx` (buat), `src/components/public/JadwalTable.tsx`, `messages/*.json` (`jadwalPage.metaTitle`, `metaDesc`) · **butuh:** T.1.11 · **model:** `claude-sonnet-5-5` · **effort:** `low` · **agent:** claude-sonnet-5-5 · **commit:** COMMIT_HASH
+  - **file:** `src/app/[locale]/(public)/jadwal-pmb/page.tsx` (buat), `src/components/public/JadwalTable.tsx`, `messages/*.json` (`jadwalPage.metaTitle`, `metaDesc`) · **butuh:** T.1.11 · **model:** `claude-sonnet-5-5` · **effort:** `low` · **agent:** claude-sonnet-5-5 · **commit:** d44cbf6
   1. Ubah kolom status `JadwalTable` sesuai baris `/jadwal-pmb` di FR-SEO-09. Komponen ini belum dipakai di mana pun, jadi aman diubah.
   2. Buat halamannya.
   3. Cek:
