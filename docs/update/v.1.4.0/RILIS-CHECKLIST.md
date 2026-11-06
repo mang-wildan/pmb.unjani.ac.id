@@ -147,3 +147,16 @@ Dibuat: `biaya-kuliah/page.tsx`, `components/public/TabelBiaya.tsx`, kunci `biay
 | Dengan data (**data contoh** disuntik hanya di salinan lewat env) | 1 `<table>`, caption, 6 kolom, 2 baris urut prodi→jalur→kelas (kelas kosong `—` lebih dulu), format `Rp 5.000.000`, semester kosong `—` |
 
 Catatan: cek "nonaktifkan semua jadwal" tidak dijalankan (butuh menulis ke DB bersama); keadaan kosong terbukti dari DB nyata yang memang tanpa biaya aktif. Data contoh bukan data produksi.
+
+### T.2.2 `/jalur-masuk` (6 November 2026)
+
+`jalur-masuk/page.tsx` baru (memakai `JalurList tingkatJudul="h2"`), `jalurPage.metaTitle`/`metaDesc` sesuai SPEC §6.4. `tsc` bersih. Diuji dengan `next dev` di salinan (DB Atlas baca-saja, data nyata).
+
+| Cek | Hasil |
+|---|---|
+| `/jalur-masuk`, `/en/jalur-masuk` | `200`, `200` |
+| `<h1` | 1 |
+| `<h2><button` (HTML tanpa script) | 14 = jumlah jalur aktif (beranda: 14 `<h3><button`) |
+| anchor `<article id="<slug>">` | 14 (cek gulir di browser tidak dijalankan; anchor sama dengan yang dipakai beranda) |
+| title | `Jalur Masuk UNJANI dan Persyaratannya — PMB UNJANI`; en: `UNJANI Admission Paths and Requirements — PMB UNJANI` |
+| canonical | `https://pmb.unjani.ac.id/jalur-masuk` |

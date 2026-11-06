@@ -235,8 +235,8 @@ curl -s $B/ | perl -0pe 's/<script\b.*?<\/script>//gs' > /tmp/b-dom.html
      ```
   4. Cek data kosong: nonaktifkan semua jadwal di admin dev. Expected: `200`, `grep -c '<table'` = `0`, dan `grep -c '/api/files/'` ≥ 1. Setelah itu aktifkan kembali jadwalnya.
 
-- [ ] **T.2.2** Halaman `/jalur-masuk` — FR-SEO-09
-  - **file:** `src/app/[locale]/(public)/jalur-masuk/page.tsx` (buat), `messages/*.json` (`jalurPage.metaTitle`, `metaDesc`) · **butuh:** T.1.7, T.1.11 · **model:** `claude-sonnet-5-5` · **effort:** `low` · **agent:** - · **commit:** -
+- [x] **T.2.2** Halaman `/jalur-masuk` — FR-SEO-09
+  - **file:** `src/app/[locale]/(public)/jalur-masuk/page.tsx` (buat), `messages/*.json` (`jalurPage.metaTitle`, `metaDesc`) · **butuh:** T.1.7, T.1.11 · **model:** `claude-sonnet-5-5` · **effort:** `low` · **agent:** claude-sonnet-5-5 · **commit:** COMMIT_HASH
   1. Buat halaman sesuai baris `/jalur-masuk` di FR-SEO-09. Query: `JalurSeleksi.find({ aktif: true }).sort({ urutan: 1, nama: 1 }).lean().catch(() => [])`.
   2. Cek:
      - `/jalur-masuk` dan `/en/jalur-masuk` mengembalikan `200`.
