@@ -444,8 +444,9 @@ Tambahan (atribut React ditulis `hrefLang`, jadi grep harus `-i`):
 
 **2. Rich Results Test**
 - `/faq`: **2 item valid terdeteksi** (FAQ dan breadcrumb), tanpa error. Di-crawl 6 Nov 2026 15.56.
-- `/artikel/pmb-unjani-20272028-pmdk-1-and-gelombang-1-dibuka`: percobaan pertama "URL tidak tersedia untuk Google / Gagal meng-crawl". Dari luar dengan user-agent Googlebot halaman itu `200` (0,58 s, 79 KB), jadi kemungkinan kegagalan sementara di sisi alat. **Perlu diulang.**
-- 1 pengumuman (mis. `/pengumuman/mekanisme-ods`): **belum diuji**. Ekstensi Chrome kehilangan tab berulang kali sehingga uji dihentikan.
+- `/artikel/pmb-unjani-20272028-pmdk-1-and-gelombang-1-dibuka` (diulang pemilik, di-crawl 6 Nov 2026 15.58.42): **3 item valid** (Artikel, Breadcrumb, Organisasi), tanpa error. Percobaan pertama sempat "Gagal meng-crawl" (sementara).
+- `/pengumuman/mekanisme-ods` (pemilik, di-crawl 6 Nov 2026 15.58.48): **3 item valid** (Artikel, Breadcrumb, Organisasi), tanpa error.
+- Artikel dan Organisasi menampilkan "Masalah non-kritis terdeteksi" (properti opsional yang disarankan Google). Bukan error; tidak menghalangi hasil multimedia.
 
 **3. Search Console: belum (pemilik)**
 - Kirim ulang `https://pmb.unjani.ac.id/sitemap.xml`.
