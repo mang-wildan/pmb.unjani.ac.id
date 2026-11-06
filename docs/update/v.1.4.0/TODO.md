@@ -307,8 +307,8 @@ curl -s $B/ | perl -0pe 's/<script\b.*?<\/script>//gs' > /tmp/b-dom.html
      curl -s $B/en | grep -c 'href="/en/jalur-masuk"'                                        # ≥1
      ```
 
-- [ ] **T.2.7** CHECKPOINT FASE 2 dan fokus review
-  - **file:** `RILIS-CHECKLIST.md` · **butuh:** T.2.5, T.2.6 · **model:** `claude-opus-5-5` · **effort:** `high` · **agent:** - · **commit:** -
+- [x] **T.2.7** CHECKPOINT FASE 2 dan fokus review
+  - **file:** `RILIS-CHECKLIST.md` · **butuh:** T.2.5, T.2.6 · **model:** `claude-opus-5-5` · **effort:** `high` · **agent:** claude-opus-5-5 · **commit:** ea6b8f0
   1. `npx tsc --noEmit`, `yarn lint` (tidak melebihi baseline), dan `yarn build` harus sukses. Lalu jalankan `yarn start` (port 9532).
   2. Ulangi semua cek T.1.x dan T.2.x terhadap build production lokal. Tempel hasilnya ke RILIS-CHECKLIST.
   3. Fokus review butir 1, 2, 3, dan 5: rujuk hasil T.1.9, T.2.5, T.2.1/T.2.3/T.2.4, dan T.1.4.

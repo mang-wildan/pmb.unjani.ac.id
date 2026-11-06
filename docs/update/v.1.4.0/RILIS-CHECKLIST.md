@@ -290,3 +290,5 @@ T.2.5 redirect OK: 14/14; /jadwal/ -L: 200 2; /en/jadwal/ -L: http://localhost:9
 **5. Regresi manual** (Chrome, build production lokal)
 - Desktop (lebar 1070): beranda tampil normal; section `hero`, `jalur`, `jadwal`, `kalkulator`, `program-studi` ada; navbar menuju `/#manual-book`, `/jalur-masuk`, `/biaya-kuliah`, `/pengumuman`, `/kontak`, portal pendaftaran; footer menuju `/biaya-kuliah`, `/jalur-masuk`, `/jadwal-pmb`, `/faq`, `/pengumuman`, `/kontak`; accordion jalur membuka (`aria-expanded` `true`); kalkulator dalam keadaan kosong seperti production; `/admin/login` `200`.
 - **Belum dilakukan:** tampilan ponsel, klik language switcher, dan popup (tidak ada popup aktif saat uji). Ekstensi Chrome gagal tiga kali ("tab not in group"), jadi dihentikan. Perlu dicek manusia sebelum T.4.1.
+
+- Tampilan ponsel, language switcher, dan popup: dinyatakan aman oleh pemilik (6 November 2026).
