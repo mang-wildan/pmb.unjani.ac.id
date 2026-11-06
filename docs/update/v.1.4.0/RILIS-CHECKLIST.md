@@ -292,3 +292,49 @@ T.2.5 redirect OK: 14/14; /jadwal/ -L: 200 2; /en/jadwal/ -L: http://localhost:9
 - **Belum dilakukan:** tampilan ponsel, klik language switcher, dan popup (tidak ada popup aktif saat uji). Ekstensi Chrome gagal tiga kali ("tab not in group"), jadi dihentikan. Perlu dicek manusia sebelum T.4.1.
 
 - Tampilan ponsel, language switcher, dan popup: dinyatakan aman oleh pemilik (6 November 2026).
+
+## Fase 4
+
+### T.4.1 Deploy production (6 November 2026)
+
+- Server: `/www/wwwroot/pmb.unjani.ac.id` (aaPanel). Aplikasi **tidak** dijalankan pm2 `pmb-unjani` seperti di TODO, tetapi oleh Node Project aaPanel `PMB_UNJANI` (`/www/server/nodejs/vhost/scripts/PMB_UNJANI.sh`, user `www`, port 9532, Node v22.14.0). Proses pm2 `pmb-unjani1` berstatus stopped dan tidak dipakai.
+- Cadangan rollback: `/www/wwwroot/pmb.unjani.ac.id.bak-20261106` (dibuat pemilik sebelum deploy).
+- Kode baru disalin dan `yarn build` dijalankan oleh pemilik (build 6 Nov 2026 15:35, memuat `/[locale]/biaya-kuliah`, `/faq`, `/jadwal-pmb`, `/jalur-masuk`).
+- Masalah saat deploy: build dijalankan sebagai `root`, sehingga `.next` milik `root`, sedangkan proses berjalan sebagai `www` (log: `EACCES ... mkdir .next/server/route-cache`). Perbaikan: `chown -R www:www .next`.
+- Restart: proses lama (berjalan sejak 9 Okt 2026, PID 2714283/2714299) dihentikan, lalu `PMB_UNJANI.sh` dijalankan ulang sebagai `www` (PID baru 2487683, 15:40). `.env` dan `uploads/` tidak disentuh.
+- Smoke test dari server (`127.0.0.1:9532`): `/`, `/biaya-kuliah`, `/jalur-masuk`, `/jadwal-pmb`, `/faq`, `/admin/login` semuanya `200`.
+
+Verifikasi dari luar (`https://pmb.unjani.ac.id`):
+
+```text
+/ 200
+/en 200
+/biaya-kuliah 200
+/en/biaya-kuliah 200
+/jalur-masuk 200
+/en/jalur-masuk 200
+/jadwal-pmb 200
+/en/jadwal-pmb 200
+/faq 200
+/en/faq 200
+/pengumuman 200
+/artikel 200
+/kontak 200
+/admin/login 200
+robots: allow-files=1 host=0
+accept-lang en: 200
+title id: <title>PMB UNJANI Tahun Akademik 2027/2028 – Pendaftaran Kuliah di Cimahi &amp; Bandung
+title en: <title>PMB UNJANI Tahun Akademik 2027/2028 – Study in Cimahi &amp; Bandung, Indonesia
+sitemap total: 25 4rute: 8 en-ods: 0
+en/pengumuman/mekanisme-ods: <meta name="robots" content="noindex, nofollow"
+org home: 1 kontak: 1 logo: 200
+fetchpriority -ic: 2 h3button: 25 Persyaratan-h3: 0
+wa: wa.me/628112497890 
+biaya title: <title>Biaya Kuliah UNJANI per Program Studi — PMB UNJANI
+jalur-masuk h2button: 14
+faq: FAQPage=1 Question=22
+kontak anchor lama: 0 beranda link: 4
+redirect OK 14/14; /jadwal/ -L: 200 2; kalkulator: 308; 404: 404
+```
+
+Catatan untuk deploy berikutnya: jalankan `yarn build` sebagai `www` (atau `chown -R www:www .next` setelahnya), lalu restart lewat aaPanel (Node Project `PMB_UNJANI`), bukan `pm2 restart pmb-unjani`. Folder server belum repo git; kode disalin manual.
