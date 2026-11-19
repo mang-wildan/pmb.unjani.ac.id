@@ -208,7 +208,19 @@
     "pilihPersentase": "— Pilih Persentase —",
     "resetPilihan": "Reset semua pilihan",
     "kurangiUnit": "Kurangi jumlah unit",
-    "tambahUnit": "Tambah jumlah unit"
+    "tambahUnit": "Tambah jumlah unit",
+    "reset": "Reset",
+    "stepperProdi": "Prodi",
+    "stepperKelas": "Kelas",
+    "stepperJadwal": "Jadwal",
+    "stepperCicilan": "Cicilan",
+    "placeholderTitle": "Estimasi biaya akan muncul di sini",
+    "placeholderDesc": "Lengkapi {next} di sebelah kiri untuk melihat rincian biaya per jalur seleksi.",
+    "biayaPokok": "Biaya Pokok",
+    "persentase": "Persentase",
+    "biayaDibayar": "Biaya Dibayar",
+    "estimasiBiayaSemester": "Estimasi biaya per Semester",
+    "spt": "SPT"
   },
   "pengumumanPage": {
     "metaTitle": "Pengumuman",

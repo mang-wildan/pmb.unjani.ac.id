@@ -7,14 +7,110 @@ const baca = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf
 const tasks = {
   8: async () => {
     const kalkulator = baca('src/components/public/KalkulatorForm.tsx');
-    const progress = kalkulator.slice(kalkulator.indexOf('function ProgressStepper'), kalkulator.indexOf('function EmptyState'));
-    assert.doesNotMatch(progress, /text-ink-soft\/[456]0/, 'teks langkah aktif maupun tertunda harus kontras AA');
-    assert.match(progress, /text-center text-\[10px\] text-ink-muted font-medium/, 'counter memakai ink-muted 5.72:1 di putih');
-    for (const key of ['programStudi', 'kelas', 'gelombang', 'cicilan', 'cicilanHint', 'cariProdi', 'pilihKelas', 'pilihGelombang', 'pilihPersentase', 'resetPilihan', 'kurangiUnit', 'tambahUnit']) {
-      assert.ok(kalkulator.includes(`t('${key}')`), `label kalkulator ${key} dari kamus`);
-      for (const locale of ['id', 'en']) assert.ok(JSON.parse(baca(`messages/${locale}.json`)).kalkulatorPage[key], `${locale}: ${key}`);
+    const id = JSON.parse(baca('messages/id.json')).kalkulatorPage;
+    const en = JSON.parse(baca('messages/en.json')).kalkulatorPage;
+
+    // B1: kontras AA — tolak SELURUH text-ink-soft di slice progress (tidak ada penggunaan sah);
+    // /70 (3.05:1 putih) dulu lolos regex [456]0.
+    const wajibKontras = (src) => {
+      const progress = src.slice(src.indexOf('function ProgressStepper'), src.indexOf('function EmptyState'));
+      assert.ok(progress.includes('function ProgressStepper'), 'slice ProgressStepper ditemukan');
+      assert.doesNotMatch(progress, /text-ink-soft/, 'teks langkah aktif/tertunda tidak boleh text-ink-soft (gagal AA)');
+      assert.match(progress, /text-center text-\[10px\] text-ink-muted font-medium/, 'counter memakai ink-muted 5.72:1 di putih');
+    };
+    wajibKontras(kalkulator);
+    // Negative control: varian /70 dan tanpa opasitas yang dulu lolos wajib ditolak.
+    const mutasiKontras = [
+      ['counter /70', kalkulator.replace('text-center text-[10px] text-ink-muted font-medium', 'text-center text-[10px] text-ink-soft/70 font-medium')],
+      ['label aktif /70', kalkulator.replace("'text-brand-700'", "'text-ink-soft/70'")],
+      ['label tanpa opasitas', kalkulator.replace(/text-center text-\[10px\] text-ink-muted font-medium/, 'text-center text-[10px] text-ink-soft font-medium')],
+    ];
+    for (const [label, termutasi] of mutasiKontras) {
+      assert.notEqual(termutasi, kalkulator, `mutasi "${label}" mengubah sumber`);
+      assert.throws(() => wajibKontras(termutasi), `kontras harus menolak: ${label}`);
     }
-    assert.doesNotMatch(kalkulator, /aria-label="(?:Reset semua pilihan|Kurangi jumlah unit|Tambah jumlah unit)"/, 'aria-label kalkulator terlokalisasi');
+
+    // B2: setiap label JSX terikat ke key yang benar, dan nilai id/en non-kosong + berbeda.
+    const usang = ['programStudi', 'kelas', 'gelombang', 'cicilan', 'cicilanHint', 'cariProdi', 'pilihKelas', 'pilihGelombang', 'pilihPersentase', 'resetPilihan', 'kurangiUnit', 'tambahUnit'];
+    const baru = ['reset', 'stepperProdi', 'stepperKelas', 'stepperJadwal', 'stepperCicilan', 'placeholderTitle', 'placeholderDesc', 'biayaPokok', 'persentase', 'biayaDibayar', 'estimasiBiayaSemester', 'spt'];
+    const binding = [
+      ['label={t(\'programStudi\')}', 'programStudi'],
+      ['label={t(\'kelas\')}', 'kelas'],
+      ['label={t(\'gelombang\')}', 'gelombang'],
+      ['label={t(\'cicilan\')}', 'cicilan'],
+      ['hint={t(\'cicilanHint\')}', 'cicilanHint'],
+      ['placeholder={t(\'cariProdi\')}', 'cariProdi'],
+      ['placeholder={t(\'pilihKelas\')}', 'pilihKelas'],
+      ['placeholder={t(\'pilihGelombang\')}', 'pilihGelombang'],
+      ['placeholder={t(\'pilihPersentase\')}', 'pilihPersentase'],
+      ['aria-label={t(\'resetPilihan\')}', 'resetPilihan'],
+      ['aria-label={t(\'kurangiUnit\')}', 'kurangiUnit'],
+      ['aria-label={t(\'tambahUnit\')}', 'tambahUnit'],
+      ['{t(\'placeholderTitle\')}', 'placeholderTitle'],
+      ["t('placeholderDesc', { next: nextLabel })", 'placeholderDesc'],
+      ["t('kriteriaJudul')", 'kriteriaJudul'],
+      ['{t(\'biayaPokok\')}', 'biayaPokok'],
+      ['label={t(\'persentase\')}', 'persentase'],
+      ['{t(\'biayaDibayar\')}', 'biayaDibayar'],
+      ['{t(\'estimasiBiayaSemester\')}', 'estimasiBiayaSemester'],
+      ['{t(\'spt\')}', 'spt'],
+    ];
+    const stepBinding = [
+      ["{ label: t('stepperProdi'), icon: <BookIcon", 'stepperProdi'],
+      ["{ label: t('stepperKelas'), icon: <CapIcon", 'stepperKelas'],
+      ["{ label: t('stepperJadwal'), icon: <CalendarIcon", 'stepperJadwal'],
+      ["{ label: t('stepperCicilan'), icon: <CardIcon", 'stepperCicilan'],
+    ];
+    const perluBeda = [...usang, ...baru.filter((k) => !['reset', 'spt'].includes(k))]; // Reset/SPT identik secara sah (kata pinjaman/akronim)
+    const wajibI18n = (src, mId, mEn) => {
+      for (const [key, icon, step] of [['programStudi', 'Book', 1], ['kelas', 'Cap', 2], ['gelombang', 'Calendar', 3]]) {
+        assert.ok(src.includes(`label={t('${key}')} icon={<${icon}Icon />} stepNo={${step}}`), `binding field ${key}`);
+      }
+      for (const [value, key] of [['prodiId', 'cariProdi'], ['kelasId', 'pilihKelas'], ['jadwalId', 'pilihGelombang'], ['persentase', 'pilihPersentase']]) {
+        assert.match(src, new RegExp(`value=\\{${value}\\}\\s+placeholder=\\{t\\('${key}'\\)\\}`), `placeholder ${value}`);
+      }
+      for (const [markup, key] of binding) assert.ok(src.includes(markup), `binding ${key}: ${markup}`);
+      for (const [markup, key] of stepBinding) assert.ok(src.includes(markup), `label stepper ${key}: ${markup}`);
+      for (const key of [...usang, ...baru]) {
+        for (const [locale, m] of [['id', mId], ['en', mEn]]) assert.ok(m[key], `${locale}: ${key} tidak kosong`);
+      }
+      for (const key of perluBeda) assert.notEqual(mId[key], mEn[key], `nilai ${key} id/en harus berbeda`);
+    };
+    wajibI18n(kalkulator, id, en);
+
+    // Negative control: swap key dan EN==ID wajib ditolak.
+    const swap = (s) => s.replace("{ label: t('stepperProdi')", "{ label: t('__TMP__')")
+      .replace("{ label: t('stepperKelas')", "{ label: t('stepperProdi')}")
+      .replace("{ label: t('__TMP__')}", "{ label: t('stepperKelas')}");
+    assert.notEqual(swap(kalkulator), kalkulator, 'mutasi swap mengubah sumber');
+    assert.throws(() => wajibI18n(swap(kalkulator), id, en), 'swap stepperProdi/stepperKelas harus ditolak');
+    const swapLabel = kalkulator.replace("label={t('programStudi')}", 'label={TMP}').replace("label={t('kelas')}", "label={t('programStudi')}").replace('label={TMP}', "label={t('kelas')}");
+    assert.notEqual(swapLabel, kalkulator, 'mutasi swap label mengubah sumber');
+    assert.throws(() => wajibI18n(swapLabel, id, en), 'swap label programStudi/kelas harus ditolak');
+    const enKembar = (mutasi) => ({ ...en, ...mutasi });
+    assert.throws(() => wajibI18n(kalkulator, id, enKembar({ kelas: id.kelas })), 'EN==ID untuk kelas harus ditolak');
+    assert.throws(() => wajibI18n(kalkulator, id, enKembar({ placeholderTitle: '' })), 'nilai kosong harus ditolak');
+
+    // Copy Indonesia tidak boleh tersisa di JSX yang sudah diterjemahkan.
+    const usangSisa = [
+      ['text Reset', '>Reset<'],
+      ['label stepper Prodi', "{ label: 'Prodi'"],
+      ['label stepper Kelas', "{ label: 'Kelas'"],
+      ['label stepper Jadwal', "{ label: 'Jadwal'"],
+      ['label stepper Cicilan', "{ label: 'Cicilan'"],
+      ['placeholder labels', "const labels = ['Program Studi'"],
+      ['placeholder title', '>Estimasi biaya akan muncul di sini<'],
+      ['placeholder desc', 'di sebelah kiri'],
+      ['biaya pokok', '>Biaya Pokok<'],
+      ['persentase row', 'label="Persentase"'],
+      ['biaya dibayar', '>Biaya Dibayar<'],
+      ['estimasi semester', '>Estimasi biaya per Semester<'],
+    ];
+    for (const [label, potongan] of usangSisa) assert.ok(!kalkulator.includes(potongan), `sisa hardcode: ${label} (${potongan})`);
+
+    const wajibAria = (src) => assert.doesNotMatch(src, /aria-label="(?:Reset semua pilihan|Kurangi jumlah unit|Tambah jumlah unit)"/, 'aria-label kalkulator terlokalisasi');
+    wajibAria(kalkulator);
+    assert.throws(() => wajibAria(`${kalkulator}<button aria-label="Kurangi jumlah unit" />`), 'aria-label hardcoded harus ditolak');
   },
   7: async () => {
     const login = baca('src/app/admin/login/page.tsx');

@@ -248,7 +248,7 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
                   aria-label={t('resetPilihan')}
                 >
                   <RefreshIcon className="w-3.5 h-3.5" />
-                  Reset
+                  {t('reset')}
                 </button>
               )}
             </div>
@@ -442,19 +442,19 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
 
                         <div className="mt-4 space-y-2.5 text-sm flex-1">
                           <div className="flex justify-between items-baseline">
-                            <span className="text-ink-muted">Biaya Pokok</span>
+                            <span className="text-ink-muted">{t('biayaPokok')}</span>
                             <AnimatedRupiah
                               value={record.biaya}
                               className="font-semibold text-ink"
                             />
                           </div>
-                          <Row label="Persentase" value={persentase} muted />
+                          <Row label={t('persentase')} value={persentase} muted />
 
                           {/* Biaya Dibayar — highlight panel */}
                           <div className="mt-3 rounded-lg bg-gradient-to-br from-brand-50 to-brand-50/40 border border-brand-100 px-3.5 py-2.5">
                             <div className="flex justify-between items-center">
                               <span className="text-xs font-semibold uppercase tracking-wide text-brand-700">
-                                Biaya Dibayar
+                                {t('biayaDibayar')}
                               </span>
                               <AnimatedRupiah
                                 value={applied}
@@ -466,7 +466,7 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
                           {/* Estimasi Biaya per Semester */}
                           {record.biayaPerSemester != null && record.biayaPerSemester > 0 && (
                             <div className="flex justify-between items-baseline pt-1">
-                              <span className="text-xs text-ink-muted">Estimasi biaya per Semester</span>
+                              <span className="text-xs text-ink-muted">{t('estimasiBiayaSemester')}</span>
                               <AnimatedRupiah
                                 value={record.biayaPerSemester}
                                 className="text-xs font-semibold text-ink-muted"
@@ -479,7 +479,7 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
                             <div className="rounded-lg bg-accent-50/40 border border-accent-100 px-3.5 py-3">
                               <div className="flex items-center justify-between mb-2">
                                 <span className="text-xs font-semibold uppercase tracking-wide text-accent-700">
-                                  SPT
+                                  {t('spt')}
                                 </span>
                                 <span className="text-[10px] font-medium text-ink-muted">
                                   <AnimatedRupiah value={record.biayaTambahan!} duration={700} />
@@ -562,9 +562,10 @@ function FieldWithIcon({
 }
 
 function ResultPlaceholder({ statuses }: { statuses: StepStatus[] }) {
-  const labels = ['Program Studi', 'Kelas', 'Jadwal', 'Cicilan'];
+  const t = useTranslations('kalkulatorPage');
+  const labels = [t('stepperProdi'), t('stepperKelas'), t('stepperJadwal'), t('stepperCicilan')];
   const activeIdx = statuses.findIndex((s) => s === 'active');
-  const nextLabel = activeIdx >= 0 ? labels[activeIdx] : 'kriteria';
+  const nextLabel = activeIdx >= 0 ? labels[activeIdx] : t('kriteriaJudul');
 
   return (
     <div className="motion-safe:animate-fade-in rounded-lg border-2 border-dashed border-brand-100 bg-white p-8 md:p-10 text-center min-h-[420px] flex flex-col items-center justify-center">
@@ -575,11 +576,10 @@ function ResultPlaceholder({ statuses }: { statuses: StepStatus[] }) {
         </div>
       </div>
       <h3 className="font-display text-xl font-bold text-ink mb-2">
-        Estimasi biaya akan muncul di sini
+        {t('placeholderTitle')}
       </h3>
       <p className="text-sm text-ink-muted max-w-sm mx-auto">
-        Lengkapi <span className="font-semibold text-brand-700">{nextLabel}</span> di sebelah kiri
-        untuk melihat rincian biaya per jalur seleksi.
+        {t('placeholderDesc', { next: nextLabel })}
       </p>
 
       <div className="mt-6 grid grid-cols-4 gap-2 w-full max-w-xs">
@@ -647,10 +647,10 @@ function Stepper({
 function ProgressStepper({ statuses }: { statuses: StepStatus[] }) {
   const t = useTranslations('kalkulatorPage');
   const steps: { label: string; icon: ReactNode }[] = [
-    { label: 'Prodi', icon: <BookIcon className="w-4 h-4" /> },
-    { label: 'Kelas', icon: <CapIcon className="w-4 h-4" /> },
-    { label: 'Jadwal', icon: <CalendarIcon className="w-4 h-4" /> },
-    { label: 'Cicilan', icon: <CardIcon className="w-4 h-4" /> },
+    { label: t('stepperProdi'), icon: <BookIcon className="w-4 h-4" /> },
+    { label: t('stepperKelas'), icon: <CapIcon className="w-4 h-4" /> },
+    { label: t('stepperJadwal'), icon: <CalendarIcon className="w-4 h-4" /> },
+    { label: t('stepperCicilan'), icon: <CardIcon className="w-4 h-4" /> },
   ];
 
   const completedCount = statuses.filter((s) => s === 'completed' || s === 'skipped').length;

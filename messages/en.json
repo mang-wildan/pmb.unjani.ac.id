@@ -208,7 +208,19 @@
     "pilihPersentase": "— Choose Percentage —",
     "resetPilihan": "Reset all selections",
     "kurangiUnit": "Decrease unit count",
-    "tambahUnit": "Increase unit count"
+    "tambahUnit": "Increase unit count",
+    "reset": "Reset",
+    "stepperProdi": "Program",
+    "stepperKelas": "Class",
+    "stepperJadwal": "Schedule",
+    "stepperCicilan": "Installment",
+    "placeholderTitle": "The cost estimate will appear here",
+    "placeholderDesc": "Complete {next} on the left to see the cost breakdown per admission path.",
+    "biayaPokok": "Base Tuition",
+    "persentase": "Percentage",
+    "biayaDibayar": "Amount Payable",
+    "estimasiBiayaSemester": "Estimated tuition per Semester",
+    "spt": "SPT"
   },
   "pengumumanPage": {
     "metaTitle": "Announcements",
