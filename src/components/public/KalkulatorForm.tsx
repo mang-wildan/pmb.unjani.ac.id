@@ -418,7 +418,7 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
                                 <div className="flex items-center gap-1.5">
                                   <AwardIcon className="w-3.5 h-3.5 text-brand-700 flex-none" />
                                   <span className="text-xs text-ink-muted">
-                                    Akreditasi:{' '}
+                                    {t('akreditasi')}:{' '}
                                     <span className="font-bold text-ink">
                                       {p.akreditasi || '—'}
                                     </span>
@@ -483,7 +483,7 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
                                 </span>
                                 <span className="text-[10px] font-medium text-ink-muted">
                                   <AnimatedRupiah value={record.biayaTambahan!} duration={700} />
-                                  /unit
+                                  {t('perUnit')}
                                 </span>
                               </div>
 
@@ -498,8 +498,8 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
                               <div className="mt-2.5 flex justify-between items-baseline">
                                 <span className="text-[11px] text-ink-muted">
                                   {mult === minMult
-                                    ? `Min. gelombang ke-${minMult}`
-                                    : `${mult}× unit price`}
+                                    ? t('minGelombang', { n: minMult })
+                                    : t('kelipatanUnit', { mult })}
                                 </span>
                                 <AnimatedRupiah
                                   value={tambahan}

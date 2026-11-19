@@ -220,7 +220,11 @@
     "persentase": "Percentage",
     "biayaDibayar": "Amount Payable",
     "estimasiBiayaSemester": "Estimated tuition per Semester",
-    "spt": "SPT"
+    "spt": "SPT",
+    "akreditasi": "Accreditation",
+    "perUnit": "/unit",
+    "minGelombang": "Min. intake {n}",
+    "kelipatanUnit": "{mult}× unit price"
   },
   "pengumumanPage": {
     "metaTitle": "Announcements",

@@ -220,7 +220,11 @@
     "persentase": "Persentase",
     "biayaDibayar": "Biaya Dibayar",
     "estimasiBiayaSemester": "Estimasi biaya per Semester",
-    "spt": "SPT"
+    "spt": "SPT",
+    "akreditasi": "Akreditasi",
+    "perUnit": "/unit",
+    "minGelombang": "Min. gelombang ke-{n}",
+    "kelipatanUnit": "{mult}× harga satuan"
   },
   "pengumumanPage": {
     "metaTitle": "Pengumuman",

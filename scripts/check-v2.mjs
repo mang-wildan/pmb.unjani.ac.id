@@ -32,7 +32,7 @@ const tasks = {
 
     // B2: setiap label JSX terikat ke key yang benar, dan nilai id/en non-kosong + berbeda.
     const usang = ['programStudi', 'kelas', 'gelombang', 'cicilan', 'cicilanHint', 'cariProdi', 'pilihKelas', 'pilihGelombang', 'pilihPersentase', 'resetPilihan', 'kurangiUnit', 'tambahUnit'];
-    const baru = ['reset', 'stepperProdi', 'stepperKelas', 'stepperJadwal', 'stepperCicilan', 'placeholderTitle', 'placeholderDesc', 'biayaPokok', 'persentase', 'biayaDibayar', 'estimasiBiayaSemester', 'spt'];
+    const baru = ['reset', 'stepperProdi', 'stepperKelas', 'stepperJadwal', 'stepperCicilan', 'placeholderTitle', 'placeholderDesc', 'biayaPokok', 'persentase', 'biayaDibayar', 'estimasiBiayaSemester', 'spt', 'akreditasi', 'perUnit', 'minGelombang', 'kelipatanUnit'];
     const binding = [
       ['label={t(\'programStudi\')}', 'programStudi'],
       ['label={t(\'kelas\')}', 'kelas'],
@@ -54,6 +54,10 @@ const tasks = {
       ['{t(\'biayaDibayar\')}', 'biayaDibayar'],
       ['{t(\'estimasiBiayaSemester\')}', 'estimasiBiayaSemester'],
       ['{t(\'spt\')}', 'spt'],
+      ['{t(\'akreditasi\')}', 'akreditasi'],
+      ['{t(\'perUnit\')}', 'perUnit'],
+      ["t('minGelombang', { n: minMult })", 'minGelombang'],
+      ["t('kelipatanUnit', { mult })", 'kelipatanUnit'],
     ];
     const stepBinding = [
       ["{ label: t('stepperProdi'), icon: <BookIcon", 'stepperProdi'],
@@ -61,7 +65,7 @@ const tasks = {
       ["{ label: t('stepperJadwal'), icon: <CalendarIcon", 'stepperJadwal'],
       ["{ label: t('stepperCicilan'), icon: <CardIcon", 'stepperCicilan'],
     ];
-    const perluBeda = [...usang, ...baru.filter((k) => !['reset', 'spt'].includes(k))]; // Reset/SPT identik secara sah (kata pinjaman/akronim)
+    const perluBeda = [...usang, ...baru.filter((k) => !['reset', 'spt', 'perUnit'].includes(k))]; // Reset/SPT/perUnit identik secara sah
     const wajibI18n = (src, mId, mEn) => {
       for (const [key, icon, step] of [['programStudi', 'Book', 1], ['kelas', 'Cap', 2], ['gelombang', 'Calendar', 3]]) {
         assert.ok(src.includes(`label={t('${key}')} icon={<${icon}Icon />} stepNo={${step}}`), `binding field ${key}`);
@@ -105,6 +109,10 @@ const tasks = {
       ['persentase row', 'label="Persentase"'],
       ['biaya dibayar', '>Biaya Dibayar<'],
       ['estimasi semester', '>Estimasi biaya per Semester<'],
+      ['akreditasi label', 'Akreditasi:{'],
+      ['per unit', '/unit'],
+      ['min gelombang', 'Min. gelombang ke-'],
+      ['kelipatan unit', '× unit price'],
     ];
     for (const [label, potongan] of usangSisa) assert.ok(!kalkulator.includes(potongan), `sisa hardcode: ${label} (${potongan})`);
 
