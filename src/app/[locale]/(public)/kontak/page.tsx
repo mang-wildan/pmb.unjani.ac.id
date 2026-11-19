@@ -39,7 +39,7 @@ export default async function KontakPage({ params }: { params: Promise<{ locale:
   const [s, hero, faq] = await Promise.all([
     getSettings().catch(() => null),
     PageContent.findOne({ kunci: 'hero' }).select('data').lean().catch(() => null),
-    FAQ.find({ aktif: true }).sort({ kategori: 1, urutan: 1 }).limit(3).lean().catch(() => []),
+    FAQ.find({ aktif: true }).sort({ urutan: 1 }).limit(3).lean().catch(() => []),
   ]);
 
   const heroImages = ((hero?.data || {}) as { heroImages?: string[] }).heroImages || [];
@@ -64,18 +64,18 @@ export default async function KontakPage({ params }: { params: Promise<{ locale:
       >
         <Image
           src={fotoHero}
-          alt={t('heroImageAlt')}
+          alt=""
           fill
           preload
           sizes="100vw"
           className="absolute inset-0 -z-20 object-cover"
         />
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-black via-black/55 to-black/30" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-[#06281D] via-[#06281D]/60 to-[#06281D]/30" aria-hidden />
         <div className="container mx-auto pb-14 pt-24 md:pb-20">
-          <nav aria-label={t('breadcrumb')} className="text-xs text-white/80">
+          <nav aria-label={t('breadcrumbLabel')} className="text-xs text-white/80">
             <Link href="/" className="rounded-lg hover:underline">{tc('beranda')}</Link>
             <span aria-hidden> / </span>
-            <span>{t('breadcrumb')}</span>
+            <span aria-current="page">{t('breadcrumb')}</span>
           </nav>
           <p className="mt-5 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">
             <span aria-hidden className="h-0.5 w-6 bg-[#D4AF37]" />
@@ -89,7 +89,7 @@ export default async function KontakPage({ params }: { params: Promise<{ locale:
       </section>
 
       <section className="container mx-auto py-14 md:py-20">
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:items-start">
           <article className="rounded-lg bg-white p-6 shadow-sm md:p-8">
             <h2 className="font-display text-2xl font-bold text-ink md:text-3xl">{t('sekretariatTitle')}</h2>
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-muted">{t('sekretariatDesc')}</p>

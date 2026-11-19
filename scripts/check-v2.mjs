@@ -29,9 +29,20 @@ const tasks = {
     for (const cls of ['bg-[#063F2A]', 'bg-[#D4AF37]', 'text-[#D4AF37]', 'rounded-lg']) assert.ok(page.includes(cls), cls);
     assert.ok(page.includes('href="/faq"'), 'tautan FAQ lengkap');
     // Kamus id/en memuat copy baru.
+    // Round 1 (review M1-M6): state pra-Task-4 (fallback alamat + short-link Maps) ditolak.
+    assert.doesNotMatch(page, /Jl\. Terusan|maps\.app\.goo\.gl/, 'fallback alamat/Maps hardcode lama');
+    assert.ok(page.includes('lg:items-start'), 'M1 kartu setinggi konten');
+    assert.match(page, /<Image\s+src=\{fotoHero\}\s+alt=""/, 'M2 hero dekoratif alt kosong');
+    assert.ok(page.includes("aria-label={t('breadcrumbLabel')}"), 'M3 label landmark breadcrumb');
+    assert.ok(page.includes('aria-current="page"'), 'M3 aria-current');
+    assert.ok(page.includes('.sort({ urutan: 1 })'), 'M5 FAQ urut urutan');
+    assert.doesNotMatch(page, /kategori: 1/, 'M5 tanpa bias kategori');
+    assert.ok(page.includes('from-[#06281D]') && !page.includes('from-black'), 'M6 gradient hijau');
+    const kunci = (l) => Object.keys(JSON.parse(baca(`messages/${l}.json`)).kontakPage).sort();
+    assert.deepEqual(kunci('id'), kunci('en'), 'paritas key kontakPage id/en');
     for (const locale of ['id', 'en']) {
       const messages = JSON.parse(baca(`messages/${locale}.json`));
-      for (const key of ['breadcrumb', 'heroImageAlt', 'sekretariatTitle', 'sekretariatDesc', 'kampusLabel', 'bukaMaps', 'kanalTitle', 'kanalDesc', 'emailLabel', 'teleponLabel', 'whatsappCta', 'sosmedLabel', 'faqTitle', 'faqDesc', 'faqLink']) assert.ok(messages.kontakPage[key], `kontakPage.${key} ${locale}`);
+      for (const key of ['breadcrumb', 'breadcrumbLabel', 'heroImageAlt', 'sekretariatTitle', 'sekretariatDesc', 'kampusLabel', 'bukaMaps', 'kanalTitle', 'kanalDesc', 'emailLabel', 'teleponLabel', 'whatsappCta', 'sosmedLabel', 'faqTitle', 'faqDesc', 'faqLink']) assert.ok(messages.kontakPage[key], `kontakPage.${key} ${locale}`);
     }
   },
   3: async () => {
