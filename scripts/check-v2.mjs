@@ -26,11 +26,22 @@ const tasks = {
     const slider = baca('src/components/public/HeroSlider.tsx');
     assert.ok(slider.includes("fullBleed ? 'h-full w-full'"));
     assert.ok(slider.includes("fullBleed ? '100vw'"));
+    // Round 1 fixes (review I1/I2/M1/M2/M4)
+    assert.ok(kalkulator.includes('useTranslations'), 'kalkulator: i18n klien');
+    assert.ok(kalkulator.includes("t('hasilPerJalur')"), 'kalkulator: hasil header dari kamus');
+    assert.ok(kalkulator.includes("t('estimasiBiaya')"), 'kalkulator: eyebrow dari kamus');
+    assert.ok(kalkulator.includes('text-white'), 'kalkulator: teks header hasil harus terang di band gelap');
+    const pse = baca('src/components/public/ProgramStudiExplorer.tsx');
+    assert.ok(pse.includes('max-md:data-[tingkat=prodi]:hidden'), 'prodi: rail tersembunyi saat drill-down mobile');
+    assert.ok(baca('src/components/public/HeroGelombangInfo.tsx').includes('_id'), 'gelombang: key memakai _id');
+    assert.ok(jalur.includes('scrollIntoView'), 'jalur: gulir panel persyaratan saat pilih');
+    assert.ok(jalur.includes('prefers-reduced-motion'), 'jalur: hormati reduced motion');
     for (const locale of ['id', 'en']) {
       const messages = JSON.parse(baca(`messages/${locale}.json`));
       assert.ok(messages.jalurPage.daftarJalur);
       assert.ok(messages.prodiExplorer.ringkasan.includes('{fakultas}'));
       for (const key of ['pendaftaranAktif', 'pendaftaranSelesai', 'gelombangKosong']) assert.ok(messages.hero[key]);
+      for (const key of ['kriteriaJudul', 'kriteriaSub', 'estimasiBiaya', 'hasilPerJalur', 'jalurCount', 'langkah', 'semuaSelesai']) assert.ok(messages.kalkulatorPage[key], `kalkulatorPage.${key}`);
     }
   },
   2: async () => {

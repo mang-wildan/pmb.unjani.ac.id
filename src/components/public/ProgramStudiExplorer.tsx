@@ -121,8 +121,9 @@ export default function ProgramStudiExplorer({ fakultas, programStudi, urlWhatsA
     if (jenjang && id !== SEMUA && !(jenjangPerFakultas.get(id) ?? []).includes(jenjang)) setJenjang('');
     setTingkat('prodi');
     // Di <md petak yang ditekan ikut tersembunyi; pindahkan fokus ke judul panel agar tidak jatuh ke body.
+    // Fokus tanpa preventScroll ikut membawa panel hasil ke dalam viewport.
     if (window.matchMedia('(max-width: 767px)').matches) {
-      requestAnimationFrame(() => judulPanelRef.current?.focus({ preventScroll: true }));
+      requestAnimationFrame(() => judulPanelRef.current?.focus());
     }
   };
   const ubahKata = (v: string) => {
@@ -145,7 +146,7 @@ export default function ProgramStudiExplorer({ fakultas, programStudi, urlWhatsA
     setKata('');
     requestAnimationFrame(() => {
       const tombol = railRef.current?.querySelector<HTMLButtonElement>('button[aria-pressed="true"]');
-      tombol?.focus({ preventScroll: true });
+      tombol?.focus();
     });
   };
   const hapusFilter = () => {
@@ -194,7 +195,7 @@ export default function ProgramStudiExplorer({ fakultas, programStudi, urlWhatsA
             aria-label={t('navFakultas')}
             // Di layar pendek rail sticky bisa lebih tinggi dari viewport: batasi tinggi dan beri gulir dalam
             // hanya pada rail (navigasi), bukan pada panel isi.
-            className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
+            className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 max-md:data-[tingkat=prodi]:hidden"
           >
             <TombolFakultas
               aktif={modeSemua}

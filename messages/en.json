@@ -189,7 +189,14 @@
     "metaDesc": "Calculate estimated tuition costs at UNJANI based on your chosen program and path.",
     "eyebrow": "Cost Simulation",
     "title": "PMB Cost Calculator",
-    "desc": "Enter your program and admission path choices below. Results are official estimates based on PMB committee data."
+    "desc": "Enter your program and admission path choices below. Results are official estimates based on PMB committee data.",
+    "kriteriaJudul": "Choose Criteria",
+    "kriteriaSub": "Complete the 4 steps below",
+    "estimasiBiaya": "Cost Estimate",
+    "hasilPerJalur": "Results per Admission Path",
+    "jalurCount": "{n} paths",
+    "langkah": "Step {n} of {total}",
+    "semuaSelesai": "All steps completed ✓"
   },
   "pengumumanPage": {
     "metaTitle": "Announcements",

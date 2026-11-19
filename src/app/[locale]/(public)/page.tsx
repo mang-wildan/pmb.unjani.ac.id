@@ -243,6 +243,7 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
         jumlahFakultas={jumlahFakultas}
         jumlahProgramStudi={jumlahProgramStudi}
         gelombang={activeGelombangList.map((g: any) => ({
+          _id: String(g._id),
           ke: g.ke,
           judul: g.judul,
           jalur: (g.jalur as any[]) || [],

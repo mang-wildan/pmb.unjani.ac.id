@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import IndikatorPing from './IndikatorPing';
 
-type GelombangInfo = { ke: number; judul: string; jalur: { nama: string }[]; selesai: string };
+type GelombangInfo = { _id: string; ke: number; judul: string; jalur: { nama: string }[]; selesai: string };
 
 export default async function HeroGelombangInfo({ gelombang }: { gelombang: GelombangInfo[] }) {
   const t = await getTranslations('hero');
@@ -16,7 +16,7 @@ export default async function HeroGelombangInfo({ gelombang }: { gelombang: Gelo
       </div>
       <div className="mt-4 space-y-3">
         {daftar.length === 0 ? <a href="#jadwal" className="text-sm text-ink-muted">{t('gelombangKosong')}</a> : daftar.map((g) => (
-          <a key={g.ke} href="#jadwal" className="group flex items-center justify-between rounded-lg border border-[#CBD9CD] p-3 hover:border-brand">
+          <a key={g._id} href="#jadwal" className="group flex items-center justify-between rounded-lg border border-[#CBD9CD] p-3 hover:border-brand">
             <div>
               <p className="font-display text-base font-bold">{g.judul}</p>
               {g.jalur?.length > 0 && <p className="text-xs text-ink-muted">{g.jalur.map((j) => j.nama).join(', ')}</p>}

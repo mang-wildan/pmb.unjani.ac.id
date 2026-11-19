@@ -3,7 +3,7 @@ import HeroSlider from './HeroSlider';
 import HeroGelombangInfo from './HeroGelombangInfo';
 import TrackedRegistrationLink from './TrackedRegistrationLink';
 
-type GelombangInfo = { ke: number; judul: string; jalur: { nama: string }[]; selesai: string };
+type GelombangInfo = { _id: string; ke: number; judul: string; jalur: { nama: string }[]; selesai: string };
 
 export default async function Hero({ urlPendaftaran, judul, subJudul, tahunAjaran, heroImages = [], gelombang = [], jumlahFakultas = 0, jumlahProgramStudi = 0 }: {
   urlPendaftaran: string; judul?: string; subJudul?: string; tahunAjaran?: string;

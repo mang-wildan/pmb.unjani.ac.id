@@ -189,7 +189,14 @@
     "metaDesc": "Hitung estimasi biaya kuliah di UNJANI sesuai program studi dan jalur pilihan.",
     "eyebrow": "Simulasi Biaya",
     "title": "Kalkulator Biaya PMB",
-    "desc": "Masukkan pilihan program studi dan jalurmu di bawah. Hasil perhitungan adalah estimasi resmi berdasarkan data panitia PMB."
+    "desc": "Masukkan pilihan program studi dan jalurmu di bawah. Hasil perhitungan adalah estimasi resmi berdasarkan data panitia PMB.",
+    "kriteriaJudul": "Pilih Kriteria",
+    "kriteriaSub": "Lengkapi 4 langkah di bawah",
+    "estimasiBiaya": "Estimasi Biaya",
+    "hasilPerJalur": "Hasil per Jalur Seleksi",
+    "jalurCount": "{n} jalur",
+    "langkah": "Langkah {n} dari {total}",
+    "semuaSelesai": "Semua langkah selesai ✓"
   },
   "pengumumanPage": {
     "metaTitle": "Pengumuman",

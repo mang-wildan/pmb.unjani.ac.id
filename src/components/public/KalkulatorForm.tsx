@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, type ReactNode } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card, Badge } from '@/components/ui/Card';
 import SearchableSelect, { type SearchableSelectOption } from '@/components/ui/SearchableSelect';
 import { ANALYTICS_EVENTS, sendAnalyticsEvent } from '@/lib/analytics';
@@ -133,6 +134,7 @@ function AnimatedRupiah({
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, kelasMap, jadwalMap, kosong }: Props) {
+  const t = useTranslations('kalkulatorPage');
   const [prodiId, setProdiId] = useState('');
   const [kelasId, setKelasId] = useState('');
   const [jadwalId, setJadwalId] = useState('');
@@ -231,10 +233,10 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
                 </span>
                 <div>
                   <h3 className="font-display font-bold text-ink text-base leading-none">
-                    Pilih Kriteria
+                    {t('kriteriaJudul')}
                   </h3>
                   <p className="text-[11px] text-ink-muted mt-0.5">
-                    Lengkapi 4 langkah di bawah
+                    {t('kriteriaSub')}
                   </p>
                 </div>
               </div>
@@ -357,17 +359,17 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
             <div key={`results-${jadwalId}-${persentase}`} className="motion-safe:animate-fade-up">
               <header className="mb-5 flex items-end justify-between gap-4 flex-wrap">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-brand-700">
-                    Estimasi Biaya
+                  <p className="text-xs font-bold uppercase tracking-widest text-accent">
+                    {t('estimasiBiaya')}
                   </p>
-                  <h3 className="mt-1 font-display text-2xl font-bold text-ink leading-tight">
-                    Hasil per Jalur Seleksi
+                  <h3 className="mt-1 font-display text-2xl font-bold text-white leading-tight">
+                    {t('hasilPerJalur')}
                   </h3>
                   <span className="mt-2 inline-block w-12 h-1 rounded-lg bg-gradient-to-r from-brand to-accent" />
                 </div>
                 <span className="inline-flex items-center gap-1.5 rounded-lg bg-brand-50 border border-brand-100 px-3 py-1.5 text-xs font-semibold text-brand-700">
                   <SparkleIcon className="w-3.5 h-3.5" />
-                  {jadwalFiltered.length} jalur
+                  {t('jalurCount', { n: jadwalFiltered.length })}
                 </span>
               </header>
 
@@ -565,7 +567,7 @@ function ResultPlaceholder({ statuses }: { statuses: StepStatus[] }) {
   const nextLabel = activeIdx >= 0 ? labels[activeIdx] : 'kriteria';
 
   return (
-    <div className="motion-safe:animate-fade-in rounded-lg border-2 border-dashed border-brand-100 bg-white/60 backdrop-blur p-8 md:p-10 text-center min-h-[420px] flex flex-col items-center justify-center">
+    <div className="motion-safe:animate-fade-in rounded-lg border-2 border-dashed border-brand-100 bg-white p-8 md:p-10 text-center min-h-[420px] flex flex-col items-center justify-center">
       <div className="relative mb-5">
         <div className="absolute inset-0 rounded-lg bg-brand-100/60 blur-2xl motion-safe:animate-pulse" />
         <div className="relative inline-flex items-center justify-center w-20 h-20 rounded-lg bg-gradient-to-br from-brand-50 to-white border border-brand-100 text-brand-700 shadow-sm motion-safe:animate-float">
@@ -642,6 +644,7 @@ function Stepper({
 }
 
 function ProgressStepper({ statuses }: { statuses: StepStatus[] }) {
+  const t = useTranslations('kalkulatorPage');
   const steps: { label: string; icon: ReactNode }[] = [
     { label: 'Prodi', icon: <BookIcon className="w-4 h-4" /> },
     { label: 'Kelas', icon: <CapIcon className="w-4 h-4" /> },
@@ -657,7 +660,7 @@ function ProgressStepper({ statuses }: { statuses: StepStatus[] }) {
   );
 
   return (
-    <div className="rounded-lg bg-gradient-to-br from-brand-50/70 via-white to-accent-50/30 border border-brand-100/70 px-4 pt-4 pb-3 shadow-sm motion-safe:animate-fade-in sm:px-5">
+    <div className="rounded-lg bg-white border border-brand-100/70 px-4 pt-4 pb-3 shadow-sm motion-safe:animate-fade-in sm:px-5">
       {/* Wrapper: connectors behind, ol in front */}
       <div className="relative">
         {/* Connector layer — absolute siblings of ol, guaranteed behind z-10 ol */}
@@ -706,8 +709,8 @@ function ProgressStepper({ statuses }: { statuses: StepStatus[] }) {
       {/* Step counter label */}
       <p className="mt-2 text-center text-[10px] text-ink-soft/60 font-medium">
         {completedCount === 4
-          ? 'Semua langkah selesai ✓'
-          : `Langkah ${Math.min(completedCount + 1, 4)} dari 4`}
+          ? t('semuaSelesai')
+          : t('langkah', { n: Math.min(completedCount + 1, 4), total: 4 })}
       </p>
     </div>
   );
