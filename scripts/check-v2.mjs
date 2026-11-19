@@ -12,13 +12,26 @@ const tasks = {
     assert.match(layout, /weight: \['500', '600', '700', '800'\]/);
     assert.match(layout, /variable: '--font-display'/);
     const theme = baca('tailwind.config.ts');
-    for (const color of ['#063F2A', '#06281D', '#D4AF37', '#C4A030', '#10281D', '#576B5F']) assert.ok(theme.includes(color), color);
+    const colorMatch = (palette, key) => {
+      const block = theme.split(`${palette}: {`)[1]?.split('}')[0] ?? '';
+      const m = block.match(new RegExp(`^\\s*${key}:\\s*'([^']+)'`, 'm'));
+      return m ? m[1] : null;
+    };
+    assert.equal(colorMatch('brand', 'DEFAULT'), '#063F2A', 'brand.DEFAULT harus #063F2A');
+    assert.equal(colorMatch('brand', '900'), '#06281D', 'brand.900 harus #06281D');
+    assert.equal(colorMatch('accent', 'DEFAULT'), '#D4AF37', 'accent.DEFAULT harus #D4AF37');
+    assert.equal(colorMatch('accent', '600'), '#C4A030', 'accent.600 harus #C4A030');
+    assert.equal(colorMatch('ink', 'DEFAULT'), '#10281D', 'ink.DEFAULT harus #10281D');
+    assert.equal(colorMatch('ink', 'muted'), '#576B5F', 'ink.muted harus #576B5F');
+    assert.ok(theme.includes("surface: '#ffffff'"));
     for (const [palette, shades] of [['brand', [50, 100, 200, 300, 400, 600, 700, 800, 900]], ['accent', [50, 100, 200, 300, 600, 700]]]) {
       const block = theme.split(`${palette}: {`)[1].split('}')[0];
       for (const shade of shades) assert.ok(block.includes(`${shade}:`), `${palette}.${shade}`);
     }
-    assert.ok(theme.includes("surface: '#ffffff'"));
     assert.ok(theme.includes("soft: '#8a9499'"));
+    const langSwitcher = baca('src/components/public/LanguageSwitcher.tsx');
+    assert.ok(langSwitcher.includes('rounded-lg'), 'LanguageSwitcher harus rounded-lg');
+    assert.doesNotMatch(langSwitcher, /rounded-full/, 'LanguageSwitcher tidak boleh rounded-full');
     for (const locale of ['id', 'en']) {
       const messages = JSON.parse(baca(`messages/${locale}.json`));
       for (const key of ['navigasiUtama', 'berandaLabel', 'penerimaanMahasiswaBaru']) assert.ok(messages.nav[key]);

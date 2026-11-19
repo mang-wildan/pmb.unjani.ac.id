@@ -19,7 +19,7 @@ export default function LanguageSwitcher() {
   }
 
   return (
-    <div className="flex items-center gap-0.5 rounded-full border border-brand-100 bg-white p-0.5">
+    <div className="flex items-center gap-0.5 rounded-lg border border-brand-100 bg-white p-0.5">
       {(['id', 'en'] as const).map((l) => (
         <button
           key={l}
@@ -27,7 +27,7 @@ export default function LanguageSwitcher() {
           onClick={() => switchLocale(l)}
           disabled={isPending}
           className={cn(
-            'px-2.5 py-1 rounded-full text-xs font-bold uppercase transition',
+            'px-2.5 py-1 rounded-lg text-xs font-bold uppercase transition',
             locale === l
               ? 'bg-brand text-white shadow-soft'
               : 'text-ink-muted hover:bg-brand-50 hover:text-brand-700',
