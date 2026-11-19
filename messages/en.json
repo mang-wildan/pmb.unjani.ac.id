@@ -201,14 +201,23 @@
   "pengumumanPage": {
     "metaTitle": "Announcements",
     "metaDesc": "Official announcements from the UNJANI admissions committee: new registration waves, exam schedules, results, and re-registration.",
+    "breadcrumb": "Announcements",
+    "breadcrumbLabel": "Breadcrumb",
+    "detailCrumb": "Detail",
     "eyebrow": "Latest Updates",
     "title": "Announcements",
     "desc": "Latest news from the committee regarding new student admissions.",
     "empty": "No announcements yet.",
     "penting": "Important",
     "bacaSelengkapnya": "Read more →",
-    "kembali": "← Back to Announcements",
-    "diterbitkan": "Published"
+    "kembali": "Back to Announcements",
+    "diterbitkan": "Published",
+    "paginationLabel": "Pagination",
+    "next": "Next",
+    "sidebarTitle": "Ready to apply?",
+    "sidebarDesc": "Register now and start your study journey at UNJANI.",
+    "lainnyaTitle": "Other announcements",
+    "lainnyaSemua": "All announcements"
   },
   "artikelPage": {
     "metaTitle": "Articles",

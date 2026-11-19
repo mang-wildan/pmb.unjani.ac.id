@@ -201,14 +201,23 @@
   "pengumumanPage": {
     "metaTitle": "Pengumuman",
     "metaDesc": "Pengumuman resmi panitia PMB Universitas Jenderal Achmad Yani (UNJANI): pembukaan gelombang, jadwal ujian, kelulusan, dan registrasi ulang.",
+    "breadcrumb": "Pengumuman",
+    "breadcrumbLabel": "Jejak navigasi",
+    "detailCrumb": "Detail",
     "eyebrow": "Informasi Terbaru",
     "title": "Pengumuman",
     "desc": "Kabar terbaru dari panitia seputar penerimaan mahasiswa baru.",
     "empty": "Belum ada pengumuman.",
     "penting": "Penting",
     "bacaSelengkapnya": "Baca selengkapnya →",
-    "kembali": "← Kembali ke Pengumuman",
-    "diterbitkan": "Diterbitkan"
+    "kembali": "Kembali ke Pengumuman",
+    "diterbitkan": "Diterbitkan",
+    "paginationLabel": "Navigasi halaman",
+    "next": "Berikutnya",
+    "sidebarTitle": "Siap mendaftar?",
+    "sidebarDesc": "Segera daftarkan dirimu dan mulai perjalanan kuliah di UNJANI.",
+    "lainnyaTitle": "Pengumuman lainnya",
+    "lainnyaSemua": "Semua pengumuman"
   },
   "artikelPage": {
     "metaTitle": "Artikel",

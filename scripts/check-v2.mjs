@@ -4,6 +4,54 @@ import { readFileSync, existsSync } from 'node:fs';
 
 const baca = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 const tasks = {
+  5: async () => {
+    const list = baca('src/app/[locale]/(public)/pengumuman/page.tsx');
+    const detail = baca('src/app/[locale]/(public)/pengumuman/[slug]/page.tsx');
+    // Hero band list: 440px mobile / 480px desktop, menandai navbar overlay.
+    assert.match(list, /min-h-\[440px\]/, 'hero list mobile 440px');
+    assert.match(list, /md:min-h-\[480px\]/, 'hero list desktop 480px');
+    assert.ok(list.includes('data-public-hero'), 'hero list menandai overlay navbar');
+    assert.ok(list.includes('pt-24'), 'ruang isi hero list minimal 96px');
+    assert.doesNotMatch(list, /<Navbar/, 'navbar hanya dari layout publik');
+    // Hero band detail: 480px mobile / 520px desktop.
+    assert.match(detail, /min-h-\[480px\]/, 'hero detail mobile 480px');
+    assert.match(detail, /md:min-h-\[520px\]/, 'hero detail desktop 520px');
+    assert.ok(detail.includes('data-public-hero'), 'hero detail menandai overlay navbar');
+    assert.ok(detail.includes('pt-24'), 'ruang isi hero detail minimal 96px');
+    assert.doesNotMatch(detail, /<Navbar/, 'navbar hanya dari layout publik');
+    // Breadcrumb, eyebrow, judul, aria.
+    assert.ok(list.includes("t('breadcrumbLabel')"), 'label landmark breadcrumb list');
+    assert.ok(list.includes('aria-current="page"'), 'aria-current breadcrumb');
+    assert.ok(list.includes("t('eyebrow')") && list.includes("t('title')"), 'eyebrow + judul list dari kamus');
+    // Query Mongoose dipertahankan: hanya aktif, pinned diprioritaskan, ada pagination.
+    assert.ok(list.includes('Pengumuman.find'), 'query Pengumuman.find');
+    assert.ok(list.includes('aktif: true'), 'filter aktif dipertahankan');
+    assert.ok(list.includes('pinned'), 'filter pinned dipertahankan');
+    for (const s of ['countDocuments', 'totalPages', '.skip(', '.limit(']) assert.ok(list.includes(s), `pagination: ${s}`);
+    // Kartu utama pinned + token gold + radius 8px.
+    for (const cls of ['bg-[#063F2A]', 'bg-[#D4AF37]', 'text-[#1D2114]', 'rounded-lg']) assert.ok(list.includes(cls), cls);
+    // Badge tanggal besar: hari + bulan/tahun terpisah.
+    assert.ok(list.includes("format('DD')"), 'badge hari angka besar');
+    assert.ok(list.includes("format('MMM YYYY')"), 'badge bulan/tahun');
+    // Detail: konten tersanitasi + prose, sidebar gold, tombol hitam, daftar lainnya dari model.
+    assert.ok(detail.includes('sanitizeRichText'), 'konten tetap disanitasi');
+    assert.ok(detail.includes('prose-brand'), 'konten memakai styling prose');
+    assert.ok(detail.includes('bg-[#D4AF37]'), 'sidebar gold');
+    assert.ok(detail.includes('bg-[#10281D]'), 'tombol hitam sidebar');
+    assert.ok(detail.includes("t('lainnyaTitle')"), 'judul pengumuman lainnya dari kamus');
+    assert.ok(detail.includes("t('kembali')"), 'tautan kembali dari kamus');
+    // Isi contoh PNG tidak boleh di-hardcode.
+    for (const contoh of ['09 Nov 2026', '2027/2028', 'Rp200.000', 'Jadwal penting']) {
+      assert.ok(!list.includes(contoh) && !detail.includes(contoh), `hardcode contoh PNG: ${contoh}`);
+    }
+    // Paritas + kelengkapan kamus id/en.
+    const kunci = (l) => Object.keys(JSON.parse(baca(`messages/${l}.json`)).pengumumanPage).sort();
+    assert.deepEqual(kunci('id'), kunci('en'), 'paritas key pengumumanPage id/en');
+    for (const locale of ['id', 'en']) {
+      const messages = JSON.parse(baca(`messages/${locale}.json`));
+      for (const key of ['breadcrumb', 'breadcrumbLabel', 'detailCrumb', 'eyebrow', 'title', 'desc', 'empty', 'penting', 'bacaSelengkapnya', 'kembali', 'diterbitkan', 'paginationLabel', 'next', 'sidebarTitle', 'sidebarDesc', 'lainnyaTitle', 'lainnyaSemua']) assert.ok(messages.pengumumanPage[key], `pengumumanPage.${key} ${locale}`);
+    }
+  },
   4: async () => {
     const page = baca('src/app/[locale]/(public)/kontak/page.tsx');
     // Hero band SPEC: 480px desktop / 440px mobile, y=0, marker navbar.
