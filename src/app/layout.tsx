@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Plus_Jakarta_Sans, Inter } from 'next/font/google';
+import { Montserrat, Inter } from 'next/font/google';
 import { headers } from 'next/headers';
 import { getLocale } from 'next-intl/server';
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -22,7 +22,7 @@ const sans = Inter({
   display: 'swap',
 });
 
-const display = Plus_Jakarta_Sans({
+const display = Montserrat({
   subsets: ['latin'],
   variable: '--font-display',
   display: 'swap',

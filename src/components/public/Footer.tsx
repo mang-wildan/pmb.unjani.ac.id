@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import type { PublicSettings } from '@/models/Settings';
 
@@ -46,6 +46,10 @@ function SosmedIcon({ nama }: { nama: string }) {
 export default async function Footer({ settings }: { settings: PublicSettings | null }) {
   const t = await getTranslations('footer');
   const year = new Date().getFullYear();
+  const locale = await getLocale();
+  const anchors = locale === 'en'
+    ? { biaya: '/en#kalkulator', jalur: '/en#jalur-seleksi' }
+    : { biaya: '/#kalkulator', jalur: '/#jalur-seleksi' };
   const campusLocations = [
     {
       name: t('kampusCimahi'),
@@ -60,7 +64,7 @@ export default async function Footer({ settings }: { settings: PublicSettings | 
   ];
 
   return (
-    <footer className="mt-20 border-t border-brand-50 bg-gradient-to-b from-white to-brand-50/40">
+    <footer className="bg-[#06281D] text-white [&_a:focus-visible]:outline-none [&_a:focus-visible]:ring-2 [&_a:focus-visible]:ring-[#D4AF37] [&_a:focus-visible]:ring-offset-2 [&_a:focus-visible]:ring-offset-[#06281D]">
       <div className="container mx-auto py-12 grid gap-10 md:grid-cols-4">
         <div className="md:col-span-2">
           <div className="flex items-center gap-2">
@@ -78,25 +82,24 @@ export default async function Footer({ settings }: { settings: PublicSettings | 
               height={40}
               className="h-10 w-auto object-contain"
             />
-            <span className="font-display text-lg font-bold text-brand-700">PMB UNJANI</span>
+            <span className="font-display text-lg font-bold text-white">PMB UNJANI</span>
           </div>
-          <p className="mt-4 max-w-md text-sm text-ink-muted leading-relaxed">
-            {settings?.tagline ||
-              'Gerbang masa depanmu di Universitas Jenderal Achmad Yani. Informasi resmi Penerimaan Mahasiswa Baru.'}
+          <p className="mt-4 max-w-md text-sm text-white/80 leading-relaxed">
+            {settings?.tagline}
           </p>
-          <p className="mt-4 text-sm text-ink-muted">
+          <p className="mt-4 text-sm text-white/80">
             {settings?.alamat || 'Jl. Terusan Jenderal Sudirman, Cimahi, Jawa Barat'}
           </p>
           {settings?.email && (
-            <p className="mt-1 text-sm text-ink-muted">
+            <p className="mt-1 text-sm text-white/80">
               {t('email')}{' '}
-              <a href={`mailto:${settings.email}`} className="text-brand-700 hover:underline">
+              <a href={`mailto:${settings.email}`} className="text-[#D4AF37] hover:underline">
                 {settings.email}
               </a>
             </p>
           )}
           {settings?.telepon && (
-            <p className="text-sm text-ink-muted">
+            <p className="text-sm text-white/80">
               {t('telepon')} {settings.telepon}
             </p>
           )}
@@ -109,7 +112,7 @@ export default async function Footer({ settings }: { settings: PublicSettings | 
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={s.nama}
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-50 text-brand-700 hover:bg-brand hover:text-white transition"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/20 bg-white/5 text-white hover:bg-white/10 transition-colors motion-reduce:transition-none"
                 >
                   <SosmedIcon nama={s.nama} />
                 </a>
@@ -119,25 +122,25 @@ export default async function Footer({ settings }: { settings: PublicSettings | 
         </div>
 
         <div>
-          <h3 className="font-semibold text-ink mb-3">{t('informasi')}</h3>
-          <ul className="space-y-2 text-sm text-ink-muted">
+          <h3 className="font-semibold text-white mb-3">{t('informasi')}</h3>
+          <ul className="space-y-2 text-sm text-white/80">
             <li>
-              <Link href="/biaya-kuliah" className="hover:text-brand-700">
+              <a href={anchors.biaya} className="hover:text-[#D4AF37]">
                 {t('kalkulatorPmb')}
-              </Link>
+              </a>
             </li>
             <li>
-              <Link href="/jalur-masuk" className="hover:text-brand-700">
+              <a href={anchors.jalur} className="hover:text-[#D4AF37]">
                 {t('jalurSeleksi')}
-              </Link>
+              </a>
             </li>
             <li>
-              <Link href="/jadwal-pmb" className="hover:text-brand-700">
+              <Link href="/jadwal-pmb" className="hover:text-[#D4AF37]">
                 {t('jadwal')}
               </Link>
             </li>
             <li>
-              <Link href="/faq" className="hover:text-brand-700">
+              <Link href="/faq" className="hover:text-[#D4AF37]">
                 {t('faq')}
               </Link>
             </li>
@@ -146,7 +149,7 @@ export default async function Footer({ settings }: { settings: PublicSettings | 
                 href="https://unjani.ac.id"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-brand-700"
+                className="hover:text-[#D4AF37]"
               >
                 UNJANI
               </a>
@@ -155,25 +158,25 @@ export default async function Footer({ settings }: { settings: PublicSettings | 
         </div>
 
         <div>
-          <h3 className="font-semibold text-ink mb-3">{t('pendaftaran')}</h3>
-          <ul className="space-y-2 text-sm text-ink-muted">
+          <h3 className="font-semibold text-white mb-3">{t('pendaftaran')}</h3>
+          <ul className="space-y-2 text-sm text-white/80">
             <li>
               <a
                 href={settings?.urlPendaftaran || 'https://pendaftaran.unjani.ac.id/loginnew'}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-brand-700"
+                className="hover:text-[#D4AF37]"
               >
                 {t('portalPendaftaran')}
               </a>
             </li>
             <li>
-              <Link href="/pengumuman" className="hover:text-brand-700">
+              <Link href="/pengumuman" className="hover:text-[#D4AF37]">
                 {t('pengumuman')}
               </Link>
             </li>
             <li>
-              <Link href="/kontak" className="hover:text-brand-700">
+              <Link href="/kontak" className="hover:text-[#D4AF37]">
                 {t('kontakPanitia')}
               </Link>
             </li>
@@ -182,20 +185,20 @@ export default async function Footer({ settings }: { settings: PublicSettings | 
       </div>
 
       <div className="container mx-auto pb-10">
-        <h3 className="font-semibold text-ink mb-4">{t('lokasiKampus')}</h3>
+        <h3 className="font-semibold text-white mb-4">{t('lokasiKampus')}</h3>
         <div className="grid gap-4 md:grid-cols-2">
           {campusLocations.map((campus) => (
             <div
               key={campus.name}
-              className="rounded-3xl border border-brand-100 bg-white/90 p-5 shadow-sm transition hover:border-brand-200 hover:shadow-md"
+              className="rounded-lg border border-white/20 bg-white/5 p-5"
             >
-              <p className="text-sm font-semibold text-brand-700">{campus.name}</p>
+              <p className="text-sm font-semibold text-[#D4AF37]">{campus.name}</p>
               <div className="mt-3 flex flex-wrap items-start gap-3">
                 <a
                   href={campus.mapUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="min-w-0 flex-1 text-sm leading-relaxed text-ink-muted transition hover:text-brand-700 hover:underline"
+                  className="min-w-0 flex-1 text-sm leading-relaxed text-white/80 transition hover:text-[#D4AF37] hover:underline"
                 >
                   {campus.address}
                 </a>
@@ -203,7 +206,7 @@ export default async function Footer({ settings }: { settings: PublicSettings | 
                   href={campus.mapUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700 transition hover:border-brand-300 hover:bg-brand hover:text-white"
+                  className="inline-flex items-center rounded-lg border border-white/20 px-3 py-1 text-xs font-semibold text-[#D4AF37] hover:underline"
                 >
                   {t('bukaDiMaps')}
                 </a>
@@ -214,7 +217,7 @@ export default async function Footer({ settings }: { settings: PublicSettings | 
       </div>
 
       <div className="border-t border-brand-50">
-        <div className="container mx-auto py-4 text-center text-xs text-ink-muted">
+        <div className="container mx-auto py-4 text-center text-xs text-white/80">
           <p>{t('copyright', { year })}</p>
         </div>
       </div>

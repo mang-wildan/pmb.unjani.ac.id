@@ -1,5 +1,8 @@
 {
   "nav": {
+    "navigasiUtama": "Navigasi utama",
+    "berandaLabel": "Beranda PMB UNJANI",
+    "penerimaanMahasiswaBaru": "Penerimaan Mahasiswa Baru",
     "beranda": "Beranda",
     "jalurSeleksi": "Jalur Pendaftaran",
     "jadwal": "Jadwal",

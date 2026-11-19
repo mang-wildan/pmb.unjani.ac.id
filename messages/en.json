@@ -1,5 +1,8 @@
 {
   "nav": {
+    "navigasiUtama": "Main navigation",
+    "berandaLabel": "PMB UNJANI home",
+    "penerimaanMahasiswaBaru": "New Student Admissions",
     "beranda": "Home",
     "jalurSeleksi": "Admission Paths",
     "jadwal": "Schedule",
