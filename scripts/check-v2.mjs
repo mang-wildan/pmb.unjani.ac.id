@@ -4,6 +4,79 @@ import { readFileSync, existsSync } from 'node:fs';
 
 const baca = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 const tasks = {
+  6: async () => {
+    const list = baca('src/app/[locale]/(public)/artikel/page.tsx');
+    const detail = baca('src/app/[locale]/(public)/artikel/[slug]/page.tsx');
+    // Hero band list SPEC: 480px desktop / 440px mobile, mulai y=0, marker overlay navbar.
+    assert.match(list, /min-h-\[440px\]/, 'hero list mobile 440px');
+    assert.match(list, /md:min-h-\[480px\]/, 'hero list desktop 480px');
+    assert.ok(list.includes('data-public-hero'), 'hero list menandai overlay navbar');
+    assert.ok(list.includes('pt-24'), 'ruang isi hero list minimal 96px');
+    assert.doesNotMatch(list, /<Navbar/, 'navbar hanya dari layout publik');
+    assert.ok(list.includes("t('breadcrumbLabel')"), 'label landmark breadcrumb list');
+    assert.ok(list.includes('aria-current="page"'), 'aria-current breadcrumb/pagination');
+    assert.ok(list.includes("t('eyebrow')") && list.includes("t('title')"), 'eyebrow + judul list dari kamus');
+    // Kontrol pencarian nyata: q + kategori (KategoriArtikel) + tag (Artikel.tags), URL ter-encode.
+    for (const field of ['name="q"', 'name="kategori"', 'name="tag"']) assert.ok(list.includes(field), field);
+    assert.ok(list.includes('KategoriArtikel.find'), 'kategori dari koleksi KategoriArtikel');
+    assert.match(list, /Artikel\.distinct\('tags'/, 'chip tag dari Artikel.tags');
+    assert.ok(list.includes("t('allTags')"), 'chip semua tag dari kamus');
+    assert.ok(list.includes('new URLSearchParams()'), 'filter URL ter-encode');
+    // Jalankan helper URL asli tanpa loader TS/DB: encoding, pelestarian filter, reset halaman.
+    const helper = list.match(/function hrefHalaman\(params: SearchParams, page: number\) \{([\s\S]*?)\n\}/)?.[1];
+    assert.ok(helper, 'helper hrefHalaman dapat diuji');
+    const href = new Function('params', 'page', helper);
+    const encoded = new URL(href({ q: 'PMB & kampus', kategori: 'kuliah-di-unjani', tag: '2027/2028 + daftar' }, 2), 'http://localhost');
+    assert.equal(encoded.searchParams.get('q'), 'PMB & kampus');
+    assert.equal(encoded.searchParams.get('kategori'), 'kuliah-di-unjani');
+    assert.equal(encoded.searchParams.get('tag'), '2027/2028 + daftar');
+    assert.equal(encoded.searchParams.get('page'), '2');
+    assert.equal(href({}, 1), '/artikel');
+    assert.equal(new URL(href({ tag: 'a&b' }, 1), 'http://localhost').searchParams.has('page'), false);
+    // Kartu unggulan (field pinned) + grid 3 kolom + pagination numerik.
+    assert.ok(list.includes('pinned: true'), 'artikel unggulan memakai field pinned');
+    assert.ok(list.includes('$ne: unggulan._id'), 'artikel unggulan tidak diulang di grid');
+    assert.ok(list.includes('lg:grid-cols-3'), 'grid artikel 3 kolom');
+    assert.ok(list.includes('Array.from('), 'pagination numerik');
+    assert.ok(list.includes('.skip(') && list.includes('.limit('), 'pagination query dipertahankan');
+    // Detail editorial: satu kolom, tanpa hero foto/sidebar, konten tersanitasi.
+    assert.doesNotMatch(detail, /data-public-hero/, 'detail editorial tanpa hero foto');
+    assert.doesNotMatch(detail, /<aside/, 'detail editorial tanpa sidebar');
+    assert.ok(detail.includes('max-w-[800px]'), 'lebar baca terukur ~800px');
+    assert.ok(detail.includes('sanitizeRichText'), 'konten tetap disanitasi');
+    assert.ok(detail.includes('prose-brand'), 'konten memakai styling prose');
+    assert.ok(detail.includes('[&_blockquote]:border-l-4') && detail.includes('[&_blockquote]:border-[#D4AF37]'), 'quote callout gold');
+    assert.ok(detail.includes("t('back')"), 'tautan kembali dari kamus');
+    assert.ok(detail.includes("t('relatedTitle')"), 'judul artikel terkait dari kamus');
+    assert.ok(detail.includes("t('readTime'"), 'estimasi waktu baca dari kamus');
+    assert.ok(detail.includes('kategori &&'), 'badge kategori hanya bila tersedia');
+    assert.ok(detail.includes('artikel.tags.length'), 'baris tag hanya dari data');
+    assert.ok(detail.includes('.limit(3)'), 'artikel terkait maks 3');
+    assert.ok(detail.includes('filterArtikelLayakTampilPublik'), 'status publik dipertahankan');
+    assert.ok(detail.includes('notFound()'), 'slug tidak ada -> 404');
+    assert.ok(detail.includes("'@type': 'Article'"), 'structured data Article');
+    assert.ok(detail.includes('breadcrumbJsonLd'), 'structured data breadcrumb');
+    assert.ok(detail.includes('judul_en || artikel.judul'), 'fallback locale judul');
+    assert.ok(detail.includes("t('coverAlt')"), 'alt sampul terlokalisasi');
+    // Isi contoh PNG tidak boleh di-hardcode.
+    for (const contoh of ['4 menit baca', 'WIT X ADMISI', 'PMB UNJANI 2027/2028', 'Berita PMB', 'Panduan', 'Beasiswa', 'Kampus']) {
+      assert.ok(!list.includes(contoh) && !detail.includes(contoh), `hardcode contoh PNG: ${contoh}`);
+    }
+    // Paritas + kelengkapan kamus id/en.
+    const kunci = (l, ns) => Object.keys(JSON.parse(baca(`messages/${l}.json`))[ns]).sort();
+    for (const ns of ['artikelPage', 'artikelDetail']) assert.deepEqual(kunci('id', ns), kunci('en', ns), `paritas key ${ns} id/en`);
+    for (const locale of ['id', 'en']) {
+      const messages = JSON.parse(baca(`messages/${locale}.json`));
+      for (const key of ['breadcrumb', 'breadcrumbLabel', 'search', 'allTags', 'eyebrow', 'title', 'desc', 'empty', 'next', 'page']) assert.ok(messages.artikelPage[key], `artikelPage.${key} ${locale}`);
+      for (const key of ['back', 'published', 'author', 'tags', 'readTime', 'relatedTitle', 'coverAlt']) assert.ok(messages.artikelDetail[key], `artikelDetail.${key} ${locale}`);
+    }
+    // Bukti assertion menolak state lama (mutasi in-memory, tanpa DB).
+    const wajibHero = (src) => assert.match(src, /md:min-h-\[480px\]/, 'hero list 480px wajib');
+    const wajibEditorial = (src) => { assert.doesNotMatch(src, /<aside/); assert.doesNotMatch(src, /data-public-hero/); };
+    assert.throws(() => wajibHero(list.replace('md:min-h-[480px]', 'md:min-h-[520px]')), 'hero 520px harus ditolak');
+    assert.throws(() => wajibEditorial(`${detail}<aside>sidebar</aside>`), 'sidebar harus ditolak');
+    assert.throws(() => wajibEditorial(`${detail}<section data-public-hero />`), 'hero foto harus ditolak');
+  },
   5: async () => {
     const list = baca('src/app/[locale]/(public)/pengumuman/page.tsx');
     const detail = baca('src/app/[locale]/(public)/pengumuman/[slug]/page.tsx');

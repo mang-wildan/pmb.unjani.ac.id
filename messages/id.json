@@ -225,9 +225,16 @@
     "eyebrow": "Informasi dan Berita",
     "title": "Artikel PMB",
     "desc": "Temukan informasi, panduan, dan berita terbaru seputar penerimaan mahasiswa baru.",
+    "breadcrumb": "Artikel",
+    "breadcrumbLabel": "Breadcrumb",
     "searchPlaceholder": "Cari judul artikel...",
+    "search": "Cari",
     "categoryLabel": "Kategori",
     "allCategories": "Semua kategori",
+    "allTags": "Semua",
+    "tags": "Tag",
+    "readArticle": "Baca artikel",
+    "paginationLabel": "Halaman",
     "activeTag": "Tag: {tag}",
     "empty": "Tidak ada artikel yang sesuai.",
     "previous": "Sebelumnya",
@@ -235,11 +242,14 @@
     "page": "Halaman {page} dari {total}"
   },
   "artikelDetail": {
-    "back": "← Kembali ke Artikel",
+    "back": "Kembali ke Artikel",
     "published": "Diterbitkan",
     "author": "Penulis",
     "category": "Kategori",
-    "tags": "Tag"
+    "tags": "Tag",
+    "readTime": "{n} menit baca",
+    "relatedTitle": "Artikel terkait",
+    "coverAlt": "Sampul artikel"
   },
   "artikelSection": {
     "eyebrow": "Informasi Terbaru",

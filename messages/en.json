@@ -225,9 +225,16 @@
     "eyebrow": "Information and News",
     "title": "PMB Articles",
     "desc": "Find the latest information, guides, and news about new student admissions.",
+    "breadcrumb": "Articles",
+    "breadcrumbLabel": "Breadcrumb",
     "searchPlaceholder": "Search article titles...",
+    "search": "Search",
     "categoryLabel": "Category",
     "allCategories": "All categories",
+    "allTags": "All",
+    "tags": "Tags",
+    "readArticle": "Read article",
+    "paginationLabel": "Page",
     "activeTag": "Tag: {tag}",
     "empty": "No matching articles found.",
     "previous": "Previous",
@@ -235,11 +242,14 @@
     "page": "Page {page} of {total}"
   },
   "artikelDetail": {
-    "back": "← Back to Articles",
+    "back": "Back to Articles",
     "published": "Published",
     "author": "Author",
     "category": "Category",
-    "tags": "Tags"
+    "tags": "Tags",
+    "readTime": "{n, plural, one {# minute read} other {# minutes read}}",
+    "relatedTitle": "Related articles",
+    "coverAlt": "Article cover"
   },
   "artikelSection": {
     "eyebrow": "Latest Information",
