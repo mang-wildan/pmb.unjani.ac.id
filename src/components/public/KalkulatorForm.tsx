@@ -693,8 +693,8 @@ function ProgressStepper({ statuses }: { statuses: StepStatus[] }) {
                         : status === 'completed'
                           ? 'text-ink'
                           : status === 'skipped'
-                            ? 'text-ink-soft/60'
-                            : 'text-ink-soft/50'
+                            ? 'text-ink-muted'
+                            : 'text-ink-muted'
                     }`}
                   >
                     {label}
@@ -707,7 +707,7 @@ function ProgressStepper({ statuses }: { statuses: StepStatus[] }) {
       </div>
 
       {/* Step counter label */}
-      <p className="mt-2 text-center text-[10px] text-ink-soft/60 font-medium">
+      <p className="mt-2 text-center text-[10px] text-ink-muted font-medium">
         {completedCount === 4
           ? t('semuaSelesai')
           : t('langkah', { n: Math.min(completedCount + 1, 4), total: 4 })}
@@ -740,13 +740,13 @@ function StepCircle({ status, number, icon, showIcon = false }: { status: StepSt
   }
   if (status === 'skipped') {
     return (
-      <span className={`${base} bg-gray-100 text-ink-soft/50 border border-gray-200`}>
-        <span className="block w-4 h-0.5 bg-ink-soft/40 rounded-lg" />
+      <span className={`${base} bg-gray-100 text-ink-muted border border-gray-200`}>
+        <span className="block w-4 h-0.5 bg-ink-muted/40 rounded-lg" />
       </span>
     );
   }
   return (
-    <span className={`${base} bg-white text-ink-soft/40 border-2 border-gray-200`}>
+    <span className={`${base} bg-white text-ink-muted border-2 border-gray-200`}>
       <span className="text-xs">{number}</span>
     </span>
   );

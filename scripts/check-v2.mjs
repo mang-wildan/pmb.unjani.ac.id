@@ -5,6 +5,12 @@ import { createHash } from 'node:crypto';
 
 const baca = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 const tasks = {
+  8: async () => {
+    const kalkulator = baca('src/components/public/KalkulatorForm.tsx');
+    const progress = kalkulator.slice(kalkulator.indexOf('function ProgressStepper'), kalkulator.indexOf('function EmptyState'));
+    assert.doesNotMatch(progress, /text-ink-soft\/[456]0/, 'teks langkah aktif maupun tertunda harus kontras AA');
+    assert.match(progress, /text-center text-\[10px\] text-ink-muted font-medium/, 'counter memakai ink-muted 5.72:1 di putih');
+  },
   7: async () => {
     const login = baca('src/app/admin/login/page.tsx');
 
