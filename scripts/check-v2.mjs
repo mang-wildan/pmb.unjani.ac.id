@@ -4,6 +4,36 @@ import { readFileSync, existsSync } from 'node:fs';
 
 const baca = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 const tasks = {
+  4: async () => {
+    const page = baca('src/app/[locale]/(public)/kontak/page.tsx');
+    // Hero band SPEC: 480px desktop / 440px mobile, y=0, marker navbar.
+    assert.match(page, /min-h-\[440px\]/, 'hero mobile 440px');
+    assert.match(page, /md:min-h-\[480px\]/, 'hero desktop 480px');
+    assert.ok(page.includes('data-public-hero'), 'hero harus menandai overlay navbar');
+    assert.ok(page.includes('pt-24'), 'ruang isi atas hero minimal 96px');
+    assert.doesNotMatch(page, /<Navbar/, 'navbar hanya dari layout publik');
+    // Kontak v2.0.0 tanpa form.
+    assert.doesNotMatch(page, /<form/i, 'halaman kontak tanpa form');
+    // Data dinamis Settings + FAQ + PageContent.
+    for (const key of ['s?.alamat', 's?.email', 's?.telepon', 's?.whatsapp', 's?.sosmed']) assert.ok(page.includes(key), key);
+    assert.ok(page.includes('FAQ.find'), 'FAQ dari model');
+    assert.ok(page.includes('PageContent'), 'foto/hero dari PageContent');
+    // Nilai contoh PNG tidak boleh hardcode.
+    assert.doesNotMatch(page, /admisi@unjani\.ac\.id/);
+    assert.doesNotMatch(page, /\(022\) 6631564/);
+    // Accordion dipakai ulang, bukan diduplikasi.
+    assert.ok(page.includes("from '@/components/public/FAQAccordion'"));
+    assert.ok(page.includes('tampilkanTab={false}'));
+    assert.equal((page.match(/aria-expanded=/g) || []).length, 0, 'accordion tidak diduplikasi');
+    // Token Varian 02 Gold.
+    for (const cls of ['bg-[#063F2A]', 'bg-[#D4AF37]', 'text-[#D4AF37]', 'rounded-lg']) assert.ok(page.includes(cls), cls);
+    assert.ok(page.includes('href="/faq"'), 'tautan FAQ lengkap');
+    // Kamus id/en memuat copy baru.
+    for (const locale of ['id', 'en']) {
+      const messages = JSON.parse(baca(`messages/${locale}.json`));
+      for (const key of ['breadcrumb', 'heroImageAlt', 'sekretariatTitle', 'sekretariatDesc', 'kampusLabel', 'bukaMaps', 'kanalTitle', 'kanalDesc', 'emailLabel', 'teleponLabel', 'whatsappCta', 'sosmedLabel', 'faqTitle', 'faqDesc', 'faqLink']) assert.ok(messages.kontakPage[key], `kontakPage.${key} ${locale}`);
+    }
+  },
   3: async () => {
     const page = baca('src/app/[locale]/(public)/page.tsx');
     const hero = baca('src/components/public/Hero.tsx');

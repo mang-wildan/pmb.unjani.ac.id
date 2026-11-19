@@ -241,9 +241,24 @@
   "kontakPage": {
     "metaTitle": "Contact",
     "metaDesc": "Contact the UNJANI admissions committee at the Admissions Office, Rectorate Building 1st Floor, Cimahi, via WhatsApp, email, or official social media.",
+    "breadcrumb": "Contact",
     "eyebrow": "Need Help?",
     "title": "Contact Us",
-    "desc": "The PMB UNJANI committee is ready to assist with your registration process."
+    "desc": "The PMB UNJANI committee is ready to assist with your registration process.",
+    "heroImageAlt": "Universitas Jenderal Achmad Yani Cimahi campus",
+    "sekretariatTitle": "PMB Secretariat",
+    "sekretariatDesc": "Admissions Office, Rectorate Building 1st Floor. Visit us for registration consultations and document assistance.",
+    "kampusLabel": "Cimahi Campus",
+    "bukaMaps": "Open in Maps",
+    "kanalTitle": "Official Channels",
+    "kanalDesc": "Choose the channel that suits you best. The committee replies during business hours.",
+    "emailLabel": "Email",
+    "teleponLabel": "Phone",
+    "whatsappCta": "Chat via WhatsApp",
+    "sosmedLabel": "Social media",
+    "faqTitle": "The answer may already be here",
+    "faqDesc": "Check the most frequently asked questions before contacting the committee.",
+    "faqLink": "See all questions"
   },
   "faq": {
     "empty": "No FAQ available for this category.",

@@ -1,7 +1,11 @@
+import Image from 'next/image';
 import { getTranslations } from 'next-intl/server';
+import { Link } from '@/i18n/navigation';
 import { connectDb } from '@/lib/db';
 import { getSettings } from '@/models/Settings';
-import { SectionHeading, Card } from '@/components/ui/Card';
+import { PageContent } from '@/models/PageContent';
+import { FAQ } from '@/models/FAQ';
+import FAQAccordion, { type FAQItem } from '@/components/public/FAQAccordion';
 import {
   buildMetadata,
   breadcrumbJsonLd,
@@ -9,17 +13,8 @@ import {
 } from '@/lib/seo';
 import JsonLd from '@/components/public/JsonLd';
 
-function SosmedIcon({ nama }: { nama: string }) {
-  const value = nama.toLowerCase();
-
-  if (value.includes('instagram')) return 'fa-brands fa-instagram';
-  if (value.includes('tiktok')) return 'fa-brands fa-tiktok';
-  if (value.includes('youtube')) return 'fa-brands fa-youtube';
-  if (value.includes('facebook')) return 'fa-brands fa-facebook-f';
-  if (value.includes('twitter') || value === 'x' || value.includes(' x ')) return 'fa-brands fa-x-twitter';
-
-  return 'fa-solid fa-link';
-}
+// Fallback aset kampus, sama dengan HeroSlider (bukan path upload CMS).
+const FOTO_KAMPUS_BAWAAN = '/pmb unjani.jpg';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 300;
@@ -35,99 +30,169 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: P
   });
 }
 
-export default async function KontakPage() {
+export default async function KontakPage({ params }: { params: Promise<{ locale: PublicLocale }> }) {
+  const { locale } = await params;
   const t = await getTranslations('kontakPage');
-  const tf = await getTranslations('footer');
-  const mapsUrl = 'https://maps.app.goo.gl/7ViYh7x7LLknjYC17';
+  const tc = await getTranslations('common');
 
   await connectDb().catch(() => null);
-  const s = await getSettings().catch(() => null);
+  const [s, hero, faq] = await Promise.all([
+    getSettings().catch(() => null),
+    PageContent.findOne({ kunci: 'hero' }).select('data').lean().catch(() => null),
+    FAQ.find({ aktif: true }).sort({ kategori: 1, urutan: 1 }).limit(3).lean().catch(() => []),
+  ]);
+
+  const heroImages = ((hero?.data || {}) as { heroImages?: string[] }).heroImages || [];
+  const fotoHero = heroImages[0] || FOTO_KAMPUS_BAWAAN;
+  const fotoKampus = heroImages[1] || fotoHero;
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s?.alamat || '')}`;
+
+  const faqItems: FAQItem[] = (faq as any[]).map((item) => ({
+    _id: String(item._id),
+    pertanyaan: locale === 'en' ? item.pertanyaan_en || item.pertanyaan : item.pertanyaan,
+    jawaban: locale === 'en' ? item.jawaban_en || item.jawaban : item.jawaban,
+    kategori: item.kategori,
+    urutan: item.urutan,
+  }));
 
   return (
-    <div className="container mx-auto py-12 md:py-16 max-w-4xl">
-      <SectionHeading level={1} eyebrow={t('eyebrow')} title={t('title')} description={t('desc')} />
-      <div className="mt-10 grid gap-6 md:grid-cols-2">
-        <Card>
-          <h3 className="font-display text-xl font-bold text-ink">Sekretariat PMB</h3>
-          <p className="mt-3 text-ink-muted">Gedung Rektorat Lantai 1</p>
-          <a
-            href={mapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-1 inline-flex items-start gap-3 text-left text-ink-muted transition hover:text-brand-700"
-          >
-            <span className="mt-0.5 inline-flex h-9 w-9 flex-none items-center justify-center rounded-full bg-brand-50 text-brand-700">
-              <i className="fa-solid fa-location-dot text-base" aria-hidden="true" />
-            </span>
-            <span className="min-w-0">
-              <span className="block font-medium text-ink">
-                {s?.alamat || 'Jl. Terusan Jenderal Sudirman, Cimahi, Jawa Barat'}
-              </span>
-              <span className="mt-1 inline-flex rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700">
-                Buka di Maps
-              </span>
-            </span>
-          </a>
-        </Card>
-        <Card>
-          <h3 className="font-display text-xl font-bold text-ink">Kanal Resmi</h3>
-          <ul className="mt-3 space-y-2 text-sm">
-            {s?.email && (
-              <li>
-                <span className="text-ink-muted">{tf('email')}</span>{' '}
-                <a href={`mailto:${s.email}`} className="font-semibold text-brand-700 hover:underline">
-                  {s.email}
-                </a>
-              </li>
-            )}
-            {s?.telepon && (
-              <li>
-                <span className="text-ink-muted">{tf('telepon')}</span>{' '}
-                <span className="font-semibold">{s.telepon}</span>
-              </li>
-            )}
-            {s?.whatsapp && (
-              <li>
-                <span className="text-ink-muted">WhatsApp:</span>{' '}
+    <div className="bg-[#F2F5F0] text-ink">
+      <section
+        data-public-hero
+        aria-labelledby="kontak-title"
+        className="relative isolate flex min-h-[440px] flex-col justify-end overflow-hidden bg-[#06281D] text-white md:min-h-[480px]"
+      >
+        <Image
+          src={fotoHero}
+          alt={t('heroImageAlt')}
+          fill
+          preload
+          sizes="100vw"
+          className="absolute inset-0 -z-20 object-cover"
+        />
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-black via-black/55 to-black/30" aria-hidden />
+        <div className="container mx-auto pb-14 pt-24 md:pb-20">
+          <nav aria-label={t('breadcrumb')} className="text-xs text-white/80">
+            <Link href="/" className="rounded-lg hover:underline">{tc('beranda')}</Link>
+            <span aria-hidden> / </span>
+            <span>{t('breadcrumb')}</span>
+          </nav>
+          <p className="mt-5 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">
+            <span aria-hidden className="h-0.5 w-6 bg-[#D4AF37]" />
+            {t('eyebrow')}
+          </p>
+          <h1 id="kontak-title" className="mt-4 font-display text-4xl font-extrabold leading-tight sm:text-5xl">
+            {t('title')}
+          </h1>
+          <p className="mt-3 max-w-xl text-base text-white/85 md:text-lg">{t('desc')}</p>
+        </div>
+      </section>
+
+      <section className="container mx-auto py-14 md:py-20">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+          <article className="rounded-lg bg-white p-6 shadow-sm md:p-8">
+            <h2 className="font-display text-2xl font-bold text-ink md:text-3xl">{t('sekretariatTitle')}</h2>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-muted">{t('sekretariatDesc')}</p>
+            <div className="relative mt-6 aspect-[16/9] overflow-hidden rounded-lg bg-[#E3ECE3]">
+              <Image src={fotoKampus} alt={t('heroImageAlt')} fill sizes="(max-width: 1024px) 100vw, 60vw" className="object-cover" />
+            </div>
+            <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="font-semibold text-ink">{t('kampusLabel')}</p>
+                {s?.alamat && <p className="mt-1 max-w-md text-sm text-ink-muted">{s.alamat}</p>}
+              </div>
+              {s?.alamat && (
                 <a
-                  href={`https://wa.me/${s.whatsapp.replace(/\D/g, '').replace(/^0/, '62')}`}
+                  href={mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-semibold text-brand-700 hover:underline"
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[#063F2A] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#06281D] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#D4AF37] motion-reduce:transition-none"
                 >
-                  {s.whatsapp}
+                  {t('bukaMaps')} <span aria-hidden>→</span>
                 </a>
-              </li>
+              )}
+            </div>
+          </article>
+
+          <aside className="rounded-lg bg-[#063F2A] p-6 text-white md:p-8">
+            <h2 className="font-display text-2xl font-bold md:text-3xl">{t('kanalTitle')}</h2>
+            <p className="mt-3 text-sm leading-relaxed text-white/80">{t('kanalDesc')}</p>
+            <dl className="mt-6 divide-y divide-white/15">
+              {s?.email && (
+                <div className="pb-5">
+                  <dt className="text-xs text-white/70">{t('emailLabel')}</dt>
+                  <dd className="mt-1">
+                    <a href={`mailto:${s.email}`} className="font-semibold text-[#D4AF37] hover:underline">
+                      {s.email}
+                    </a>
+                  </dd>
+                </div>
+              )}
+              {s?.telepon && (
+                <div className="py-5">
+                  <dt className="text-xs text-white/70">{t('teleponLabel')}</dt>
+                  <dd className="mt-1">
+                    <a href={`tel:${s.telepon.replace(/[^\d+]/g, '')}`} className="font-semibold text-white hover:underline">
+                      {s.telepon}
+                    </a>
+                  </dd>
+                </div>
+              )}
+            </dl>
+            {s?.whatsapp && (
+              <a
+                href={`https://wa.me/${s.whatsapp.replace(/\D/g, '').replace(/^0/, '62')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[#D4AF37] px-5 py-3 text-sm font-semibold text-[#1D2114] transition-colors hover:bg-[#C4A030] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white motion-reduce:transition-none"
+              >
+                {t('whatsappCta')} <span aria-hidden>→</span>
+              </a>
             )}
             {s?.sosmed && s.sosmed.length > 0 && (
-              <li className="pt-2">
-                <span className="text-ink-muted">Sosial Media:</span>
-                <div className="mt-3 flex flex-wrap gap-3">
-                  {s.sosmed.map((m: { nama: string; url: string }, i: number) => (
+              <div className="mt-6 border-t border-white/15 pt-5">
+                <p className="text-xs text-white/70">{t('sosmedLabel')}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {s.sosmed.map((m, i) => (
                     <a
                       key={i}
                       href={m.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label={m.nama}
-                      title={m.nama}
-                      className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-brand-100 bg-white text-brand-700 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-200 hover:bg-brand hover:text-white"
+                      className="inline-flex min-h-10 items-center rounded-lg border border-white/40 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]"
                     >
-                      <i className={`${SosmedIcon({ nama: m.nama })} text-lg`} aria-hidden="true" />
+                      {m.nama}
                     </a>
                   ))}
                 </div>
-              </li>
+              </div>
             )}
-          </ul>
-        </Card>
-      </div>
+          </aside>
+        </div>
+      </section>
+
+      {faqItems.length > 0 && (
+        <section className="bg-[#E3ECE3] py-14 md:py-20" aria-labelledby="faq-kontak-heading">
+          <div className="container mx-auto grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+            <div>
+              <h2 id="faq-kontak-heading" className="font-display text-3xl font-extrabold leading-tight text-ink md:text-4xl">
+                {t('faqTitle')}
+              </h2>
+              <p className="mt-4 max-w-md text-sm leading-relaxed text-ink-muted">{t('faqDesc')}</p>
+              <Link href="/faq" className="mt-5 inline-flex items-center gap-2 rounded-lg font-semibold text-[#063F2A] hover:underline">
+                {t('faqLink')} <span aria-hidden>→</span>
+              </Link>
+            </div>
+            <FAQAccordion items={faqItems} tampilkanTab={false} />
+          </div>
+        </section>
+      )}
 
       <JsonLd
         data={[
           breadcrumbJsonLd([
-            { name: 'Beranda', path: '/' },
-            { name: t('title'), path: '/kontak' },
+            { name: tc('beranda'), path: '/' },
+            { name: t('breadcrumb'), path: '/kontak' },
           ]),
         ]}
       />

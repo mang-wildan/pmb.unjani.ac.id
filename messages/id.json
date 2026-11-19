@@ -241,9 +241,24 @@
   "kontakPage": {
     "metaTitle": "Kontak",
     "metaDesc": "Hubungi panitia PMB UNJANI di Kantor Admisi, Gedung Rektorat Lantai 1, Cimahi, lewat WhatsApp, email, atau media sosial resmi.",
+    "breadcrumb": "Kontak",
     "eyebrow": "Butuh Bantuan?",
     "title": "Hubungi Kami",
-    "desc": "Tim panitia PMB UNJANI siap membantu proses pendaftaranmu."
+    "desc": "Tim panitia PMB UNJANI siap membantu proses pendaftaranmu.",
+    "heroImageAlt": "Kampus Cimahi Universitas Jenderal Achmad Yani",
+    "sekretariatTitle": "Sekretariat PMB",
+    "sekretariatDesc": "Kantor Admisi, Gedung Rektorat Lantai 1. Datang langsung untuk konsultasi pendaftaran dan bantuan dokumen.",
+    "kampusLabel": "Kampus Cimahi",
+    "bukaMaps": "Buka di Maps",
+    "kanalTitle": "Kanal Resmi",
+    "kanalDesc": "Pilih kanal yang paling nyaman. Panitia membalas pada jam kerja.",
+    "emailLabel": "Email",
+    "teleponLabel": "Telepon",
+    "whatsappCta": "Chat via WhatsApp",
+    "sosmedLabel": "Media sosial",
+    "faqTitle": "Mungkin jawabannya sudah ada",
+    "faqDesc": "Cek pertanyaan yang paling sering ditanyakan sebelum menghubungi panitia.",
+    "faqLink": "Lihat semua pertanyaan"
   },
   "faq": {
     "empty": "Belum ada FAQ untuk kategori ini.",
