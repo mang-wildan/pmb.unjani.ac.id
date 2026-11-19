@@ -245,7 +245,7 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
                   type="button"
                   onClick={resetAll}
                   className="inline-flex items-center gap-1.5 rounded-lg border border-brand-200 bg-white px-3 py-1.5 text-xs font-semibold text-brand-700 hover:bg-brand-50 transition-colors duration-200 motion-safe:animate-fade-in cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand/30"
-                  aria-label="Reset semua pilihan"
+                  aria-label={t('resetPilihan')}
                 >
                   <RefreshIcon className="w-3.5 h-3.5" />
                   Reset
@@ -256,11 +256,11 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
             <div className="space-y-4">
               {/* Program Studi */}
               <div className="relative z-40 motion-safe:animate-fade-up">
-                <FieldWithIcon label="Program Studi" icon={<BookIcon />} stepNo={1}>
+                <FieldWithIcon label={t('programStudi')} icon={<BookIcon />} stepNo={1}>
                   <SearchableSelect
                     options={prodiOptions}
                     value={prodiId}
-                    placeholder="— Cari program studi —"
+                    placeholder={t('cariProdi')}
                     onChange={(v) => {
                       setProdiId(v);
                       setKelasId('');
@@ -275,7 +275,7 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
               {/* Kelas — hanya muncul jika ada record berkelas */}
               {prodiId && hasKelas && (
                 <div key={`kelas-${prodiId}`} className="motion-safe:animate-fade-up">
-                  <FieldWithIcon label="Kelas" icon={<CapIcon />} stepNo={2}>
+                  <FieldWithIcon label={t('kelas')} icon={<CapIcon />} stepNo={2}>
                     <SearchableSelect
                       searchable={false}
                       options={kelasOptions.map((k) => ({
@@ -283,7 +283,7 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
                         label: `${k.singkatan} — ${k.nama}`,
                       }))}
                       value={kelasId}
-                      placeholder="— Pilih Kelas —"
+                      placeholder={t('pilihKelas')}
                       onChange={(v) => {
                         setKelasId(v);
                         setJadwalId('');
@@ -298,7 +298,7 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
               {/* Jadwal */}
               {prodiId && kelasReady && hasJadwal && (
                 <div key={`jadwal-${prodiId}-${kelasId}`} className="motion-safe:animate-fade-up">
-                  <FieldWithIcon label="Gelombang / Jadwal" icon={<CalendarIcon />} stepNo={3}>
+                  <FieldWithIcon label={t('gelombang')} icon={<CalendarIcon />} stepNo={3}>
                     <SearchableSelect
                       searchable={false}
                       options={jadwalOptions.map((j) => ({
@@ -307,7 +307,7 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
                         sublabel: j.tahun,
                       }))}
                       value={jadwalId}
-                      placeholder="— Pilih Gelombang —"
+                      placeholder={t('pilihGelombang')}
                       onChange={(v) => {
                         setJadwalId(v);
                         setPersentase('');
@@ -322,8 +322,8 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
               {prodiId && showPersentase && (
                 <div key={`pct-${jadwalId}`} className="motion-safe:animate-fade-up">
                   <FieldWithIcon
-                    label="Cicilan Pembayaran"
-                    hint="Persentase yang dibayarkan sekarang"
+                    label={t('cicilan')}
+                    hint={t('cicilanHint')}
                     icon={<CardIcon />}
                     stepNo={4}
                   >
@@ -331,7 +331,7 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
                       searchable={false}
                       options={persentaseOpts.map((p) => ({ value: p, label: p }))}
                       value={persentase}
-                      placeholder="— Pilih Persentase —"
+                      placeholder={t('pilihPersentase')}
                       onChange={(v) => {
                         if (v) {
                           sendAnalyticsEvent(ANALYTICS_EVENTS.calculatorSubmit, {
@@ -609,6 +609,7 @@ function Stepper({
   min: number;
   onChange: (v: number) => void;
 }) {
+  const t = useTranslations('kalkulatorPage');
   const canDec = value > min;
   return (
     <div className="inline-flex items-center gap-2 rounded-lg bg-white border border-accent-200 p-1 shadow-sm">
@@ -616,7 +617,7 @@ function Stepper({
         type="button"
         onClick={() => canDec && onChange(value - 1)}
         disabled={!canDec}
-        aria-label="Kurangi jumlah unit"
+        aria-label={t('kurangiUnit')}
         className={`w-9 h-9 inline-flex items-center justify-center rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent/40 ${
           canDec
             ? 'text-ink hover:bg-accent-50 active:bg-accent-100 cursor-pointer'
@@ -634,7 +635,7 @@ function Stepper({
       <button
         type="button"
         onClick={() => onChange(value + 1)}
-        aria-label="Tambah jumlah unit"
+        aria-label={t('tambahUnit')}
         className="w-9 h-9 inline-flex items-center justify-center rounded-lg text-ink hover:bg-accent-50 active:bg-accent-100 transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/40"
       >
         <PlusIcon className="w-4 h-4" />

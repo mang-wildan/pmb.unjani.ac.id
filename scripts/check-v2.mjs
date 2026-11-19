@@ -10,6 +10,11 @@ const tasks = {
     const progress = kalkulator.slice(kalkulator.indexOf('function ProgressStepper'), kalkulator.indexOf('function EmptyState'));
     assert.doesNotMatch(progress, /text-ink-soft\/[456]0/, 'teks langkah aktif maupun tertunda harus kontras AA');
     assert.match(progress, /text-center text-\[10px\] text-ink-muted font-medium/, 'counter memakai ink-muted 5.72:1 di putih');
+    for (const key of ['programStudi', 'kelas', 'gelombang', 'cicilan', 'cicilanHint', 'cariProdi', 'pilihKelas', 'pilihGelombang', 'pilihPersentase', 'resetPilihan', 'kurangiUnit', 'tambahUnit']) {
+      assert.ok(kalkulator.includes(`t('${key}')`), `label kalkulator ${key} dari kamus`);
+      for (const locale of ['id', 'en']) assert.ok(JSON.parse(baca(`messages/${locale}.json`)).kalkulatorPage[key], `${locale}: ${key}`);
+    }
+    assert.doesNotMatch(kalkulator, /aria-label="(?:Reset semua pilihan|Kurangi jumlah unit|Tambah jumlah unit)"/, 'aria-label kalkulator terlokalisasi');
   },
   7: async () => {
     const login = baca('src/app/admin/login/page.tsx');

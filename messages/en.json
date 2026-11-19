@@ -196,7 +196,19 @@
     "hasilPerJalur": "Results per Admission Path",
     "jalurCount": "{n, plural, one {# path} other {# paths}}",
     "langkah": "Step {n} of {total}",
-    "semuaSelesai": "All steps completed ✓"
+    "semuaSelesai": "All steps completed ✓",
+    "programStudi": "Study Program",
+    "cariProdi": "— Search study program —",
+    "kelas": "Class",
+    "pilihKelas": "— Choose Class —",
+    "gelombang": "Intake / Schedule",
+    "pilihGelombang": "— Choose Intake —",
+    "cicilan": "Payment Installment",
+    "cicilanHint": "Percentage paid now",
+    "pilihPersentase": "— Choose Percentage —",
+    "resetPilihan": "Reset all selections",
+    "kurangiUnit": "Decrease unit count",
+    "tambahUnit": "Increase unit count"
   },
   "pengumumanPage": {
     "metaTitle": "Announcements",

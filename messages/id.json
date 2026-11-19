@@ -196,7 +196,19 @@
     "hasilPerJalur": "Hasil per Jalur Seleksi",
     "jalurCount": "{n} jalur",
     "langkah": "Langkah {n} dari {total}",
-    "semuaSelesai": "Semua langkah selesai ✓"
+    "semuaSelesai": "Semua langkah selesai ✓",
+    "programStudi": "Program Studi",
+    "cariProdi": "— Cari program studi —",
+    "kelas": "Kelas",
+    "pilihKelas": "— Pilih Kelas —",
+    "gelombang": "Gelombang / Jadwal",
+    "pilihGelombang": "— Pilih Gelombang —",
+    "cicilan": "Cicilan Pembayaran",
+    "cicilanHint": "Persentase yang dibayarkan sekarang",
+    "pilihPersentase": "— Pilih Persentase —",
+    "resetPilihan": "Reset semua pilihan",
+    "kurangiUnit": "Kurangi jumlah unit",
+    "tambahUnit": "Tambah jumlah unit"
   },
   "pengumumanPage": {
     "metaTitle": "Pengumuman",
