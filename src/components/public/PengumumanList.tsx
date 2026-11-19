@@ -23,16 +23,16 @@ export default async function PengumumanList({
   }
 
   return (
-    <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-5">
       {items.map((p) => {
         const judul = locale === 'en' ? ((p as any).judul_en || p.judul) : p.judul;
         const ringkasan = locale === 'en' ? ((p as any).ringkasan_en || p.ringkasan) : p.ringkasan;
         return (
-          <Card key={String(p._id)} className="flex flex-col">
+          <Card key={String(p._id)} className="!rounded-lg !shadow-none flex flex-col border-b border-[#CBD9CD]">
             <div className="flex items-center gap-2">
               {p.pinned && <Badge tone="accent">{t('penting')}</Badge>}
               <time
-                className="text-xs text-ink-soft"
+                className="rounded-lg bg-[#D9EADC] px-3 py-2 font-display text-base font-bold text-brand"
                 dateTime={new Date(p.publishedAt as Date).toISOString()}
               >
                 {dayjs(p.publishedAt as Date)

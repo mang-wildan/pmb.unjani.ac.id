@@ -212,7 +212,7 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
   ];
 
   return (
-    <div className="relative bg-white">
+    <div className="relative rounded-lg bg-[#063F2A] [&_article]:!rounded-lg">
       <BackgroundDecor />
 
       <div className="relative z-10 grid gap-6 lg:gap-8 lg:grid-cols-12 items-start">
@@ -222,11 +222,11 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
           <ProgressStepper statuses={stepStatuses} />
 
           {/* Form Card */}
-          <div className="rounded-3xl border border-brand-100 bg-white/90 backdrop-blur shadow-soft p-6 md:p-7">
+          <div className="rounded-lg border border-brand-100 bg-white/90 backdrop-blur shadow-soft p-6 md:p-7">
             {/* Card header: title + reset */}
             <div className="flex items-center justify-between gap-3 mb-5 pb-4 border-b border-brand-50">
               <div className="flex items-center gap-2.5">
-                <span className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-brand-100 to-brand-50 text-brand-700">
+                <span className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-gradient-to-br from-brand-100 to-brand-50 text-brand-700">
                   <SparkleIcon className="w-4 h-4" />
                 </span>
                 <div>
@@ -242,7 +242,7 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
                 <button
                   type="button"
                   onClick={resetAll}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-brand-200 bg-white px-3 py-1.5 text-xs font-semibold text-brand-700 hover:bg-brand-50 transition-colors duration-200 motion-safe:animate-fade-in cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand/30"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-brand-200 bg-white px-3 py-1.5 text-xs font-semibold text-brand-700 hover:bg-brand-50 transition-colors duration-200 motion-safe:animate-fade-in cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand/30"
                   aria-label="Reset semua pilihan"
                 >
                   <RefreshIcon className="w-3.5 h-3.5" />
@@ -363,9 +363,9 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
                   <h3 className="mt-1 font-display text-2xl font-bold text-ink leading-tight">
                     Hasil per Jalur Seleksi
                   </h3>
-                  <span className="mt-2 inline-block w-12 h-1 rounded-full bg-gradient-to-r from-brand to-accent" />
+                  <span className="mt-2 inline-block w-12 h-1 rounded-lg bg-gradient-to-r from-brand to-accent" />
                 </div>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 border border-brand-100 px-3 py-1.5 text-xs font-semibold text-brand-700">
+                <span className="inline-flex items-center gap-1.5 rounded-lg bg-brand-50 border border-brand-100 px-3 py-1.5 text-xs font-semibold text-brand-700">
                   <SparkleIcon className="w-3.5 h-3.5" />
                   {jadwalFiltered.length} jalur
                 </span>
@@ -390,7 +390,7 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
                           <Badge tone="brand" className="self-start">
                             {record.jalur_nama}
                           </Badge>
-                          <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-brand-50 text-brand-700">
+                          <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-brand-50 text-brand-700">
                             <TagIcon className="w-4 h-4" />
                           </span>
                         </div>
@@ -399,7 +399,7 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
                         {prodiMap[record.prodi_id] && (() => {
                           const p = prodiMap[record.prodi_id];
                           return (
-                            <div className="mt-3 rounded-2xl bg-gradient-to-br from-brand-50/80 to-white border border-brand-100 px-3.5 py-3 space-y-2">
+                            <div className="mt-3 rounded-lg bg-gradient-to-br from-brand-50/80 to-white border border-brand-100 px-3.5 py-3 space-y-2">
                               {p.fakultas_nama && (
                                 <p className="text-[10px] font-bold uppercase tracking-widest text-ink-soft flex items-center gap-1.5">
                                   <UniversityIcon className="w-3 h-3 flex-none" />
@@ -408,7 +408,7 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
                               )}
                               <div className="flex items-start justify-between gap-2">
                                 <p className="text-sm font-bold text-ink leading-snug">{p.nama}</p>
-                                <span className="inline-flex flex-none items-center rounded-full bg-brand px-2.5 py-0.5 text-[10px] font-bold text-white">
+                                <span className="inline-flex flex-none items-center rounded-lg bg-brand px-2.5 py-0.5 text-[10px] font-bold text-white">
                                   {p.jenjang}
                                 </span>
                               </div>
@@ -427,7 +427,7 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
                                     href={`/api/program-studi/${p.id}/akreditasi`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-1 rounded-full bg-white border border-brand-200 px-2.5 py-1 text-[10px] font-semibold text-brand-700 hover:bg-brand-50 transition-colors"
+                                    className="inline-flex items-center gap-1 rounded-lg bg-white border border-brand-200 px-2.5 py-1 text-[10px] font-semibold text-brand-700 hover:bg-brand-50 transition-colors"
                                   >
                                     <DownloadIcon className="w-3 h-3" />
                                     SK PDF
@@ -449,7 +449,7 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
                           <Row label="Persentase" value={persentase} muted />
 
                           {/* Biaya Dibayar — highlight panel */}
-                          <div className="mt-3 rounded-2xl bg-gradient-to-br from-brand-50 to-brand-50/40 border border-brand-100 px-3.5 py-2.5">
+                          <div className="mt-3 rounded-lg bg-gradient-to-br from-brand-50 to-brand-50/40 border border-brand-100 px-3.5 py-2.5">
                             <div className="flex justify-between items-center">
                               <span className="text-xs font-semibold uppercase tracking-wide text-brand-700">
                                 Biaya Dibayar
@@ -474,7 +474,7 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
 
                           {/* Biaya tambahan — stepper panel */}
                           {hasTambahan && (
-                            <div className="rounded-2xl bg-accent-50/40 border border-accent-100 px-3.5 py-3">
+                            <div className="rounded-lg bg-accent-50/40 border border-accent-100 px-3.5 py-3">
                               <div className="flex items-center justify-between mb-2">
                                 <span className="text-xs font-semibold uppercase tracking-wide text-accent-700">
                                   SPT
@@ -549,7 +549,7 @@ function FieldWithIcon({
           {icon}
         </span>
         <span className="text-sm font-semibold text-ink">{label}</span>
-        <span className="ml-auto inline-flex items-center justify-center w-5 h-5 rounded-full bg-brand-50 text-[10px] font-bold text-brand-700">
+        <span className="ml-auto inline-flex items-center justify-center w-5 h-5 rounded-lg bg-brand-50 text-[10px] font-bold text-brand-700">
           {stepNo}
         </span>
       </span>
@@ -565,10 +565,10 @@ function ResultPlaceholder({ statuses }: { statuses: StepStatus[] }) {
   const nextLabel = activeIdx >= 0 ? labels[activeIdx] : 'kriteria';
 
   return (
-    <div className="motion-safe:animate-fade-in rounded-3xl border-2 border-dashed border-brand-100 bg-white/60 backdrop-blur p-8 md:p-10 text-center min-h-[420px] flex flex-col items-center justify-center">
+    <div className="motion-safe:animate-fade-in rounded-lg border-2 border-dashed border-brand-100 bg-white/60 backdrop-blur p-8 md:p-10 text-center min-h-[420px] flex flex-col items-center justify-center">
       <div className="relative mb-5">
-        <div className="absolute inset-0 rounded-full bg-brand-100/60 blur-2xl motion-safe:animate-pulse" />
-        <div className="relative inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-brand-50 to-white border border-brand-100 text-brand-700 shadow-sm motion-safe:animate-float">
+        <div className="absolute inset-0 rounded-lg bg-brand-100/60 blur-2xl motion-safe:animate-pulse" />
+        <div className="relative inline-flex items-center justify-center w-20 h-20 rounded-lg bg-gradient-to-br from-brand-50 to-white border border-brand-100 text-brand-700 shadow-sm motion-safe:animate-float">
           <CalculatorIcon className="w-10 h-10" />
         </div>
       </div>
@@ -584,7 +584,7 @@ function ResultPlaceholder({ statuses }: { statuses: StepStatus[] }) {
         {statuses.map((s, i) => (
           <span
             key={i}
-            className={`h-1.5 rounded-full transition-colors duration-300 ${
+            className={`h-1.5 rounded-lg transition-colors duration-300 ${
               s === 'completed' || s === 'skipped'
                 ? 'bg-brand'
                 : s === 'active'
@@ -609,13 +609,13 @@ function Stepper({
 }) {
   const canDec = value > min;
   return (
-    <div className="inline-flex items-center gap-2 rounded-full bg-white border border-accent-200 p-1 shadow-sm">
+    <div className="inline-flex items-center gap-2 rounded-lg bg-white border border-accent-200 p-1 shadow-sm">
       <button
         type="button"
         onClick={() => canDec && onChange(value - 1)}
         disabled={!canDec}
         aria-label="Kurangi jumlah unit"
-        className={`w-9 h-9 inline-flex items-center justify-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent/40 ${
+        className={`w-9 h-9 inline-flex items-center justify-center rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent/40 ${
           canDec
             ? 'text-ink hover:bg-accent-50 active:bg-accent-100 cursor-pointer'
             : 'text-ink-soft/40 cursor-not-allowed'
@@ -633,7 +633,7 @@ function Stepper({
         type="button"
         onClick={() => onChange(value + 1)}
         aria-label="Tambah jumlah unit"
-        className="w-9 h-9 inline-flex items-center justify-center rounded-full text-ink hover:bg-accent-50 active:bg-accent-100 transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/40"
+        className="w-9 h-9 inline-flex items-center justify-center rounded-lg text-ink hover:bg-accent-50 active:bg-accent-100 transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/40"
       >
         <PlusIcon className="w-4 h-4" />
       </button>
@@ -657,7 +657,7 @@ function ProgressStepper({ statuses }: { statuses: StepStatus[] }) {
   );
 
   return (
-    <div className="rounded-2xl bg-gradient-to-br from-brand-50/70 via-white to-accent-50/30 border border-brand-100/70 px-4 pt-4 pb-3 shadow-sm motion-safe:animate-fade-in sm:px-5">
+    <div className="rounded-lg bg-gradient-to-br from-brand-50/70 via-white to-accent-50/30 border border-brand-100/70 px-4 pt-4 pb-3 shadow-sm motion-safe:animate-fade-in sm:px-5">
       {/* Wrapper: connectors behind, ol in front */}
       <div className="relative">
         {/* Connector layer — absolute siblings of ol, guaranteed behind z-10 ol */}
@@ -715,7 +715,7 @@ function ProgressStepper({ statuses }: { statuses: StepStatus[] }) {
 
 function StepCircle({ status, number, icon, showIcon = false }: { status: StepStatus; number: number; icon?: ReactNode; showIcon?: boolean }) {
   const base =
-    'inline-flex items-center justify-center w-11 h-11 rounded-full text-sm font-bold transition-all duration-300';
+    'inline-flex items-center justify-center w-11 h-11 rounded-lg text-sm font-bold transition-all duration-300';
   if (status === 'completed') {
     return (
       <span className={`${base} bg-brand text-white shadow-md shadow-brand/30`}>
@@ -726,7 +726,7 @@ function StepCircle({ status, number, icon, showIcon = false }: { status: StepSt
   if (status === 'active') {
     return (
       <span className="relative inline-flex">
-        <span className="absolute inset-0 rounded-full bg-brand/20 motion-safe:animate-ping" />
+        <span className="absolute inset-0 rounded-lg bg-brand/20 motion-safe:animate-ping" />
         <span
           className={`relative ${base} bg-white text-brand-700 border-2 border-brand ring-4 ring-brand-100 shadow-md shadow-brand/20`}
         >
@@ -738,7 +738,7 @@ function StepCircle({ status, number, icon, showIcon = false }: { status: StepSt
   if (status === 'skipped') {
     return (
       <span className={`${base} bg-gray-100 text-ink-soft/50 border border-gray-200`}>
-        <span className="block w-4 h-0.5 bg-ink-soft/40 rounded-full" />
+        <span className="block w-4 h-0.5 bg-ink-soft/40 rounded-lg" />
       </span>
     );
   }
@@ -751,12 +751,12 @@ function StepCircle({ status, number, icon, showIcon = false }: { status: StepSt
 
 function EmptyState({ kosong }: { kosong: KalkulatorKosong }) {
   return (
-    <div className="motion-safe:animate-fade-in rounded-3xl border border-brand-100 bg-white shadow-soft p-8 sm:p-10 text-center">
-      <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand-50 text-brand-700 mb-4 motion-safe:animate-float">
+    <div className="rounded-lg border border-white/20 bg-[#063F2A] p-6 text-left text-white sm:p-10">
+      <div className="inline-flex items-center justify-center w-16 h-16 rounded-lg bg-brand-50 text-brand-700 mb-4 motion-safe:animate-float">
         <CalculatorIcon className="w-8 h-8" />
       </div>
-      <h3 className="font-display text-lg font-bold text-ink mb-1">{kosong.judul}</h3>
-      <p className="text-sm text-ink-muted max-w-xl mx-auto">{kosong.pesan}</p>
+      <h2 id="kalkulator-heading" className="mb-3 font-display text-3xl font-bold text-white">{kosong.judul}</h2>
+      <p className="max-w-2xl text-sm leading-relaxed text-white/85">{kosong.pesan}</p>
       <div className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3">
         {kosong.urlWhatsApp && (
           <TrackedAnalyticsLink
@@ -764,7 +764,7 @@ function EmptyState({ kosong }: { kosong: KalkulatorKosong }) {
             eventName={ANALYTICS_EVENTS.whatsappClick}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#25D366] px-5 py-2.5 text-sm font-semibold text-white shadow-soft transition-colors hover:bg-[#1ea952] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#25D366]/25"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-[#1D2114] hover:bg-accent-600 focus-visible:ring-4 focus-visible:ring-white"
           >
             <i className="fa-brands fa-whatsapp text-lg leading-none" aria-hidden="true" />
             {kosong.labelWhatsApp}
@@ -772,7 +772,7 @@ function EmptyState({ kosong }: { kosong: KalkulatorKosong }) {
         )}
         <Link
           href="/kontak"
-          className="inline-flex items-center justify-center rounded-xl border border-brand-200 px-5 py-2.5 text-sm font-semibold text-brand-700 transition-colors hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-200"
+          className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/60 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/10 focus-visible:ring-4 focus-visible:ring-white"
         >
           {kosong.labelKontak}
         </Link>
@@ -784,9 +784,9 @@ function EmptyState({ kosong }: { kosong: KalkulatorKosong }) {
 function BackgroundDecor() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden -z-10">
-      <div className="absolute -top-24 -left-16 w-72 h-72 rounded-full bg-brand-100/40 blur-3xl motion-safe:animate-blob-drift" />
+      <div className="absolute -top-24 -left-16 w-72 h-72 rounded-lg bg-brand-100/40 blur-3xl motion-safe:animate-blob-drift" />
       <div
-        className="absolute -bottom-24 -right-16 w-80 h-80 rounded-full bg-accent-100/30 blur-3xl motion-safe:animate-blob-drift"
+        className="absolute -bottom-24 -right-16 w-80 h-80 rounded-lg bg-accent-100/30 blur-3xl motion-safe:animate-blob-drift"
         style={{ animationDelay: '4s' }}
       />
     </div>

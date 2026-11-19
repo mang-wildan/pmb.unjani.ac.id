@@ -127,15 +127,6 @@ function RouteIcon({ className }: { className?: string }) {
   );
 }
 
-function ClockIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} aria-hidden>
-      <circle cx="12" cy="12" r="8" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v5l3 2" />
-    </svg>
-  );
-}
-
 function InfoTile({
   icon,
   label,
@@ -148,7 +139,7 @@ function InfoTile({
   muted?: boolean;
 }) {
   return (
-    <div className={cn('rounded-2xl bg-white/80 p-4', muted ? 'border border-slate-200' : 'border border-brand-100')}>
+    <div className={cn('rounded-lg bg-white/80 p-4', muted ? 'border border-slate-200' : 'border border-brand-100')}>
       <div
         className={cn(
           'flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em]',
@@ -183,7 +174,7 @@ export default async function JadwalHighlights({
   }
 
   return (
-    <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+    <div className="grid gap-6">
       {activeItems.map((item, indeks) => {
         const jalurNames = getJalurNames(item.jalur);
         const state = getState(item.mulai, item.selesai, t);
@@ -196,10 +187,10 @@ export default async function JadwalHighlights({
           <Reveal key={String(item._id)} urutan={indeks}>
             <Card
               className={cn(
-                'relative h-full overflow-hidden p-0 hover:shadow-lg',
+                'relative h-full overflow-hidden rounded-lg !bg-white p-0',
                 isSoon
-                  ? 'border-slate-200 bg-[linear-gradient(145deg,rgba(226,232,240,0.7),rgba(255,255,255,0.98)_42%,rgba(241,245,249,0.92))] hover:border-slate-300'
-                  : 'border-brand-100 bg-[linear-gradient(145deg,rgba(14,165,233,0.10),rgba(255,255,255,0.98)_42%,rgba(249,115,22,0.10))] hover:border-brand-300',
+                  ? 'border-[#CBD9CD] bg-white'
+                  : 'border-[#CBD9CD] bg-white',
               )}
             >
               <div
@@ -222,7 +213,7 @@ export default async function JadwalHighlights({
                       {isSoon && <Badge tone="accent">Soon</Badge>}
                       <span
                         className={cn(
-                          'inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold',
+                          'inline-flex items-center rounded-lg px-3 py-1 text-xs font-semibold',
                           state.className,
                         )}
                       >
@@ -241,7 +232,7 @@ export default async function JadwalHighlights({
 
                   <div
                     className={cn(
-                      'shrink-0 rounded-2xl bg-white/90 px-4 py-3 text-center shadow-sm',
+                      'shrink-0 rounded-lg bg-white/90 px-4 py-3 text-center shadow-sm',
                       isSoon ? 'border border-slate-200' : 'border border-brand-100',
                     )}
                   >
@@ -296,10 +287,10 @@ export default async function JadwalHighlights({
                       aria-valuemax={100}
                       aria-valuenow={progres.persen}
                       aria-valuetext={th('jadwalProgres', { persen: progres.persen, hari: progres.hari })}
-                      className="mt-2 h-2 overflow-hidden rounded-full bg-brand-50"
+                      className="mt-2 h-2 overflow-hidden rounded-lg bg-brand-50"
                     >
                       <div
-                        className="bar-progres h-full rounded-full bg-gradient-to-r from-brand to-accent"
+                        className="bar-progres h-full rounded-lg bg-gradient-to-r from-brand to-accent"
                         style={{ '--progres': progres.persen / 100 } as CSSProperties}
                       />
                     </div>
@@ -323,7 +314,7 @@ export default async function JadwalHighlights({
                         <span
                           key={name}
                           className={cn(
-                            'inline-flex rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-ink-muted',
+                            'inline-flex rounded-lg bg-white/90 px-3 py-1 text-xs font-semibold text-ink-muted',
                             isSoon ? 'border border-slate-200' : 'border border-brand-100',
                           )}
                         >

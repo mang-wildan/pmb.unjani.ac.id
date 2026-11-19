@@ -43,7 +43,7 @@ export default async function DokumenList({
         <p className="text-sm text-ink-muted">{td('kosong')}</p>
         <Link
           href="/kontak"
-          className="mt-3 inline-flex min-h-11 items-center justify-center rounded-xl border border-brand-200 px-5 text-sm font-semibold text-brand-700 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/20"
+          className="mt-3 inline-flex min-h-11 items-center justify-center rounded-lg border border-brand-200 px-5 text-sm font-semibold text-brand-700 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/20"
         >
           {td('kosongKontak')}
         </Link>
@@ -53,7 +53,7 @@ export default async function DokumenList({
 
   const sekarang = Date.now();
   return (
-    <ul className="divide-y divide-brand-100">
+    <ul className="space-y-3" data-icon-type={iconType}>
       {items.map((d) => {
         const judul = locale === 'en' ? ((d as any).judul_en || d.judul) : d.judul;
         const diperbarui = (d as any).updatedAt as Date | string | undefined;
@@ -61,22 +61,16 @@ export default async function DokumenList({
         const tanggal = diperbarui ? dayjs(diperbarui).locale(locale === 'en' ? 'en' : 'id').format('D MMM YYYY') : '—';
         const id = String(d._id);
         return (
-          <li key={id} className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:gap-4">
+          <li key={id} className="flex flex-col gap-3 rounded-lg border border-[#CBD9CD] bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex min-w-0 flex-1 items-start gap-3">
-              <span className="flex h-11 w-11 flex-none items-center justify-center rounded-xl bg-brand-50 text-brand-700" aria-hidden="true">
-                {iconType === 'biaya' ? (
-                  <i className="fa-duotone fa-solid fa-file-invoice-dollar text-xl leading-none" />
-                ) : iconType === 'manual' ? (
-                  <i className="fa-sharp-duotone fa-solid fa-book text-xl leading-none" />
-                ) : (
-                  <i className="fa-solid fa-file-lines text-xl leading-none" />
-                )}
+              <span className="flex h-10 w-10 flex-none items-center justify-center rounded-lg bg-[#D9EADC] text-xs font-bold text-brand" aria-hidden="true">
+                PDF
               </span>
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="font-semibold leading-snug text-ink">{judul}</h3>
+                  <h3 className="font-semibold text-ink">{judul}</h3>
                   {baru && (
-                    <span className="inline-flex items-center rounded-full bg-accent-100 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide text-ink">
+                    <span className="inline-flex items-center rounded-lg bg-accent/20 px-2 py-0.5 text-[11px] font-bold text-ink">
                       {td('baru')}
                     </span>
                   )}
@@ -93,7 +87,7 @@ export default async function DokumenList({
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={td('lihatDokumen', { judul })}
-                className="inline-flex min-h-11 min-w-11 flex-1 items-center justify-center rounded-full bg-brand-700 px-5 text-sm font-semibold text-white hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/25 sm:flex-none"
+                className="inline-flex min-h-11 min-w-11 flex-1 items-center justify-center rounded-lg border border-brand px-5 text-sm font-semibold text-brand hover:bg-brand-50 sm:flex-none"
               >
                 {t('lihat')}
               </a>
@@ -102,7 +96,7 @@ export default async function DokumenList({
                 eventName={ANALYTICS_EVENTS.documentDownload}
                 eventParams={{ dokumen_id: id, dokumen_judul: judul }}
                 aria-label={td('unduhDokumen', { judul })}
-                className="inline-flex min-h-11 min-w-11 flex-1 items-center justify-center rounded-full border border-brand-200 px-5 text-sm font-semibold text-brand-700 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/25 sm:flex-none"
+                className="inline-flex min-h-11 min-w-11 flex-1 items-center justify-center rounded-lg bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-800 sm:flex-none"
               >
                 {t('unduh')}
               </TrackedAnalyticsLink>

@@ -29,7 +29,7 @@ export default async function ArtikelSection({
   const publicLocale = locale === 'en' ? 'en' : 'id';
 
   return (
-    <section className="container mx-auto py-16" aria-labelledby="artikel-heading">
+    <section id="artikel" className="scroll-mt-24" aria-labelledby="artikel-heading">
       <Reveal>
         <SectionHeading
           id="artikel-heading"
@@ -38,7 +38,7 @@ export default async function ArtikelSection({
           description={t('desc')}
         />
       </Reveal>
-      <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-8 grid gap-6 [&_article]:!rounded-lg [&_article>a]:sm:!grid [&_article>a]:sm:!grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] [&_article]:!shadow-none">
         {items.map((item, indeks) => (
           <Reveal key={String(item._id)} urutan={indeks}>
             <ArtikelCard

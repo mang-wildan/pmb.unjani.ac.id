@@ -8,9 +8,11 @@ export default async function JalurList({
   items,
   locale = 'id',
   tingkatJudul,
+  urlPendaftaran,
 }: {
   items: JalurSeleksiDoc[];
   locale?: string;
+  urlPendaftaran?: string;
   tingkatJudul?: 'h2' | 'h3';
 }) {
   const t = await getTranslations('jalurPage');
@@ -40,5 +42,5 @@ export default async function JalurList({
     };
   });
 
-  return <JalurAccordion items={localizedItems} tingkatJudul={tingkatJudul} />;
+  return <JalurAccordion items={localizedItems} tingkatJudul={tingkatJudul} urlPendaftaran={urlPendaftaran} />;
 }

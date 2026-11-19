@@ -233,7 +233,7 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
   }));
 
   return (
-    <>
+    <div className="bg-[#F2F5F0] text-ink">
       <Hero
         urlPendaftaran={urlDaftar}
         judul={heroData.judul}
@@ -250,152 +250,35 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
         }))}
       />
 
-      <section className="container mx-auto py-16" aria-labelledby="dok-heading">
-        <Reveal>
-          <SectionHeading
-            eyebrow={t('dokumenEyebrow')}
-            title={t('dokumenTitle')}
-            description={t('dokumenDesc')}
-          />
-        </Reveal>
-        <div className="mt-10 grid gap-6 lg:grid-cols-2">
-          {/* ── Panel: Biaya Pendidikan (teks putih di atas brand-700/800, kontras AA) ── */}
-          <Reveal urutan={1}>
-            <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-brand-100 bg-white shadow-soft">
-              <div className="bg-gradient-to-br from-brand-700 to-brand-800 px-6 py-6 text-white">
-                <div className="flex items-center gap-4">
-                  <span className="inline-flex h-14 w-14 flex-none items-center justify-center rounded-2xl bg-white/20" aria-hidden="true">
-                    <i className="fa-duotone fa-solid fa-file-invoice-dollar text-[1.75rem] leading-none" />
-                  </span>
-                  <div>
-                    <h3 className="font-display text-xl font-bold leading-snug">{t('dokumenBiaya')}</h3>
-                    <p className="mt-0.5 text-sm">{td('biayaSubjudul')}</p>
-                  </div>
-                </div>
-                <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-ink/30 px-3 py-1 text-xs font-semibold">
-                  <i className="fa-solid fa-check text-[0.65rem]" aria-hidden="true" />
-                  {td('biayaBadge')}
-                </span>
-              </div>
-              <div className="flex-1 p-5">
-                <DokumenList items={biayaDocs as any} locale={locale} iconType="biaya" />
-              </div>
-              <p className="border-t border-brand-100 px-5 py-3 text-sm text-ink-muted">
-                {td.rich('bantuKalkulator', {
-                  link: (teks) => (
-                    <a href="#kalkulator" className="font-semibold text-brand-700 underline underline-offset-2 hover:text-brand-800">
-                      {teks}
-                    </a>
-                  ),
-                })}
-              </p>
-            </div>
-          </Reveal>
-
-          {/* ── Panel: Buku Panduan (header kuning, teks ink gelap, kontras AA) ── */}
-          <Reveal urutan={2}>
-            <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-accent-100 bg-white shadow-soft">
-              <div className="bg-gradient-to-br from-accent to-accent-300 px-6 py-6 text-ink">
-                <div className="flex items-center gap-4">
-                  <span className="inline-flex h-14 w-14 flex-none items-center justify-center rounded-2xl bg-ink/10" aria-hidden="true">
-                    <i className="fa-sharp-duotone fa-solid fa-book text-[1.75rem] leading-none" />
-                  </span>
-                  <div>
-                    <h3 id="manual-book" className="scroll-mt-24 font-display text-xl font-bold leading-snug">
-                      {t('dokumenManual')}
-                    </h3>
-                    <p className="mt-0.5 text-sm">{td('manualSubjudul')}</p>
-                  </div>
-                </div>
-                <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-ink/10 px-3 py-1 text-xs font-semibold">
-                  <i className="fa-solid fa-check text-[0.65rem]" aria-hidden="true" />
-                  {td('manualBadge')}
-                </span>
-              </div>
-              <div className="flex-1 p-5">
-                <DokumenList items={manualDocs as any} locale={locale} iconType="manual" />
-              </div>
-              <p className="border-t border-accent-100 px-5 py-3 text-sm text-ink-muted">{td('bantuManual')}</p>
-            </div>
-          </Reveal>
+      <section id="manual-book" className="scroll-mt-24 py-16 md:py-24" aria-labelledby="dok-heading">
+        <div className="container mx-auto grid gap-10 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1.5fr)]">
+          <aside><SectionHeading id="dok-heading" eyebrow={t('dokumenEyebrow')} title={t('dokumenTitle')} description={t('dokumenDesc')} /></aside>
+          <div className="space-y-3">
+            <DokumenList items={[...biayaDocs, ...manualDocs] as any} locale={locale} />
+            <p className="pt-3 text-sm text-ink-muted">{td.rich('bantuKalkulator', { link: (teks) => <a href="#kalkulator" className="font-semibold text-brand underline">{teks}</a> })}</p>
+          </div>
         </div>
       </section>
 
-      <section id="jalur" className="bg-brand-50/40 py-16 scroll-mt-24" aria-labelledby="jalur-heading">
+      <section id="jalur-seleksi" className="scroll-mt-24 bg-[#E3ECE3] py-16 md:py-24" aria-labelledby="jalur-heading">
+        <span id="jalur" className="scroll-mt-24" />
         <div className="container mx-auto">
-          <Reveal>
-            <SectionHeading
-              eyebrow={t('jalurEyebrow')}
-              title={t('jalurTitle')}
-              description={t('jalurDesc')}
-            />
-          </Reveal>
-          {/* Baris jalur masuk bertahap di JalurAccordion (FR-36). */}
-          <div className="mt-10">
-            <JalurList items={jalur as any} locale={locale} />
-          </div>
-          <div className="mt-6">
-            <Link
-              href="/jalur-masuk"
-              className="inline-flex items-center gap-2 font-semibold text-brand-700 hover:text-brand-600"
-            >
-              {t('jalurLink')}
-            </Link>
-          </div>
+          <div className="mb-10 max-w-xl"><SectionHeading id="jalur-heading" eyebrow={t('jalurEyebrow')} title={t('jalurTitle')} description={t('jalurDesc')} /></div>
+          <JalurList items={jalur as any} locale={locale} urlPendaftaran={urlDaftar} />
         </div>
       </section>
 
-      <section id="jadwal" className="container mx-auto py-16" aria-labelledby="jadwal-heading">
-        <Reveal>
-          <SectionHeading
-            eyebrow={t('jadwalEyebrow')}
-            title={t('jadwalTitle')}
-            description={t('jadwalDesc')}
-          />
-        </Reveal>
-        {/* Kartu jadwal masuk bertahap di JadwalHighlights (FR-36). */}
-        <div className="mt-10">
+      <section id="jadwal" className="scroll-mt-24 py-16 md:py-24" aria-labelledby="jadwal-heading">
+        <div className="container mx-auto grid items-start gap-10 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1.5fr)]">
+          <aside><SectionHeading id="jadwal-heading" eyebrow={t('jadwalEyebrow')} title={t('jadwalTitle')} description={t('jadwalDesc')} /></aside>
           <JadwalHighlights items={jadwal as any} locale={locale} />
         </div>
-        <div className="mt-6">
-          <Link
-            href="/jadwal-pmb"
-            className="inline-flex items-center gap-2 font-semibold text-brand-700 hover:text-brand-600"
-          >
-            {t('jadwalLink')}
-          </Link>
-        </div>
       </section>
 
-      <section
-        id="kalkulator"
-        className="container mx-auto py-16 scroll-mt-24"
-        aria-labelledby="kalkulator-heading"
-      >
-        <Reveal>
-          <SectionHeading
-            eyebrow={t('kalkulatorEyebrow')}
-            title={t('kalkulatorTitle')}
-            description={t('kalkulatorDesc')}
-          />
-        </Reveal>
-        <Reveal delayMs={120} className="mt-10">
-          <KalkulatorForm
-            records={kalkulatorRecords}
-            prodiOptions={prodiOptions}
-            prodiMap={prodiMap}
-            kelasMap={kelasMap}
-            jadwalMap={jadwalMap}
-            kosong={kalkulatorKosong}
-          />
-        </Reveal>
-        <div className="mt-6">
-          <Link
-            href="/biaya-kuliah"
-            className="inline-flex items-center gap-2 font-semibold text-brand-700 hover:text-brand-600"
-          >
-            {t('biayaLink')}
-          </Link>
+      <section id="kalkulator" className="scroll-mt-24 bg-[#063F2A] py-16 md:py-20" aria-labelledby="kalkulator-heading">
+        <div className="container mx-auto">
+          {kalkulatorRecords.length > 0 && <div className="mb-10 max-w-2xl text-white [&_h2]:text-white [&_p]:text-white/80"><SectionHeading id="kalkulator-heading" eyebrow={t('kalkulatorEyebrow')} title={t('kalkulatorTitle')} description={t('kalkulatorDesc')} /></div>}
+          <KalkulatorForm records={kalkulatorRecords} prodiOptions={prodiOptions} prodiMap={prodiMap} kelasMap={kelasMap} jadwalMap={jadwalMap} kosong={kalkulatorKosong} />
         </div>
       </section>
 
@@ -412,30 +295,14 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
         />
       )}
 
-      {pengumuman.length > 0 && (
-        <section className="bg-brand-50/40 py-16" aria-labelledby="pengumuman-heading">
-          <div className="container mx-auto">
-            <SectionHeading
-              eyebrow={t('pengumumanEyebrow')}
-              title={t('pengumumanTitle')}
-              description={t('pengumumanDesc')}
-            />
-            <div className="mt-10">
-              <PengumumanList items={pengumuman as any} locale={locale} />
-            </div>
-            <div className="mt-6">
-              <Link
-                href="/pengumuman"
-                className="inline-flex items-center gap-2 font-semibold text-brand-700 hover:text-brand-600"
-              >
-                {t('pengumumanLink')}
-              </Link>
-            </div>
-          </div>
+      <div className="container mx-auto grid items-start gap-12 py-16 md:py-24 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+        <section id="pengumuman" className="scroll-mt-24" aria-labelledby="pengumuman-heading">
+          <SectionHeading id="pengumuman-heading" eyebrow={t('pengumumanEyebrow')} title={t('pengumumanTitle')} />
+          <div className="mt-8"><PengumumanList items={pengumuman as any} locale={locale} /></div>
+          <Link href="/pengumuman" className="mt-6 inline-flex min-h-11 items-center font-semibold text-brand">{t('pengumumanLink')}</Link>
         </section>
-      )}
-
-      <ArtikelSection items={artikel as any} locale={locale} />
+        <ArtikelSection items={artikel as any} locale={locale} />
+      </div>
 
       {instagramPosts.length > 0 && (
         <section className="container mx-auto py-16" aria-labelledby="instagram-heading">
@@ -463,10 +330,11 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
         </section>
       )}
 
-      <section className="bg-brand-50/40 py-16" aria-labelledby="faq-heading">
-        <div className="container mx-auto">
-          <Reveal>
+      <section id="faq" className="scroll-mt-24 bg-[#E3ECE3] py-16 md:py-24" aria-labelledby="faq-heading">
+        <div className="container mx-auto max-w-[880px]">
+          <Reveal className="text-center">
             <SectionHeading
+              id="faq-heading"
               eyebrow={t('faqEyebrow')}
               title={t('faqTitle')}
               description={t('faqDesc')}
@@ -486,39 +354,14 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
         </div>
       </section>
 
-      <section className="container mx-auto py-16">
-        {/* CTA penutup: fade biasa tanpa geser/zoom (FR-36). */}
-        <Reveal efek="fade">
-          <div
-            className="rounded-3xl p-10 md:p-14 text-white text-center relative overflow-hidden"
-            style={{ backgroundImage: "url('/pmb%20unjani.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }}
-          >
-            <div className="absolute inset-0 bg-brand/70" aria-hidden />
-            <div className="absolute inset-0 bg-grid opacity-10" aria-hidden />
-            <div className="relative">
-              <h2 className="font-display text-3xl md:text-4xl font-bold">{t('ctaTitle')}</h2>
-              <p className="mt-3 text-white/90 max-w-2xl mx-auto">{t('ctaDesc')}</p>
-              <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
-                <a
-                  href={urlDaftar}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-7 py-3.5 text-base font-semibold text-ink hover:bg-accent-600 shadow-soft"
-                >
-                  {t('ctaDaftar')}
-                </a>
-                <a
-                  href="https://wa.me/628112497890?text=Yth%20Ibu%20Yani%2C%20mohon%20bantuan%20informasi%20terkait%20Pendaftaran%20di%20Universitas%20Jenderal%20Achmad%20Yani.%20Nama%20Saya%20%3A%20"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-white px-7 py-3.5 text-base font-semibold text-white hover:bg-white hover:text-brand-700 transition"
-                >
-                  {t('ctaKontak')}
-                </a>
-              </div>
-            </div>
+      <section id="cta" className="container mx-auto scroll-mt-24 py-16 md:py-24">
+        <div className="grid items-center gap-8 rounded-lg bg-[#D4AF37] p-7 text-[#1D2114] md:grid-cols-[1fr_auto] md:p-14">
+          <div><h2 className="max-w-2xl font-display text-3xl font-bold md:text-4xl">{t('ctaTitle')}</h2><p className="mt-4 max-w-2xl">{t('ctaDesc')}</p></div>
+          <div className="flex flex-col gap-3">
+            <a href={urlDaftar} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center justify-center rounded-lg bg-[#1D2114] px-6 py-3 font-semibold text-white focus-visible:ring-4 focus-visible:ring-brand">{t('ctaDaftar')} <span aria-hidden className="ml-3">→</span></a>
+            <Link href="/kontak" className="inline-flex min-h-12 items-center justify-center rounded-lg border border-[#1D2114] px-6 py-3 font-semibold focus-visible:ring-4 focus-visible:ring-brand">{t('ctaKontak')}</Link>
           </div>
-        </Reveal>
+        </div>
       </section>
 
       <LandingPopup
@@ -533,6 +376,6 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
       />
 
       <JsonLd data={breadcrumbJsonLd([{ name: 'Beranda', path: '/' }])} />
-    </>
+    </div>
   );
 }

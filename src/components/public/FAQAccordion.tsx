@@ -50,7 +50,7 @@ export default function FAQAccordion({
   return (
     <div>
       {tampilkanTab && (
-      <div className="flex gap-2 flex-wrap mb-8">
+      <div className="flex justify-center gap-2 flex-wrap mb-8">
         {categories.map((cat) => {
           const hasItems = items.some((i) => i.kategori === cat);
           if (!hasItems) return null;
@@ -59,8 +59,9 @@ export default function FAQAccordion({
               key={cat}
               type="button"
               onClick={() => handleCategoryChange(cat)}
+              aria-pressed={activeCategory === cat}
               className={cn(
-                'px-5 py-2 rounded-full text-sm font-semibold transition',
+                'px-5 py-2 rounded-lg text-sm font-semibold transition',
                 activeCategory === cat
                   ? 'bg-brand text-white shadow-soft'
                   : 'text-ink-muted hover:bg-brand-50 hover:text-brand-700',
@@ -76,7 +77,7 @@ export default function FAQAccordion({
       {filtered.length === 0 ? (
         <p className="text-ink-muted text-sm">{t('empty')}</p>
       ) : (
-        <div className="rounded-3xl border border-brand-100 bg-white shadow-soft overflow-hidden">
+        <div className="rounded-lg border border-brand-100 bg-white shadow-soft overflow-hidden">
           {filtered.map((item, i) => {
             const isOpen = openIndex === i;
             const panelId = `faq-panel-${item._id}`;

@@ -158,7 +158,7 @@ export default function ProgramStudiExplorer({ fakultas, programStudi, urlWhatsA
   return (
     <section
       id="program-studi"
-      className="bg-gradient-to-b from-brand-50/45 via-white to-brand-50/30 py-16 scroll-mt-24"
+      className="bg-[#E3ECE3] py-16 md:py-24 scroll-mt-24"
       aria-labelledby="fakultas-heading"
     >
       <noscript dangerouslySetInnerHTML={{ __html: `<style>${GAYA_NOSCRIPT}</style>` }} />
@@ -181,11 +181,11 @@ export default function ProgramStudiExplorer({ fakultas, programStudi, urlWhatsA
             placeholder={t('cariPlaceholder')}
             autoComplete="off"
             aria-controls={idPanel}
-            className="h-12 w-full rounded-2xl border border-brand-100 bg-white pl-11 pr-4 text-base text-ink shadow-sm placeholder:text-ink-soft focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/20"
+            className="h-12 w-full rounded-lg border border-brand-100 bg-white pl-11 pr-4 text-base text-ink shadow-sm placeholder:text-ink-soft focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/20"
           />
         </div>
 
-        <div className="mt-4 md:grid md:grid-cols-[280px_1fr] md:items-start md:gap-6 lg:grid-cols-[300px_1fr]">
+        <div className="mt-6 space-y-6">
           {/* Rail (>=md) / petak dua kolom (<md). */}
           <nav
             ref={railRef}
@@ -194,15 +194,15 @@ export default function ProgramStudiExplorer({ fakultas, programStudi, urlWhatsA
             aria-label={t('navFakultas')}
             // Di layar pendek rail sticky bisa lebih tinggi dari viewport: batasi tinggi dan beri gulir dalam
             // hanya pada rail (navigasi), bukan pada panel isi.
-            className="grid grid-cols-2 gap-2 max-md:data-[tingkat=prodi]:hidden md:sticky md:top-24 md:max-h-[calc(100dvh-7rem)] md:grid-cols-1 md:gap-1.5 md:overflow-y-auto md:overscroll-contain md:pr-1"
+            className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
           >
             <TombolFakultas
               aktif={modeSemua}
               onClick={() => pilihFakultas(SEMUA)}
               warna={undefined}
               idPanel={idPanel}
-              singkatan={t('semuaProdi')}
-              nama={t('pilihFakultas')}
+              singkatan={String(prodiValid.length)}
+              nama={t('ringkasan', { prodi: prodiValid.length, fakultas: fakultas.length })}
               jumlah={prodiValid.length}
               jenjang={semuaJenjang}
               semua
@@ -228,7 +228,7 @@ export default function ProgramStudiExplorer({ fakultas, programStudi, urlWhatsA
             ref={flip.ref}
             data-panel=""
             data-tingkat={tingkat}
-            className="mt-4 rounded-3xl border border-brand-100 bg-white p-4 shadow-soft max-md:hidden max-md:data-[tingkat=prodi]:block md:mt-0 md:p-5"
+            className="mt-4 rounded-lg border border-brand-100 bg-white p-4 shadow-soft max-md:hidden max-md:data-[tingkat=prodi]:block md:mt-0 md:p-5"
           >
             <div className="flex flex-wrap items-start justify-between gap-3" data-hanya-js="">
               <div className="min-w-0">
@@ -264,7 +264,7 @@ export default function ProgramStudiExplorer({ fakultas, programStudi, urlWhatsA
             </div>
 
             {jumlah === 0 && (
-              <div className="mt-4 rounded-2xl border border-dashed border-brand-200 px-6 py-8 text-center" data-hanya-js="">
+              <div className="mt-4 rounded-lg border border-dashed border-brand-200 px-6 py-8 text-center" data-hanya-js="">
                 <h4 className="font-display text-base font-bold text-ink">{t('kosongJudul')}</h4>
                 <p className="mx-auto mt-1 max-w-md text-sm text-ink-muted">{t('kosongPesan')}</p>
                 <div className="mt-4 flex flex-col items-stretch justify-center gap-2 sm:flex-row sm:items-center">
@@ -272,7 +272,7 @@ export default function ProgramStudiExplorer({ fakultas, programStudi, urlWhatsA
                     <button
                       type="button"
                       onClick={hapusFilter}
-                      className="inline-flex min-h-11 items-center justify-center rounded-xl border border-brand-200 px-5 text-sm font-semibold text-brand-700 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/20"
+                      className="inline-flex min-h-11 items-center justify-center rounded-lg border border-brand-200 px-5 text-sm font-semibold text-brand-700 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/20"
                     >
                       {t('hapusFilter')}
                     </button>
@@ -282,7 +282,7 @@ export default function ProgramStudiExplorer({ fakultas, programStudi, urlWhatsA
                       href={urlWhatsApp}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#25D366] px-5 text-sm font-semibold text-white hover:bg-[#1ea952] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#25D366]/25"
+                      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[#25D366] px-5 text-sm font-semibold text-white hover:bg-[#1ea952] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#25D366]/25"
                     >
                       <i className="fa-brands fa-whatsapp text-lg leading-none" aria-hidden="true" />
                       {t('kosongWhatsApp')}
@@ -290,7 +290,7 @@ export default function ProgramStudiExplorer({ fakultas, programStudi, urlWhatsA
                   )}
                   <Link
                     href="/kontak"
-                    className="inline-flex min-h-11 items-center justify-center rounded-xl border border-brand-200 px-5 text-sm font-semibold text-brand-700 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/20"
+                    className="inline-flex min-h-11 items-center justify-center rounded-lg border border-brand-200 px-5 text-sm font-semibold text-brand-700 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/20"
                   >
                     {t('kosongKontak')}
                   </Link>
@@ -314,7 +314,7 @@ export default function ProgramStudiExplorer({ fakultas, programStudi, urlWhatsA
                       className="mt-4 flex items-center gap-2 border-b border-brand-100 pb-2 text-xs font-bold uppercase tracking-widest [&[hidden]]:hidden"
                       style={{ color: darkenToAA(normalisasiHex(f.warna)) }}
                     >
-                      <span className="h-3 w-1 rounded-full" style={{ backgroundColor: normalisasiHex(f.warna) }} aria-hidden="true" />
+                      <span className="h-3 w-1 rounded-lg" style={{ backgroundColor: normalisasiHex(f.warna) }} aria-hidden="true" />
                       {t('judulGrup', { nama: f.nama })}
                     </h4>
                     <ul>
@@ -365,28 +365,28 @@ function TombolFakultas({
       aria-pressed={aktif}
       aria-controls={idPanel}
       className={cn(
-        'group relative flex min-h-[72px] w-full flex-col items-start gap-1 rounded-2xl border bg-white p-3 text-left transition-colors duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/25 md:min-h-0 md:flex-row md:items-center md:gap-3 md:py-2.5 md:pl-4',
-        semua && 'col-span-2 md:col-span-1',
+        'group relative flex w-full flex-col items-start gap-1 rounded-lg border bg-white p-3 text-left transition-colors duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/25 min-h-[160px]',
+        semua && 'order-last bg-accent',
         !aktif && 'hover:bg-brand-50/50',
       )}
-      style={aktif ? { backgroundColor: latarAktif, borderColor: latarAktif, color: '#ffffff' } : { borderColor: withAlpha(dasar, 0.35) }}
+      style={semua ? { backgroundColor: '#D4AF37', borderColor: '#D4AF37', color: '#1D2114' } : aktif ? { backgroundColor: latarAktif, borderColor: latarAktif, color: '#ffffff' } : { borderColor: withAlpha(dasar, 0.35) }}
     >
       <span
         className="absolute left-0 top-3 hidden h-[calc(100%-1.5rem)] w-1 rounded-r-full md:block"
         style={{ backgroundColor: aktif ? 'rgba(255,255,255,0.6)' : dasar }}
         aria-hidden="true"
       />
-      <span className="flex w-full items-center justify-between gap-2 md:w-auto md:flex-1 md:justify-start">
+      <span className="flex w-full items-center justify-between gap-2 ">
         <span
           translate={semua ? undefined : 'no'}
-          className={cn('font-display text-base font-extrabold leading-none md:min-w-[3.5rem]', semua ? 'text-sm md:text-[13px]' : 'notranslate')}
-          style={aktif ? undefined : { color: teksWarna }}
+          className={cn('font-display font-extrabold leading-none', semua ? 'text-4xl' : 'notranslate text-2xl')}
+          style={semua || aktif ? undefined : { color: teksWarna }}
         >
           {singkatan}
         </span>
         <span
           className={cn(
-            'inline-flex min-w-6 items-center justify-center rounded-full px-1.5 text-[11px] font-bold tabular-nums md:order-last',
+            'inline-flex min-w-6 items-center justify-center rounded-lg px-1.5 text-[11px] font-bold tabular-nums md:order-last',
             aktif ? 'bg-black/25 text-white' : 'bg-brand-50 text-brand-700',
           )}
           aria-label={t('jumlahProdi', { n: jumlah })}
@@ -394,9 +394,9 @@ function TombolFakultas({
           {jumlah}
         </span>
       </span>
-      <span className={cn('line-clamp-2 text-xs leading-snug md:flex-1', semua && 'md:hidden', aktif ? 'text-white' : 'text-ink')}>{nama}</span>
+      <span className={cn('mt-3 text-sm font-semibold leading-snug', aktif && !semua ? 'text-white' : 'text-ink')}>{nama}</span>
       {!semua && jenjang.length > 0 && (
-        <span className={cn('text-[10px] font-semibold uppercase tracking-wide md:hidden', aktif ? 'text-white' : 'text-ink-muted')}>
+        <span className={cn('text-[10px] font-semibold uppercase tracking-wide ', aktif ? 'text-white' : 'text-ink-muted')}>
           <span className="sr-only">{t('jenjangTersedia')}: </span>
           <span translate="no" className="notranslate">
             {jenjang.join(' · ')}
@@ -414,7 +414,7 @@ function ChipKecil({ aktif, onClick, children }: { aktif: boolean; onClick: () =
       onClick={onClick}
       aria-pressed={aktif}
       className={cn(
-        'inline-flex min-h-9 items-center rounded-full border px-3 text-xs font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/25',
+        'inline-flex min-h-9 items-center rounded-lg border px-3 text-xs font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/25',
         aktif ? 'border-brand-700 bg-brand-700 text-white' : 'border-brand-200 bg-white text-brand-700 hover:bg-brand-50',
       )}
     >

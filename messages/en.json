@@ -15,6 +15,9 @@
     "bukaMenu": "Open menu"
   },
   "hero": {
+    "pendaftaranSelesai": "Registration closed",
+    "pendaftaranAktif": "Active registrations",
+    "gelombangKosong": "No active registration periods",
     "badge": "Admissions {tahun} Now Open",
     "judul": "Start Your Journey as a UNJANI Student",
     "subJudul": "Official information for New Student Admissions at Universitas Jenderal Achmad Yani. Choose your admission path, check the schedule, calculate costs, and apply online — all from one page.",
@@ -120,7 +123,8 @@
     "desc": "All available admission paths for new student registration at UNJANI.",
     "pelajariDetail": "Learn more",
     "empty": "No admission paths have been published yet.",
-    "persyaratan": "{nama} requirements"
+    "persyaratan": "{nama} requirements",
+    "daftarJalur": "Apply for this track"
   },
   "jadwalPage": {
     "metaTitle": "Admission Schedule and Registration Waves",
@@ -255,6 +259,7 @@
     "gambarAlt": "{judul}, image {n}"
   },
   "prodiExplorer": {
+    "ringkasan": "{prodi} study programs across {fakultas} faculties",
     "cariLabel": "Search study programs",
     "cariPlaceholder": "Search by program name or abbreviation",
     "filterFakultas": "Faculty",

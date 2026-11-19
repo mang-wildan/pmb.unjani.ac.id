@@ -22,8 +22,10 @@ const GAMBAR_BAWAAN = '/pmb unjani.jpg';
 export default function HeroSlider({
   images = [GAMBAR_BAWAAN],
   judul = '',
+  fullBleed = false,
 }: {
   images: string[];
+  fullBleed?: boolean;
   /** Judul hero, dipakai untuk teks alternatif gambar. */
   judul?: string;
 }) {
@@ -105,7 +107,10 @@ export default function HeroSlider({
       onPointerCancel={() => (geser.current = null)}
     >
       <div
-        className="relative aspect-[4/3] bg-gradient-to-br from-brand to-brand-700 overflow-hidden"
+        className={cn(
+          'relative bg-gradient-to-br from-brand to-brand-700 overflow-hidden',
+          fullBleed ? 'h-full w-full' : 'aspect-[4/3]',
+        )}
         aria-live={berjalan ? 'off' : 'polite'}
       >
         {daftar.map((src, indeks) => {
@@ -122,7 +127,7 @@ export default function HeroSlider({
               priority={indeks === 0}
               fetchPriority={indeks === 0 ? 'high' : undefined}
               loading={indeks === 0 ? undefined : 'eager'}
-              sizes="(max-width: 768px) 100vw, 50vw"
+              sizes={fullBleed ? '100vw' : '(max-width: 768px) 100vw, 50vw'}
               onLoad={() => tandaiDimuat(indeks)}
               className={cn(
                 'object-cover select-none transition-opacity duration-700 ease-in-out motion-reduce:duration-200',
@@ -134,7 +139,7 @@ export default function HeroSlider({
       </div>
 
       {banyak && (
-        <div className="absolute top-3 right-3 flex items-center gap-0.5 rounded-full bg-ink/55 px-1.5 py-0.5 backdrop-blur-sm">
+        <div className={cn('absolute right-3 flex items-center gap-0.5 rounded-lg bg-ink/55 px-1.5 py-0.5 backdrop-blur-sm', fullBleed ? 'top-24' : 'top-3')}>
           {/* Reduced motion: tidak ada autoplay, jadi kontrol jeda/putar tidak diperlukan. */}
           {!reduksi && (
             <button

@@ -4,6 +4,35 @@ import { readFileSync, existsSync } from 'node:fs';
 
 const baca = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 const tasks = {
+  3: async () => {
+    const page = baca('src/app/[locale]/(public)/page.tsx');
+    const hero = baca('src/components/public/Hero.tsx');
+    for (const id of ['manual-book', 'jalur-seleksi', 'jadwal', 'kalkulator', 'pengumuman', 'faq', 'cta']) assert.ok(page.includes(`id="${id}"`), id);
+    assert.ok(hero.includes('data-public-hero'), 'Hero harus menandai overlay navbar');
+    for (const css of ['min-h-[1100px]', 'md:min-h-[900px]', 'pt-24', 'bg-accent', 'text-white']) assert.ok(hero.includes(css), css);
+    assert.doesNotMatch(hero, /2026\/2027/);
+    assert.doesNotMatch(page, /href="\/(jalur-masuk|biaya-kuliah)"|<Navbar/);
+    for (const feature of ['InstagramFeed', 'LandingPopup', 'kalkulatorRecords', 'activeJadwal', 'jumlahFakultas', 'jumlahProgramStudi']) assert.ok(page.includes(feature));
+    assert.ok(page.includes('bg-[#063F2A]'));
+    assert.ok(page.includes('bg-[#D4AF37]'));
+    const jalur = baca('src/components/public/JalurAccordion.tsx');
+    for (const feature of ['aside', 'persyaratan', 'aria-pressed', 'urlPendaftaran', 'dangerouslySetInnerHTML']) assert.ok(jalur.includes(feature), feature);
+    const kalkulator = baca('src/components/public/KalkulatorForm.tsx');
+    assert.ok(kalkulator.includes('records.length === 0'));
+    const faq = baca('src/components/public/FAQAccordion.tsx');
+    assert.ok(faq.includes('aria-pressed'));
+    assert.ok(baca('src/components/public/ProgramStudiExplorer.tsx').includes('lg:grid-cols-4'));
+    assert.ok(baca('src/components/public/ArtikelSection.tsx').includes('id="artikel"'));
+    const slider = baca('src/components/public/HeroSlider.tsx');
+    assert.ok(slider.includes("fullBleed ? 'h-full w-full'"));
+    assert.ok(slider.includes("fullBleed ? '100vw'"));
+    for (const locale of ['id', 'en']) {
+      const messages = JSON.parse(baca(`messages/${locale}.json`));
+      assert.ok(messages.jalurPage.daftarJalur);
+      assert.ok(messages.prodiExplorer.ringkasan.includes('{fakultas}'));
+      for (const key of ['pendaftaranAktif', 'pendaftaranSelesai', 'gelombangKosong']) assert.ok(messages.hero[key]);
+    }
+  },
   2: async () => {
     const layout = baca('src/app/layout.tsx');
     assert.match(layout, /const display = Montserrat\(/, 'Font display harus Montserrat asli');

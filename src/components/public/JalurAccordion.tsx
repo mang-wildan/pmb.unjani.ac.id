@@ -2,157 +2,37 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { cn } from '@/lib/cn';
-import Reveal from './Reveal';
+import TrackedAnalyticsLink from './TrackedAnalyticsLink';
+import { ANALYTICS_EVENTS } from '@/lib/analytics';
 
 export type JalurAccordionItem = {
-  id: string;
-  slug: string;
-  index: number;
-  nama: string;
-  ringkasan?: string;
-  deskripsiHtml?: string;
-  persyaratan: string[];
-  badge?: string;
+  id: string; slug: string; index: number; nama: string; ringkasan?: string;
+  deskripsiHtml?: string; persyaratan: string[]; badge?: string;
 };
 
-export default function JalurAccordion({
-  items,
-  tingkatJudul = 'h3',
-}: {
-  items: JalurAccordionItem[];
-  tingkatJudul?: 'h2' | 'h3';
+export default function JalurAccordion({ items, tingkatJudul = 'h3', urlPendaftaran }: {
+  items: JalurAccordionItem[]; tingkatJudul?: 'h2' | 'h3'; urlPendaftaran?: string;
 }) {
   const t = useTranslations('jalurPage');
+  const [selectedId, setSelectedId] = useState(items[0]?.id);
+  const selected = items.find((item) => item.id === selectedId) || items[0];
   const Judul = tingkatJudul;
-  const JudulPersyaratan = tingkatJudul === 'h2' ? 'h3' : 'h4';
-  const [openId, setOpenId] = useState<string | null>(null);
-
-  const toggle = (id: string) => setOpenId((prev) => (prev === id ? null : id));
-
   return (
-    <div className="rounded-3xl border border-brand-100 bg-white shadow-soft overflow-hidden">
-      {items.map((item) => {
-        const isOpen = openId === item.id;
-        const triggerId = `jalur-trigger-${item.id}`;
-        const panelId = `jalur-panel-${item.id}`;
-
-        return (
-          // Baris masuk bertahap (FR-36); garis pemisah dipindah ke pembungkus agar last: tetap berlaku.
-          <Reveal key={item.id} urutan={item.index} className="border-b border-brand-100 last:border-b-0">
-            <article
-              id={item.slug}
-              className={cn(
-                'border-l-4 transition-colors duration-300',
-                isOpen ? 'border-l-brand' : 'border-l-transparent',
-              )}
-            >
-              <Judul className="m-0">
-              <button
-                id={triggerId}
-                type="button"
-                onClick={() => toggle(item.id)}
-                aria-expanded={isOpen}
-                aria-controls={panelId}
-                className="w-full flex items-center gap-4 px-6 py-5 text-left hover:bg-brand-50/40 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
-              >
-                <span
-                  className={cn(
-                    'flex h-9 w-9 flex-none items-center justify-center rounded-full text-sm font-bold transition-colors duration-300',
-                    isOpen ? 'bg-brand text-white' : 'bg-brand-50 text-brand-700',
-                  )}
-                  aria-hidden
-                >
-                  {item.index + 1}
-                </span>
-
-                <span className="block flex-1 min-w-0">
-                  <span className="flex items-center gap-3 flex-wrap">
-                    <span className="font-display font-bold text-lg text-ink leading-snug">
-                      {item.nama}
-                    </span>
-                    {item.badge && (
-                      <span className="inline-flex items-center rounded-full bg-accent/20 px-3 py-0.5 text-xs font-semibold uppercase tracking-wide text-accent-700">
-                        {item.badge}
-                      </span>
-                    )}
-                  </span>
-                  {item.ringkasan && (
-                    <span className={cn('mt-0.5 block text-sm font-normal text-ink-muted', !isOpen && 'line-clamp-1')}>
-                      {item.ringkasan}
-                    </span>
-                  )}
-                </span>
-
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  aria-hidden
-                  className={cn(
-                    'flex-none text-brand-700 transition-transform duration-300 motion-reduce:transition-none',
-                    isOpen && 'rotate-180',
-                  )}
-                >
-                  <path
-                    d="M5 7.5l5 5 5-5"
-                    stroke="currentColor"
-                    strokeWidth="1.75"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
-              </Judul>
-
-              <div
-                id={panelId}
-                role="region"
-                aria-labelledby={triggerId}
-                inert={!isOpen}
-                // FR-37: buka/tutup lewat grid-template-rows 0fr->1fr, bukan max-height.
-                className={cn(
-                  'grid transition-[grid-template-rows,opacity] duration-300 ease-gerak motion-reduce:transition-opacity motion-reduce:duration-200',
-                  isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0',
-                )}
-              >
-                <div className="min-h-0 overflow-hidden">
-                  <div className="px-6 pb-6 pt-1 space-y-4">
-                    {item.deskripsiHtml && (
-                      <div
-                        className="prose-brand text-ink-muted text-sm"
-                        dangerouslySetInnerHTML={{ __html: item.deskripsiHtml }}
-                      />
-                    )}
-
-                    {item.persyaratan.length > 0 && (
-                      <div className="pt-3 border-t border-brand-50">
-                        <JudulPersyaratan className="text-xs font-semibold uppercase tracking-widest text-brand-700 mb-3">
-                          {t('persyaratan', { nama: item.nama })}
-                        </JudulPersyaratan>
-                        <ul className="space-y-2">
-                          {item.persyaratan.map((p, i) => (
-                            <li key={i} className="flex gap-3 text-sm text-ink-muted">
-                              <span
-                                className="mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full bg-brand-50 text-xs font-bold text-brand-700"
-                                aria-hidden
-                              >
-                                {i + 1}
-                              </span>
-                              <span>{p}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </article>
-          </Reveal>
-        );
-      })}
+    <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.4fr)]">
+      {selected && <aside id="jalur-persyaratan" aria-live="polite" className="rounded-lg border border-[#CBD9CD] bg-white p-6 lg:sticky lg:top-24">
+        <p className="text-xs font-semibold uppercase tracking-widest text-ink-muted">{t('persyaratan', { nama: selected.nama })}</p>
+        <h3 className="mt-3 font-display text-2xl font-bold">{selected.nama}</h3>
+        {selected.deskripsiHtml && <div className="prose-brand mt-4 text-sm text-ink-muted" dangerouslySetInnerHTML={{ __html: selected.deskripsiHtml }} />}
+        <ul className="mt-5 space-y-3">{selected.persyaratan.map((p, i) => <li key={i} className="flex gap-3 text-sm text-ink-muted"><span aria-hidden className="font-bold text-brand">✓</span><span>{p}</span></li>)}</ul>
+        {urlPendaftaran && <TrackedAnalyticsLink href={urlPendaftaran} eventName={ANALYTICS_EVENTS.ctaDaftarClick} eventParams={{ location: 'jalur-seleksi' }} target="_blank" rel="noopener noreferrer" className="mt-6 flex min-h-12 items-center justify-center rounded-lg bg-brand px-5 py-3 font-semibold text-white focus-visible:ring-4 focus-visible:ring-accent">{t('daftarJalur')}</TrackedAnalyticsLink>}
+      </aside>}
+      <div className="space-y-3">{items.map((item) => <article key={item.id} id={item.slug} className="scroll-mt-24">
+        <Judul><button type="button" aria-pressed={selected?.id === item.id} aria-controls="jalur-persyaratan" onClick={() => setSelectedId(item.id)} className={`flex w-full items-start gap-4 rounded-lg border p-5 text-left focus-visible:ring-4 focus-visible:ring-accent ${selected?.id === item.id ? 'border-brand bg-[#D9EADC]' : 'border-[#CBD9CD] bg-white hover:bg-[#E3ECE3]'}`}>
+          <span className="font-display text-2xl font-bold text-brand" aria-hidden>{String(item.index + 1).padStart(2, '0')}</span>
+          <span className="min-w-0 flex-1"><span className="flex flex-wrap items-center gap-2"><span className="font-display text-lg font-bold">{item.nama}</span>{item.badge && <span className="rounded-lg bg-accent px-2 py-1 text-xs text-[#1D2114]">{item.badge}</span>}</span>{item.ringkasan && <span className="mt-2 block text-sm font-normal text-ink-muted">{item.ringkasan}</span>}</span>
+          <span aria-hidden>→</span>
+        </button></Judul>
+      </article>)}</div>
     </div>
   );
 }

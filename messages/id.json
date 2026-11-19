@@ -15,6 +15,9 @@
     "bukaMenu": "Buka menu"
   },
   "hero": {
+    "pendaftaranSelesai": "Pendaftaran selesai",
+    "pendaftaranAktif": "Pendaftaran aktif",
+    "gelombangKosong": "Belum ada gelombang aktif",
     "badge": "Pendaftaran {tahun} Dibuka",
     "judul": "Mulai Langkahmu Menjadi Mahasiswa UNJANI",
     "subJudul": "Informasi resmi Penerimaan Mahasiswa Baru Universitas Jenderal Achmad Yani. Pilih jalur seleksi, cek jadwal, hitung biaya dengan kalkulator, dan daftar online — semua dari satu halaman.",
@@ -120,7 +123,8 @@
     "desc": "Semua jalur penerimaan yang tersedia untuk pendaftaran mahasiswa baru UNJANI.",
     "pelajariDetail": "Pelajari detail",
     "empty": "Belum ada jalur seleksi yang dipublikasikan.",
-    "persyaratan": "Persyaratan {nama}"
+    "persyaratan": "Persyaratan {nama}",
+    "daftarJalur": "Daftar Jalur Ini"
   },
   "jadwalPage": {
     "metaTitle": "Jadwal PMB dan Gelombang Pendaftaran",
@@ -255,6 +259,7 @@
     "gambarAlt": "{judul}, gambar {n}"
   },
   "prodiExplorer": {
+    "ringkasan": "{prodi} program studi di {fakultas} fakultas",
     "cariLabel": "Cari program studi",
     "cariPlaceholder": "Cari nama atau singkatan prodi",
     "filterFakultas": "Fakultas",
