@@ -116,6 +116,11 @@ const tasks = {
       const tombol = antara(src, 'type="submit"', 'aria-busy={loading}', 'tombol submit');
       assert.ok(tombol.includes('disabled={loading}'), 'submit disabled={loading}');
 
+      // Blok info pemulihan dirender pada langkahnya dan tombol melanjutkan ke dashboard.
+      const infoPemulihan = antara(src, "{langkah === 'info-pemulihan' && (", 'Lanjut ke dashboard', 'blok info pemulihan');
+      assert.ok(infoPemulihan.includes('type="button"'), 'info pemulihan type="button"');
+      assert.ok(infoPemulihan.includes('onClick={masukDashboard}'), 'info pemulihan onClick={masukDashboard}');
+
       // Form kredensial tetap terpasang tapi hidden selama langkah MFA
       assert.match(src, /<div hidden=\{langkah !== 'kredensial'\}>/, 'form kredensial hidden saat MFA');
     };
@@ -132,16 +137,30 @@ const tasks = {
     assert.throws(() => guard(login.replace('safeNextPath(nextParam, window.location.origin)', 'nextParam || "/admin"')), 'harus menolak bila safeNextPath dihilangkan');
     assert.throws(() => guard(login.replace("hidden={langkah !== 'kredensial'}", '')), 'harus menolak bila hidden kredensial dihilangkan');
 
-    // Negative control wiring: 4 mutasi review Task 7 round 1 wajib tertangkap (in-memory)
+    // Negative control wiring: 6 mutasi wajib tertangkap (in-memory, tanpa ubah disk)
     const mutasiWiring = [
       ['hapus ref captcha', login.replace('<div ref={rcContainerRef} />', '<div />')],
       ['hapus onSubmit form', login.replace('onSubmit={onSubmit} ', '')],
       ['hapus required email+password', login.replace(/\r?\n\s+required\r?\n/g, '\n')],
       ['captcha tidak dirender', login.replace('{captchaKey && (', '{false && (')],
+      ['hapus hidden kredensial', login.replace("hidden={langkah !== 'kredensial'}", '')],
+      ['hapus disabled submit', login.replace('disabled={loading}', '')],
     ];
+    assert.equal(mutasiWiring.length, 6, 'enam mutasi wiring terdaftar');
     for (const [label, termutasi] of mutasiWiring) {
       assert.notEqual(termutasi, login, `mutasi "${label}" benar-benar mengubah sumber`);
       assert.throws(() => guard(termutasi), `guard harus menolak mutasi: ${label}`);
+    }
+
+    // Negative control blok info pemulihan: type, callback, dan kondisi render wajib dijaga
+    const mutasiInfoPemulihan = [
+      ['hapus type="button"', login.replace(/type="button"(\r?\n\s+onClick=\{masukDashboard\})/, '$1')],
+      ['hapus onClick={masukDashboard}', login.replace('onClick={masukDashboard}', '')],
+      ['kondisi render dimatikan', login.replace("{langkah === 'info-pemulihan' && (", '{false && (')],
+    ];
+    for (const [label, termutasi] of mutasiInfoPemulihan) {
+      assert.notEqual(termutasi, login, `mutasi "${label}" benar-benar mengubah sumber`);
+      assert.throws(() => guard(termutasi), `guard harus menolak mutasi info pemulihan: ${label}`);
     }
   },
   6: async () => {
