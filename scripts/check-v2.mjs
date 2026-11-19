@@ -33,6 +33,25 @@ const tasks = {
     assert.equal(encoded.searchParams.get('page'), '2');
     assert.equal(href({}, 1), '/artikel');
     assert.equal(new URL(href({ tag: 'a&b' }, 1), 'http://localhost').searchParams.has('page'), false);
+    // Baris chip tag: satu baris geser horizontal di mobile, wrap di >=md + landmark berlabel.
+    const wajibTagRow = (src) => {
+      const baris = src.match(/<nav[^>]*aria-label=\{t\('tags'\)\}[^>]*>/)?.[0];
+      assert.ok(baris, 'baris tag memakai landmark nav berlabel');
+      assert.ok(baris.includes('overflow-x-auto'), 'chip tag bisa digeser horizontal di mobile');
+      assert.ok(baris.includes('flex-nowrap'), 'chip tag tidak wrap di mobile');
+      assert.ok(baris.includes('md:flex-wrap'), 'chip tag tetap wrap di desktop');
+    };
+    // Kartu unggulan tetap di alur normal dokumen (tidak absolute/fixed/sticky).
+    const wajibAlurNormal = (src) => {
+      const unggulan = src.match(/<article className="mt-10 grid[^"]*"/)?.[0];
+      assert.ok(unggulan, 'kartu unggulan tetap di alur normal');
+      assert.doesNotMatch(unggulan, /\b(absolute|fixed|sticky)\b/, 'kartu unggulan tidak lepas dari alur');
+    };
+    wajibTagRow(list);
+    wajibAlurNormal(list);
+    assert.throws(() => wajibTagRow(list.replace('overflow-x-auto', 'overflow-hidden')), 'chip tersembunyi tanpa geser harus ditolak');
+    assert.throws(() => wajibTagRow(list.replace('flex-nowrap', 'flex-wrap')), 'dinding chip wrap mobile harus ditolak');
+    assert.throws(() => wajibAlurNormal(list.replace('mt-10 grid overflow-hidden rounded-lg bg-white', 'mt-10 grid absolute')), 'unggulan lepas alur harus ditolak');
     // Kartu unggulan (field pinned) + grid 3 kolom + pagination numerik.
     assert.ok(list.includes('pinned: true'), 'artikel unggulan memakai field pinned');
     assert.ok(list.includes('$ne: unggulan._id'), 'artikel unggulan tidak diulang di grid');

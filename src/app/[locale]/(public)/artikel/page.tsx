@@ -227,11 +227,14 @@ export default async function ArtikelPage({
           </button>
         </form>
 
-        <div className="mt-5 flex flex-wrap items-center gap-2" aria-label={t('tags')}>
+        <nav
+          aria-label={t('tags')}
+          className="mt-5 flex flex-nowrap items-center gap-2 overflow-x-auto py-1 md:flex-wrap md:overflow-visible"
+        >
           <Link
             href={hrefHalaman({ q, kategori: kategoriSlug }, 1)}
             aria-current={tag ? undefined : 'page'}
-            className={`inline-flex min-h-9 items-center rounded-lg px-3 py-1.5 text-xs font-semibold focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#D4AF37] ${
+            className={`inline-flex min-h-9 shrink-0 items-center whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-semibold focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#D4AF37] ${
               tag
                 ? 'border border-[#CBD9CD] bg-white text-[#063F2A] hover:bg-[#E3ECE3]'
                 : 'bg-[#063F2A] text-white'
@@ -244,7 +247,7 @@ export default async function ArtikelPage({
               key={item}
               href={hrefHalaman({ q, kategori: kategoriSlug, tag: item }, 1)}
               aria-current={tag === item ? 'page' : undefined}
-              className={`inline-flex min-h-9 items-center rounded-lg px-3 py-1.5 text-xs font-semibold focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#D4AF37] ${
+              className={`inline-flex min-h-9 shrink-0 items-center whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-semibold focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#D4AF37] ${
                 tag === item
                   ? 'bg-[#063F2A] text-white'
                   : 'border border-[#CBD9CD] bg-white text-[#063F2A] hover:bg-[#E3ECE3]'
@@ -253,7 +256,7 @@ export default async function ArtikelPage({
               {item}
             </Link>
           ))}
-        </div>
+        </nav>
 
         {unggulan && (
           <article className="mt-10 grid overflow-hidden rounded-lg bg-white md:grid-cols-2">
