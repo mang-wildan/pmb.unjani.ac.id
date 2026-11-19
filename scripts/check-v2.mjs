@@ -30,10 +30,24 @@ const tasks = {
     assert.ok(kalkulator.includes('useTranslations'), 'kalkulator: i18n klien');
     assert.ok(kalkulator.includes("t('hasilPerJalur')"), 'kalkulator: hasil header dari kamus');
     assert.ok(kalkulator.includes("t('estimasiBiaya')"), 'kalkulator: eyebrow dari kamus');
-    assert.ok(kalkulator.includes('text-white'), 'kalkulator: teks header hasil harus terang di band gelap');
+    // Round 2: assertion spesifik, bukan includes global yang vakum.
+    const wajibJudulHasil = (src) =>
+      assert.match(src, /className="[^"]*(?<![\w/-])text-white(?![\w/-])[^"]*">\s*\{t\('hasilPerJalur'\)\}/, 'kalkulator: judul hasil harus text-white pada band gelap');
+    const wajibDisclaimer = (src) => {
+      assert.doesNotMatch(src, /text-ink-muted[^"]*text-center">\s*\* Estimasi/, 'kalkulator: disclaimer tidak boleh text-ink-muted di band gelap');
+      assert.match(src, /text-white\/80[^"]*text-center">\s*\* Estimasi/, 'kalkulator: disclaimer harus text-white/80');
+    };
+    const wajibKeyGelombang = (src) => assert.ok(src.includes('key={g._id}'), 'gelombang: key harus key={g._id}');
+    wajibJudulHasil(kalkulator);
+    wajibDisclaimer(kalkulator);
+    const gelombangSrc = baca('src/components/public/HeroGelombangInfo.tsx');
+    wajibKeyGelombang(gelombangSrc);
+    // Bukti assertion menolak state lama (mutasi in-memory, tanpa DB).
+    assert.throws(() => wajibJudulHasil(kalkulator.replace('text-white leading-tight', 'text-ink leading-tight')), 'judul lama harus ditolak');
+    assert.throws(() => wajibDisclaimer(kalkulator.replace('text-white/80 text-center', 'text-ink-muted text-center')), 'disclaimer lama harus ditolak');
+    assert.throws(() => wajibKeyGelombang(gelombangSrc.replace('key={g._id}', 'key={g.ke}')), 'key lama harus ditolak');
     const pse = baca('src/components/public/ProgramStudiExplorer.tsx');
     assert.ok(pse.includes('max-md:data-[tingkat=prodi]:hidden'), 'prodi: rail tersembunyi saat drill-down mobile');
-    assert.ok(baca('src/components/public/HeroGelombangInfo.tsx').includes('_id'), 'gelombang: key memakai _id');
     assert.ok(jalur.includes('scrollIntoView'), 'jalur: gulir panel persyaratan saat pilih');
     assert.ok(jalur.includes('prefers-reduced-motion'), 'jalur: hormati reduced motion');
     for (const locale of ['id', 'en']) {
@@ -42,6 +56,7 @@ const tasks = {
       assert.ok(messages.prodiExplorer.ringkasan.includes('{fakultas}'));
       for (const key of ['pendaftaranAktif', 'pendaftaranSelesai', 'gelombangKosong']) assert.ok(messages.hero[key]);
       for (const key of ['kriteriaJudul', 'kriteriaSub', 'estimasiBiaya', 'hasilPerJalur', 'jalurCount', 'langkah', 'semuaSelesai']) assert.ok(messages.kalkulatorPage[key], `kalkulatorPage.${key}`);
+      if (locale === 'en') assert.match(messages.kalkulatorPage.jalurCount, /\{n, plural,/, 'kalkulator EN: jalurCount harus ICU plural');
     }
   },
   2: async () => {

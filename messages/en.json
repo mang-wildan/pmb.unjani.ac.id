@@ -194,7 +194,7 @@
     "kriteriaSub": "Complete the 4 steps below",
     "estimasiBiaya": "Cost Estimate",
     "hasilPerJalur": "Results per Admission Path",
-    "jalurCount": "{n} paths",
+    "jalurCount": "{n, plural, one {# path} other {# paths}}",
     "langkah": "Step {n} of {total}",
     "semuaSelesai": "All steps completed ✓"
   },

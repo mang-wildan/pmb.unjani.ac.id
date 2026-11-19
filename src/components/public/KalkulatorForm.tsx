@@ -517,7 +517,7 @@ export default function KalkulatorForm({ records, prodiOptions, prodiMap = {}, k
                 })}
               </div>
 
-              <p className="mt-5 text-xs text-ink-muted text-center">
+              <p className="mt-5 text-xs text-white/80 text-center">
                 * Estimasi resmi berdasarkan data panitia PMB. Angka final dapat berbeda sesuai
                 kebijakan terbaru.
               </p>
