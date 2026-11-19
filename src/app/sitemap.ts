@@ -20,8 +20,6 @@ function localizedEntries(
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     ...localizedEntries('/', { changeFrequency: 'daily', priority: 1.0 }),
-    ...localizedEntries('/biaya-kuliah', { changeFrequency: 'weekly', priority: 0.9 }),
-    ...localizedEntries('/jalur-masuk', { changeFrequency: 'weekly', priority: 0.9 }),
     ...localizedEntries('/jadwal-pmb', { changeFrequency: 'weekly', priority: 0.8 }),
     ...localizedEntries('/faq', { changeFrequency: 'monthly', priority: 0.7 }),
     ...localizedEntries('/pengumuman', { changeFrequency: 'daily', priority: 0.8 }),
