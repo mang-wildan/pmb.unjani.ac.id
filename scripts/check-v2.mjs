@@ -79,12 +79,70 @@ const tasks = {
       assert.ok(src.includes('aria-pressed={showPass}'), 'aria-pressed tombol showPass');
     };
 
-    wajibAuth(login);
+    // 3. Wiring JSX keamanan: form binding, validasi native, widget captcha, submit.
+    // Hash di atas tidak menyentuh JSX, jadi wiring diverifikasi struktural di sini.
+    const antara = (src, awal, akhir, label) => {
+      const i = src.indexOf(awal);
+      const j = src.indexOf(akhir);
+      assert.ok(i !== -1 && j > i, `${label}: penanda ${JSON.stringify(awal)}..${JSON.stringify(akhir)} ada`);
+      return src.slice(i, j);
+    };
 
-    // Negative tests: membuktikan assert menolak kode yang menghilangkan logika auth vital
-    assert.throws(() => wajibAuth(login.replace('recaptchaToken: recaptchaToken || undefined', 'recaptchaToken: undefined')), 'harus menolak bila payload recaptchaToken diubah');
-    assert.throws(() => wajibAuth(login.replace('safeNextPath(nextParam, window.location.origin)', 'nextParam || "/admin"')), 'harus menolak bila safeNextPath dihilangkan');
-    assert.throws(() => wajibAuth(login.replace("hidden={langkah !== 'kredensial'}", '')), 'harus menolak bila hidden kredensial dihilangkan');
+    const wajibWiring = (src) => {
+      // Form terikat ke handler submit (bukan form dekoratif)
+      assert.match(src, /<form\s+onSubmit=\{onSubmit\}/, 'form terikat onSubmit={onSubmit}');
+
+      // Input email: tipe native, wajib, controlled state
+      const email = antara(src, 'ref={emailRef}', 'placeholder="admin@unjani.ac.id"', 'input email');
+      assert.ok(email.includes('type="email"'), 'email type="email"');
+      assert.match(email, /(^|\s)required(\s|$)/, 'email required');
+      assert.ok(email.includes('value={email}'), 'email controlled value={email}');
+      assert.ok(email.includes('onChange={(e) => setEmail(e.target.value)}'), 'email onChange setEmail');
+      assert.ok(email.includes('autoComplete="email"'), 'email autoComplete');
+
+      // Input password: tipe mengikuti toggle showPass, wajib, controlled state
+      const pass = antara(src, 'id="login-password"', 'placeholder="••••••••"', 'input password');
+      assert.ok(pass.includes("type={showPass ? 'text' : 'password'}"), 'password type mengikuti showPass');
+      assert.match(pass, /(^|\s)required(\s|$)/, 'password required');
+      assert.ok(pass.includes('value={password}'), 'password controlled value={password}');
+      assert.ok(pass.includes('onChange={(e) => setPassword(e.target.value)}'), 'password onChange setPassword');
+      assert.ok(pass.includes('autoComplete="current-password"'), 'password autoComplete');
+
+      // Kontainer captcha hanya dirender saat server meminta (captchaKey) dan tetap ter-ref
+      const captcha = antara(src, '{captchaKey && (', '<PesanGalat', 'blok captcha');
+      assert.ok(captcha.includes('ref={rcContainerRef}'), 'captcha ref={rcContainerRef}');
+
+      // Tombol submit menonaktifkan diri selama loading
+      const tombol = antara(src, 'type="submit"', 'aria-busy={loading}', 'tombol submit');
+      assert.ok(tombol.includes('disabled={loading}'), 'submit disabled={loading}');
+
+      // Form kredensial tetap terpasang tapi hidden selama langkah MFA
+      assert.match(src, /<div hidden=\{langkah !== 'kredensial'\}>/, 'form kredensial hidden saat MFA');
+    };
+
+    const guard = (src) => {
+      wajibAuth(src);
+      wajibWiring(src);
+    };
+
+    guard(login);
+
+    // Negative tests: membuktikan guard menolak kode yang menghilangkan logika auth vital
+    assert.throws(() => guard(login.replace('recaptchaToken: recaptchaToken || undefined', 'recaptchaToken: undefined')), 'harus menolak bila payload recaptchaToken diubah');
+    assert.throws(() => guard(login.replace('safeNextPath(nextParam, window.location.origin)', 'nextParam || "/admin"')), 'harus menolak bila safeNextPath dihilangkan');
+    assert.throws(() => guard(login.replace("hidden={langkah !== 'kredensial'}", '')), 'harus menolak bila hidden kredensial dihilangkan');
+
+    // Negative control wiring: 4 mutasi review Task 7 round 1 wajib tertangkap (in-memory)
+    const mutasiWiring = [
+      ['hapus ref captcha', login.replace('<div ref={rcContainerRef} />', '<div />')],
+      ['hapus onSubmit form', login.replace('onSubmit={onSubmit} ', '')],
+      ['hapus required email+password', login.replace(/\r?\n\s+required\r?\n/g, '\n')],
+      ['captcha tidak dirender', login.replace('{captchaKey && (', '{false && (')],
+    ];
+    for (const [label, termutasi] of mutasiWiring) {
+      assert.notEqual(termutasi, login, `mutasi "${label}" benar-benar mengubah sumber`);
+      assert.throws(() => guard(termutasi), `guard harus menolak mutasi: ${label}`);
+    }
   },
   6: async () => {
     const list = baca('src/app/[locale]/(public)/artikel/page.tsx');
