@@ -7,7 +7,7 @@ import { safeNextPath } from '@/lib/safeNext';
 import LangkahKode from './_components/LangkahKode';
 import LangkahDaftar from './_components/LangkahDaftar';
 import KodePemulihan from './_components/KodePemulihan';
-import { PesanGalat, TombolUtama, type HasilKembali } from './_components/shared';
+import { PesanGalat, type HasilKembali } from './_components/shared';
 
 export const dynamic = 'force-dynamic';
 
@@ -164,81 +164,85 @@ export default function LoginPage() {
   }, [kembaliKeKredensial]);
 
   return (
-    <main className="min-h-screen flex">
-      {/* ── Left decorative panel (desktop only) ── */}
-      <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] relative overflow-hidden bg-brand flex-col items-center justify-center px-12 py-16">
-        {/* Background blobs */}
-        <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-white/5" />
-        <div className="absolute -bottom-32 -right-20 h-80 w-80 rounded-full bg-white/5" />
-        <div className="absolute top-1/2 right-12 h-48 w-48 -translate-y-1/2 rounded-full bg-white/5" />
+    <main className="min-h-screen flex flex-col lg:flex-row bg-[#F2F5F0]">
+      {/* ── Left branding panel (split desktop & top banner mobile) ── */}
+      <div className="relative w-full lg:w-1/2 min-h-[340px] sm:min-h-[380px] lg:min-h-0 flex flex-col justify-end lg:justify-between overflow-hidden bg-[#06281D] text-white p-6 sm:p-8 lg:p-12 xl:p-16 shrink-0">
+        {/* Foto kampus dengan overlay hijau gelap */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/pmb unjani.jpg"
+            alt=""
+            fill
+            priority
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            className="object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-[#06281D]/45" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#06281D] via-[#063F2A]/45 to-[#06281D]/65" />
+        </div>
 
-        {/* Grid pattern overlay */}
-        <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(255,255,255,1) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)`,
-            backgroundSize: '40px 40px',
-          }}
-        />
-
-        <div className="relative z-10 flex flex-col items-center text-center max-w-md">
+        {/* Logo sudut atas (tampil di desktop sesuai varian desktop) */}
+        <div className="relative z-10 hidden lg:flex items-center gap-3">
           <Image
             src="/logo-pmb-unjani (1).png"
             alt="Logo PMB UNJANI"
-            width={100}
-            height={100}
-            className="mb-6 drop-shadow-2xl"
+            width={44}
+            height={44}
+            className="h-11 w-auto object-contain drop-shadow"
+            priority
           />
-          <h1 className="font-display text-4xl font-bold text-white leading-tight mb-3">
-            PMB UNJANI
+          <div>
+            <span className="block font-display text-sm font-bold tracking-wide text-white leading-tight">
+              PMB UNJANI
+            </span>
+            <span className="block text-xs text-white/80">Panel Admin</span>
+          </div>
+        </div>
+
+        {/* Konten teks panel kiri */}
+        <div className="relative z-10 py-2 sm:py-4 lg:py-0">
+          <h1 className="font-display text-2xl sm:text-3xl lg:text-3xl xl:text-[40px] xl:leading-[1.15] font-bold leading-tight text-white">
+            Kelola informasi PMB dari satu tempat
           </h1>
-          <p className="text-brand-100 text-base leading-relaxed mb-10">
-            Universitas Jenderal Achmad Yani
-            <br />
-            Sistem Penerimaan Mahasiswa Baru
+          <p className="mt-2 lg:mt-4 text-xs sm:text-sm lg:text-base text-white/90 leading-relaxed max-w-lg xl:max-w-xl">
+            Pengumuman, artikel, jadwal, dan biaya pendidikan langsung tampil untuk calon mahasiswa.
           </p>
 
-          <div className="w-full space-y-3 text-left">
+          {/* 3 Poin Fitur (Desktop) */}
+          <div className="mt-8 hidden lg:flex flex-col gap-4">
             {[
-              { icon: '🎓', label: 'Multi Jalur Seleksi', sub: 'Reguler, Prestasi, Beasiswa' },
-              { icon: '📅', label: 'Jadwal Terintegrasi', sub: 'Pantau gelombang pendaftaran real-time' },
-              { icon: '💳', label: 'Informasi Biaya Transparan', sub: 'Biaya per prodi & kelas tersedia lengkap' },
+              {
+                label: 'Multi Jalur Seleksi',
+                sub: 'Reguler, Prestasi, Beasiswa',
+              },
+              {
+                label: 'Jadwal Terintegrasi',
+                sub: 'Pantau gelombang pendaftaran real-time',
+              },
+              {
+                label: 'Informasi Biaya Transparan',
+                sub: 'Biaya per prodi & kelas tersedia lengkap',
+              },
             ].map((item) => (
-              <div
-                key={item.label}
-                className="flex items-start gap-3 rounded-2xl bg-white/10 px-4 py-3 backdrop-blur-sm"
-              >
-                <span className="text-xl mt-0.5">{item.icon}</span>
+              <div key={item.label} className="flex items-center gap-3.5">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#D4AF37] text-[#063F2A] shadow-sm">
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3} aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
                 <div>
-                  <p className="text-sm font-semibold text-white">{item.label}</p>
-                  <p className="text-xs text-brand-200">{item.sub}</p>
+                  <p className="text-sm font-semibold text-white leading-snug">{item.label}</p>
+                  <p className="text-xs text-[#D9EADC] leading-tight">{item.sub}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
-
-        <p className="absolute bottom-6 text-xs text-brand-300">
-          © {new Date().getFullYear()} Universitas Jenderal Achmad Yani · Cimahi
-        </p>
       </div>
 
-      {/* ── Right: login form ── */}
-      <div className="flex flex-1 flex-col items-center justify-center px-6 py-12 bg-white lg:bg-gray-50/50">
-        <div className="w-full max-w-sm">
-          {/* Mobile logo (hidden on desktop) */}
-          <div className="lg:hidden text-center mb-8">
-            <Image
-              src="/logo-pmb-unjani (1).png"
-              alt="Logo PMB UNJANI"
-              width={64}
-              height={64}
-              className="mx-auto mb-3"
-            />
-            <h1 className="font-display text-xl font-bold text-ink">PMB UNJANI</h1>
-          </div>
-
+      {/* ── Right side: login form & MFA flows ── */}
+      <div className="flex-1 flex flex-col justify-center items-center px-6 py-10 lg:px-12 xl:px-16 bg-[#F2F5F0]">
+        <div className="w-full max-w-md">
           {langkah === 'kode' && (
             <LangkahKode
               email={email}
@@ -278,40 +282,43 @@ export default function LoginPage() {
                   <strong className="text-ink">{sisaPemulihan}</strong>.
                 </p>
               </div>
-              <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800">
+              <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800">
                 {sisaPemulihan === 0
                   ? 'Kode pemulihan Anda sudah habis. Segera minta superadmin mereset MFA atau buat set kode baru.'
                   : 'Bila HP atau aplikasi authenticator Anda hilang, minta superadmin mereset MFA agar Anda bisa mendaftar ulang.'}
               </div>
-              <TombolUtama type="button" onClick={masukDashboard}>
+              <button
+                type="button"
+                onClick={masukDashboard}
+                className="relative w-full overflow-hidden rounded-lg bg-[#063F2A] hover:bg-[#10281D] py-3 text-sm font-semibold text-white transition-colors motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#063F2A]"
+              >
                 Lanjut ke dashboard
-              </TombolUtama>
+              </button>
             </div>
           )}
 
           {/* Form kredensial tetap terpasang (disembunyikan) selama langkah MFA agar widget
               reCAPTCHA tidak hilang saat pengguna dikembalikan ke langkah ini. */}
           <div hidden={langkah !== 'kredensial'}>
-          {/* Form header */}
-          <div className="mb-8">
-            <h2 className="font-display text-2xl font-bold text-ink">Selamat datang</h2>
-            <p className="text-sm text-ink-muted mt-1">
-              Masuk ke panel admin untuk mengelola konten PMB.
-            </p>
-          </div>
+            {/* Form header */}
+            <div className="mb-6 lg:mb-8">
+              <h2 className="font-display text-2xl lg:text-3xl font-bold text-ink tracking-tight">
+                Selamat datang
+              </h2>
+              <p className="text-sm text-ink-muted mt-1.5">
+                Masuk dengan akun admin untuk mengelola konten PMB UNJANI.
+              </p>
+            </div>
 
-          <form onSubmit={onSubmit} className="space-y-5">
-            {/* Email */}
-            <div>
-              <label htmlFor="login-email" className="block text-xs font-semibold uppercase tracking-wide text-ink-muted mb-2">
-                Email
-              </label>
-              <div className="relative">
-                <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-muted/60">
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </span>
+            <form onSubmit={onSubmit} className="space-y-4 lg:space-y-5">
+              {/* Email */}
+              <div>
+                <label
+                  htmlFor="login-email"
+                  className="block text-xs font-semibold text-ink uppercase tracking-wider mb-2"
+                >
+                  Email
+                </label>
                 <input
                   ref={emailRef}
                   id="login-email"
@@ -322,89 +329,87 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   autoComplete="email"
-                  className="w-full rounded-xl border border-gray-200 bg-white pl-10 pr-4 py-3 text-sm text-ink placeholder:text-ink-muted/50 focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition"
+                  className="w-full rounded-lg border border-[#CBD9CD] bg-white px-4 py-3 text-sm text-ink placeholder:text-ink-muted focus:border-[#063F2A] focus:ring-2 focus:ring-[#063F2A]/40 outline-none transition"
                   placeholder="admin@unjani.ac.id"
                 />
               </div>
-            </div>
 
-            {/* Password */}
-            <div>
-              <label htmlFor="login-password" className="block text-xs font-semibold uppercase tracking-wide text-ink-muted mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-muted/60">
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                </span>
-                <input
-                  id="login-password"
-                  type={showPass ? 'text' : 'password'}
-                  required
-                  aria-invalid={err ? true : undefined}
-                  aria-describedby={err ? 'galat-login' : undefined}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  autoComplete="current-password"
-                  className="w-full rounded-xl border border-gray-200 bg-white pl-10 pr-12 py-3 text-sm text-ink placeholder:text-ink-muted/50 focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition"
-                  placeholder="••••••••"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPass((v) => !v)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-lg text-ink-muted/50 hover:text-ink-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
-                  aria-label={showPass ? 'Sembunyikan password' : 'Tampilkan password'}
-                  aria-pressed={showPass}
+              {/* Password */}
+              <div>
+                <label
+                  htmlFor="login-password"
+                  className="block text-xs font-semibold text-ink uppercase tracking-wider mb-2"
                 >
-                  {showPass ? (
-                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                    </svg>
-                  ) : (
-                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                  )}
-                </button>
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    id="login-password"
+                    type={showPass ? 'text' : 'password'}
+                    required
+                    aria-invalid={err ? true : undefined}
+                    aria-describedby={err ? 'galat-login' : undefined}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    autoComplete="current-password"
+                    className="w-full rounded-lg border border-[#CBD9CD] bg-white pl-4 pr-24 py-3 text-sm text-ink placeholder:text-ink-muted focus:border-[#063F2A] focus:ring-2 focus:ring-[#063F2A]/40 outline-none transition"
+                    placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPass((v) => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-ink hover:text-[#063F2A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#063F2A] rounded px-1.5 py-1 transition-colors"
+                    aria-label={showPass ? 'Sembunyikan password' : 'Tampilkan password'}
+                    aria-pressed={showPass}
+                  >
+                    {showPass ? 'Sembunyikan' : 'Tampilkan'}
+                  </button>
+                </div>
               </div>
+
+              {/* reCAPTCHA: hanya setelah server memintanya */}
+              {captchaKey && (
+                <div className="flex justify-start pt-1">
+                  <div ref={rcContainerRef} />
+                </div>
+              )}
+
+              {/* Error */}
+              <PesanGalat pesan={err} id="galat-login" />
+
+              {/* Submit CTA */}
+              <button
+                type="submit"
+                disabled={loading}
+                aria-busy={loading}
+                className="relative w-full rounded-lg bg-[#D4AF37] hover:bg-[#C4A030] py-3.5 text-base font-semibold text-[#1D2114] disabled:opacity-60 transition-colors motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#063F2A] flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <>
+                    <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                    </svg>
+                    <span role="status">Memproses...</span>
+                  </>
+                ) : (
+                  <span>Masuk →</span>
+                )}
+              </button>
+            </form>
+
+            <div className="mt-6 text-center">
+              <p className="text-xs sm:text-sm text-ink-muted">
+                Lupa password? Hubungi superadmin PMB.
+              </p>
             </div>
 
-            {/* reCAPTCHA: hanya setelah server memintanya */}
-            {captchaKey && (
-              <div className="flex justify-start">
-                <div ref={rcContainerRef} />
-              </div>
-            )}
-
-            {/* Error */}
-            <PesanGalat pesan={err} id="galat-login" />
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="relative w-full overflow-hidden rounded-full bg-brand py-3 text-sm font-semibold text-white hover:bg-brand-600 disabled:opacity-60 transition-all"
-            >
-              {loading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                  </svg>
-                  Memproses...
-                </span>
-              ) : (
-                'Masuk'
-              )}
-            </button>
-          </form>
+            <div className="mt-8 pt-6 border-t border-[#CBD9CD]/60 text-center">
+              <p className="text-xs text-ink-muted">
+                © {new Date().getFullYear()} Universitas Jenderal Achmad Yani
+              </p>
+            </div>
           </div>
-
-          <p className="mt-8 text-center text-xs text-ink-muted">
-            © {new Date().getFullYear()} Universitas Jenderal Achmad Yani
-          </p>
         </div>
       </div>
     </main>

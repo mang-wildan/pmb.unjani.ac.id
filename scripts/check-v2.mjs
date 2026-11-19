@@ -1,9 +1,91 @@
 // Jalankan: node scripts/check-v2.mjs <1..9|all>
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 
 const baca = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 const tasks = {
+  7: async () => {
+    const login = baca('src/app/admin/login/page.tsx');
+
+    // Hash bagian executable dari BASE 03daac0, bukan sekadar nama simbol.
+    const normal = login.replace(/\r\n/g, '\n');
+    const hash = (text) => createHash('sha256').update(text).digest('hex');
+    const auth = normal.slice(normal.indexOf('declare global'), normal.indexOf('  return (\n    <main'));
+    assert.equal(hash(auth), '68822f12db12dc2c86e0cb24e46dad9dfae4d37d69b2ba51abb36cf2876c1f71', 'state/effect/handler auth identik BASE 03daac0');
+    const mfa = normal.slice(normal.indexOf("          {langkah === 'kode'"), normal.indexOf("          {langkah === 'info-pemulihan'"));
+    assert.equal(hash(mfa), '95a89829a1c04805d17d9a8f7fb80ec539d4075054954bca31b00d79acd674d1', 'callback komponen MFA identik BASE');
+    assert.ok(login.includes('flex-col lg:flex-row') && login.includes('lg:w-1/2'), 'split 50/50 dan stacked mobile');
+
+    // 1. Desain visual Varian 02 Gold: split screen desktop + mobile banner stacked
+    assert.match(login, /pmb unjani\.jpg/, 'foto kampus pmb unjani.jpg harus ada');
+    assert.ok(login.includes('Kelola informasi PMB dari satu tempat'), 'heading panel branding kampus');
+    assert.ok(login.includes('Pengumuman, artikel, jadwal, dan biaya pendidikan langsung tampil untuk calon mahasiswa.'), 'deskripsi branding');
+    assert.ok(login.includes('Panel Admin'), 'badge/label Panel Admin di sudut atas panel kiri');
+    assert.ok(login.includes('Multi Jalur Seleksi') && login.includes('Reguler, Prestasi, Beasiswa'), 'poin fitur 1');
+    assert.ok(login.includes('Jadwal Terintegrasi') && login.includes('Pantau gelombang pendaftaran real-time'), 'poin fitur 2');
+    assert.ok(login.includes('Informasi Biaya Transparan') && login.includes('Biaya per prodi & kelas tersedia lengkap'), 'poin fitur 3');
+    assert.match(login, /bg-\[#D4AF37\]|bg-accent/, 'kotak ikon poin fitur latar gold #D4AF37');
+    assert.ok(login.includes('Selamat datang'), 'heading form login');
+    assert.ok(login.includes('Masuk dengan akun admin untuk mengelola konten PMB UNJANI.'), 'subheading form login');
+    const submit = login.slice(login.indexOf('type="submit"'), login.indexOf('</form>'));
+    assert.ok(submit.includes('bg-[#D4AF37]') && submit.includes('text-[#1D2114]'), 'CTA gold #D4AF37 teks #1D2114');
+    assert.ok(submit.includes('rounded-lg'), 'CTA radius 8px');
+    assert.match(submit, /Masuk\s*→/, 'teks tombol Masuk →');
+    assert.ok(login.includes('Lupa password? Hubungi superadmin PMB.'), 'link bantuan lupa password');
+    assert.ok(login.includes('Universitas Jenderal Achmad Yani'), 'copyright Unjani');
+    assert.match(login, /bg-\[#F2F5F0\]|bg-bg/, 'latar form varian 02 #F2F5F0');
+    assert.ok(login.includes('bg-[#06281D]'), 'panel branding hijau gelap');
+
+    // Dilarang keras menambah fake remember me checkbox (kesepakatan user: tidak ada backend remember)
+    assert.doesNotMatch(login, /Ingat saya|Remember me/i, 'fake remember me checkbox dilarang');
+
+    // 2. Preservasi mutlak alur dan logika autentikasi (anti-regresi)
+    const wajibAuth = (src) => {
+      // reCAPTCHA v2 eksplisit dinamis
+      assert.ok(src.includes('grecaptcha'), 'tipe & namespace window.grecaptcha');
+      assert.ok(src.includes('__onGrecaptchaLoad'), 'callback onload reCAPTCHA');
+      assert.ok(src.includes('rcContainerRef') && src.includes('rcWidgetId'), 'ref container & widget reCAPTCHA');
+      assert.ok(src.includes('captchaKey') && src.includes('setCaptchaKey'), 'state captchaKey');
+      assert.ok(src.includes('window.grecaptcha.render'), 'pemanggilan render reCAPTCHA');
+      assert.ok(src.includes('window.grecaptcha.getResponse'), 'pengambilan token reCAPTCHA');
+      assert.ok(src.includes('window.grecaptcha.reset'), 'reset token reCAPTCHA');
+      assert.ok(src.includes('PETUNJUK_CAPTCHA'), 'pesan petunjuk captcha FR-03');
+
+      // State dan alur multi-langkah MFA
+      assert.match(src, /type Langkah\s*=\s*'kredensial'\s*\|\s*'kode'\s*\|\s*'daftar'\s*\|\s*'pemulihan'\s*\|\s*'info-pemulihan'/, 'union Langkah MFA');
+      assert.ok(src.includes('<LangkahKode'), 'komponen LangkahKode');
+      assert.ok(src.includes('<LangkahDaftar'), 'komponen LangkahDaftar');
+      assert.ok(src.includes('<KodePemulihan'), 'komponen KodePemulihan');
+      assert.ok(src.includes("langkah === 'info-pemulihan'"), 'tampilan info pemulihan');
+      assert.ok(src.includes('hidden={langkah !== \'kredensial\'}'), 'form kredensial disembunyikan via hidden agar reCAPTCHA tidak hilang');
+
+      // API submit & payload exact
+      assert.ok(src.includes('/api/auth/login'), 'endpoint /api/auth/login');
+      assert.ok(src.includes('recaptchaToken: recaptchaToken || undefined'), 'payload recaptchaToken');
+      assert.ok(src.includes('data.captchaRequired && data.siteKey'), 'penanganan captchaRequired dari server');
+      assert.ok(src.includes('/api/auth/logout'), 'pembatalan MFA via logout');
+
+      // Safe redirect dashboard
+      assert.ok(src.includes('safeNextPath(nextParam, window.location.origin)'), 'safeNextPath pencegah open redirect');
+
+      // Aksesibilitas & autocomplete
+      assert.ok(src.includes('id="login-email"') && src.includes('htmlFor="login-email"'), 'asosiasi label email');
+      assert.ok(src.includes('id="login-password"') && src.includes('htmlFor="login-password"'), 'asosiasi label password');
+      assert.ok(src.includes('autoComplete="email"'), 'autocomplete email');
+      assert.ok(src.includes('autoComplete="current-password"'), 'autocomplete current-password');
+      assert.ok(src.includes('aria-invalid'), 'aria-invalid');
+      assert.ok(src.includes('aria-describedby'), 'aria-describedby');
+      assert.ok(src.includes('aria-pressed={showPass}'), 'aria-pressed tombol showPass');
+    };
+
+    wajibAuth(login);
+
+    // Negative tests: membuktikan assert menolak kode yang menghilangkan logika auth vital
+    assert.throws(() => wajibAuth(login.replace('recaptchaToken: recaptchaToken || undefined', 'recaptchaToken: undefined')), 'harus menolak bila payload recaptchaToken diubah');
+    assert.throws(() => wajibAuth(login.replace('safeNextPath(nextParam, window.location.origin)', 'nextParam || "/admin"')), 'harus menolak bila safeNextPath dihilangkan');
+    assert.throws(() => wajibAuth(login.replace("hidden={langkah !== 'kredensial'}", '')), 'harus menolak bila hidden kredensial dihilangkan');
+  },
   6: async () => {
     const list = baca('src/app/[locale]/(public)/artikel/page.tsx');
     const detail = baca('src/app/[locale]/(public)/artikel/[slug]/page.tsx');
