@@ -1,12 +1,12 @@
 # Arsitektur — PMB Unjani
 
-Dokumen deskriptif: menggambarkan kondisi kode per versi 1.2.0 (package.json:3).
+Dokumen deskriptif: menggambarkan kondisi kode per versi 2.0.0 (package.json:3).
 
 ## 1. Stack & Versi
 
 | Komponen | Versi | Bukti |
 |---|---|---|
-| Next.js (App Router) | 16.2.4 | package.json:33 |
+| Next.js (App Router) | 16.3.8 | package.json:33 |
 | React / React DOM | 19.2.5 | package.json:36-37 |
 | TypeScript | ^5.6.2 | package.json:59 |
 | Node.js (runtime) | >= 20.9.0 | package.json:6-8 |
@@ -17,7 +17,10 @@ Dokumen deskriptif: menggambarkan kondisi kode per versi 1.2.0 (package.json:3).
 | Zod (validasi) | ^3.23.8 | package.json:43 |
 | Tiptap (rich text editor admin) | ^2.6.6 | package.json:19-23 |
 | formidable + sharp + file-type (upload) | ^3.5.2 / ^0.34.5 / ^16.5.4 | package.json:28-29,39 |
+| Font publik (headings) | Montserrat via `next/font/google` | src/app/layout.tsx |
+| Font publik (body) | Inter | src/app/layout.tsx |
 | Proses production: PM2 fork 1 instance | — | ecosystem.config.js |
+| Port dev/start production | 9532 | package.json:11-13 |
 
 Middleware global bernama `proxy` (konvensi Next 16) di src/proxy.ts, matcher semua path non-aset (src/proxy.ts:10-12).
 
@@ -30,6 +33,7 @@ Middleware global bernama `proxy` (konvensi Next 16) di src/proxy.ts, matcher se
 3. Halaman memanggil `connectDb()` lalu query langsung ke Mongoose (tanpa lewat API): Settings, JalurSeleksi, Jadwal, Dokumen, Pengumuman, PageContent, FAQ, Fakultas, ProgramStudi, Biaya, Popup (page.tsx:3-17,70-80).
 4. Fetch eksternal opsional ke Instagram Graph API bila token tersedia, cache 1 jam, timeout 5 detik (page.tsx:50-64).
 5. Render komponen section: Hero, JalurList, JadwalHighlights, DokumenList, PengumumanList, FAQAccordion, KalkulatorForm, InstagramFeed, LandingPopup (page.tsx:18-36).
+6. Navbar satu instance fixed 80px: transparan di atas hero (marker `data-public-hero`), solid hijau saat scroll. Scroll halus ke anchor `#jalur-seleksi` dan `#kalkulator` (offset 96px) dari Navbar/Footer, reduksi gerakan dihormati.
 
 ### b. Detail pengumuman `/pengumuman/[slug]` (publik)
 
@@ -40,7 +44,7 @@ Middleware global bernama `proxy` (konvensi Next 16) di src/proxy.ts, matcher se
 
 ### c. Login admin → halaman admin
 
-1. Halaman src/app/admin/login/page.tsx (client) mengambil konfigurasi reCAPTCHA dari GET /api/auth/login-config (src/app/api/auth/login-config/route.ts:9-19).
+1. Halaman src/app/admin/login/page.tsx (client) — ulang tampilan Varian 02 Gold (split: foto kampus + panel branding hijau, form login). Logika auth tidak berubah: konfigurasi reCAPTCHA dari GET /api/auth/login-config (src/app/api/auth/login-config/route.ts:9-19).
 2. Submit → POST /api/auth/login (src/app/api/auth/login/route.ts:26-114): rate limit per IP (default 5/menit, route.ts:27-35) → validasi Zod → verifikasi reCAPTCHA bila aktif di Settings (route.ts:52-68) → cari AdminUser aktif + `verifyPassword` → tanda tangan access token (1 jam) & refresh token (7 hari) → set cookie httpOnly `pmb_session` & `pmb_refresh` (route.ts:107-113) → tulis audit log (route.ts:96-105).
 3. Request halaman /admin/* berikutnya dicegat src/proxy.ts:98-136: tanpa sesi → redirect /admin/login; sesi ada → cek RBAC per path (`canAccessPage`/`canAccessApi`, src/lib/permissions.ts) → lolos → render src/app/admin/layout.tsx yang membaca sesi lagi via `getSession()` dan membungkus konten dengan AdminShell (layout.tsx:6-16).
 4. Mutasi ke /api/admin/* juga melewati cek origin CSRF di src/proxy.ts:115-117, lalu guard `requireAdmin` di tiap handler (src/lib/adminGuard.ts:6-19).
@@ -49,9 +53,16 @@ Middleware global bernama `proxy` (konvensi Next 16) di src/proxy.ts, matcher se
 
 ### Halaman publik (prefix locale `id`/`en`, handler = page.tsx di folder tsb)
 
-`/`, `/biaya-kuliah`, `/jalur-masuk`, `/jadwal-pmb`, `/faq`, `/kalkulator`, `/kontak`, `/manual-book`, `/pengumuman`, `/pengumuman/[slug]`, `/artikel`, `/artikel/[slug]` — semua di src/app/[locale]/(public)/. Plus src/app/not-found.tsx.
+`/`, `/jadwal-pmb`, `/faq`, `/kalkulator`, `/kontak`, `/manual-book`, `/pengumuman`, `/pengumuman/[slug]`, `/artikel`, `/artikel/[slug]` — semua di src/app/[locale]/(public)/. Plus src/app/not-found.tsx.
 
-Route lama `/biaya-pendidikan`, `/jadwal`, dan `/jalur-seleksi` sudah dihapus. URL lama dan URL WordPress dialihkan permanen (308) lewat `redirects()` di next.config.mjs (14 rule, SPEC v1.4.0 §6.3). `/kalkulator` dan `/manual-book` tetap stub `permanentRedirect('/')`.
+URL lama yang sekarang scroll ke anchor beranda (redirect permanen 308, satu hop) lewat `redirects()` di next.config.mjs:
+- `/jalur-masuk` → `/#jalur-seleksi`
+- `/en/jalur-masuk` → `/en#jalur-seleksi`
+- `/biaya-kuliah` → `/#kalkulator`
+- `/en/biaya-kuliah` → `/en#kalkulator`
+- Alias WordPress lama (`/biaya-pendidikan`, `/jadwal`, `/jalur-seleksi` dan varian locale) → anchor yang sama.
+
+Halaman `/kalkulator` dan `/manual-book` tetap stub `permanentRedirect('/')`.
 
 ### Halaman admin (tanpa locale, handler = page.tsx di src/app/admin/)
 
@@ -119,6 +130,6 @@ Tidak ada job terjadwal sisi server. Grep `cron|setInterval|node-schedule|agenda
 - `json()` dan `getClientIp()` di src/lib/http.ts:3-18 tidak diimpor file lain; `getClientIp` duplikat fungsional `clientIpFromHeaders` (src/lib/http.ts:11-26).
 - Dependency `nodemon` terdaftar di dependencies tapi tidak dipakai script mana pun (package.json:35).
 - `.htaccess` hanya berisi komentar placeholder Apache — tidak berfungsi di stack Node/Next (.htaccess:1).
-- Ketidaksesuaian port & path deploy: ecosystem.config.js memakai `PORT: 9500` dan `cwd: /www/wwwroot/dev-pmb.unjani.ac.id/v.1.0.1`, sedangkan package.json:13 `next start -p 9531`. Mana yang berlaku di server production: UNKNOWN — perlu konfirmasi manual.
+- Ketidaksesuaian port & path deploy: ecosystem.config.js memakai `PORT: 9500` dan `cwd: /www/wwwroot/dev-pmb.unjani.ac.id/v.1.0.1`, sedangkan package.json:13 `next start -p 9532`. Mana yang berlaku di server production: UNKNOWN — perlu konfirmasi manual.
 - src/app/[locale]/(public)/pengumuman/[slug]/page.tsx:12-13 menetapkan `dynamic = 'force-dynamic'` sekaligus `revalidate = 60` — dengan force-dynamic, nilai revalidate tidak berefek.
 - File log dev (`.next-dev-9501*.log`, `.next-start-9500*.log`) dan `tsconfig.tsbuildinfo` ikut berada di root folder proyek.
