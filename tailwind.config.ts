@@ -38,6 +38,9 @@ const config: Config = {
           DEFAULT: '#D4AF37',
           600: '#C4A030',
           700: '#b28a00',
+          // CTA teks putih: gold terang tidak lolos AA, dua shade ini 5.05:1 / 6.57:1.
+          800: '#8A6A1E',
+          900: '#75591A',
         },
         surface: '#ffffff',
         ink: {

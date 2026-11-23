@@ -20,7 +20,7 @@ export default async function Hero({ urlPendaftaran, judul, subJudul, tahunAjara
           <h1 id="hero-title" className="mt-6 font-display text-4xl font-extrabold leading-[1.08] sm:text-5xl lg:text-6xl xl:text-7xl">{judul || t('judul')}</h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/90">{subJudul || t('subJudul')}</p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <TrackedRegistrationLink href={urlPendaftaran} location="hero" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center justify-center rounded-lg bg-accent px-7 py-3 font-semibold text-[#1D2114] hover:bg-accent-600 focus-visible:ring-4 focus-visible:ring-white">{t('daftarSekarang')} <span aria-hidden className="ml-3">→</span></TrackedRegistrationLink>
+            <TrackedRegistrationLink href={urlPendaftaran} location="hero" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center justify-center rounded-lg bg-accent-800 px-7 py-3 font-semibold text-white transition-colors hover:bg-accent-900 motion-reduce:transition-none focus-visible:ring-4 focus-visible:ring-white">{t('daftarSekarang')}</TrackedRegistrationLink>
             <a href="#kalkulator" className="inline-flex min-h-12 items-center justify-center rounded-lg border border-white px-7 py-3 font-semibold hover:bg-white/10 focus-visible:ring-4 focus-visible:ring-white">{t('hitungBiaya')}</a>
           </div>
           <dl className="mt-10 grid max-w-lg grid-cols-3 gap-4">

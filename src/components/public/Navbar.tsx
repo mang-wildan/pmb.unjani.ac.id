@@ -16,7 +16,7 @@ const navLinks = [
   { href: '/kontak', key: 'kontak' },
 ] as const;
 const focus = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2';
-const cta = `inline-flex items-center justify-center gap-2 rounded-lg bg-[#D4AF37] text-[#1D2114] hover:bg-[#C4A030] px-5 py-2.5 text-sm font-semibold transition-colors motion-reduce:transition-none ${focus}`;
+const cta = `inline-flex items-center justify-center rounded-lg bg-accent-800 text-white hover:bg-accent-900 px-5 py-2.5 text-sm font-semibold transition-colors motion-reduce:transition-none ${focus}`;
 
 export default function Navbar({ settings }: { settings: PublicSettings | null }) {
   const t = useTranslations('nav');
@@ -94,7 +94,7 @@ export default function Navbar({ settings }: { settings: PublicSettings | null }
           </ul>
           <div className="hidden lg:flex items-center gap-2">
             <LanguageSwitcher />
-            <a href={urlDaftar} target="_blank" rel="noopener noreferrer" className={cta}>{t('daftarSekarang')} <span aria-hidden>→</span></a>
+            <a href={urlDaftar} target="_blank" rel="noopener noreferrer" className={cta}>{t('daftarSekarang')}</a>
           </div>
           <button ref={toggle} type="button" aria-label={t('bukaMenu')} aria-expanded={open} aria-controls="public-mobile-menu" className={`lg:hidden rounded-lg p-2 hover:bg-black/10 ${focus}`} onClick={() => setOpen((v) => !v)}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>

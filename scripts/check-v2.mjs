@@ -464,7 +464,7 @@ const tasks = {
     const hero = baca('src/components/public/Hero.tsx');
     for (const id of ['manual-book', 'jalur-seleksi', 'jadwal', 'kalkulator', 'pengumuman', 'faq', 'cta']) assert.ok(page.includes(`id="${id}"`), id);
     assert.ok(hero.includes('data-public-hero'), 'Hero harus menandai overlay navbar');
-    for (const css of ['min-h-[1100px]', 'md:min-h-[900px]', 'pt-24', 'bg-accent', 'text-white']) assert.ok(hero.includes(css), css);
+    for (const css of ['min-h-[1100px]', 'md:min-h-[900px]', 'pt-24', 'bg-accent-800', 'text-white']) assert.ok(hero.includes(css), css);
     assert.doesNotMatch(hero, /2026\/2027/);
     assert.doesNotMatch(page, /href="\/(jalur-masuk|biaya-kuliah)"|<Navbar/);
     for (const feature of ['InstagramFeed', 'LandingPopup', 'kalkulatorRecords', 'activeJadwal', 'jumlahFakultas', 'jumlahProgramStudi']) assert.ok(page.includes(feature));
@@ -531,10 +531,26 @@ const tasks = {
     assert.equal(colorMatch('brand', '900'), '#06281D', 'brand.900 harus #06281D');
     assert.equal(colorMatch('accent', 'DEFAULT'), '#D4AF37', 'accent.DEFAULT harus #D4AF37');
     assert.equal(colorMatch('accent', '600'), '#C4A030', 'accent.600 harus #C4A030');
+    assert.equal(colorMatch('accent', '800'), '#8A6A1E', 'accent.800 harus #8A6A1E');
+    assert.equal(colorMatch('accent', '900'), '#75591A', 'accent.900 harus #75591A');
+    // CTA navbar/hero: teks putih wajib AA di latar gold gelap; gold terang harus ditolak.
+    const luminansi = (hex) => {
+      const kanal = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
+        .map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+      return 0.2126 * kanal[0] + 0.7152 * kanal[1] + 0.0722 * kanal[2];
+    };
+    const rasioKontras = (a, b) => {
+      const [terang, gelap] = [luminansi(a), luminansi(b)].sort((p, q) => q - p);
+      return (terang + 0.05) / (gelap + 0.05);
+    };
+    for (const latar of [colorMatch('accent', '800'), colorMatch('accent', '900')]) {
+      assert.ok(rasioKontras('#FFFFFF', latar) >= 4.5, `teks putih di ${latar} wajib lolos AA`);
+    }
+    assert.ok(rasioKontras('#FFFFFF', colorMatch('accent', 'DEFAULT')) < 4.5, 'kontrol negatif: putih di gold terang tidak lolos AA');
     assert.equal(colorMatch('ink', 'DEFAULT'), '#10281D', 'ink.DEFAULT harus #10281D');
     assert.equal(colorMatch('ink', 'muted'), '#576B5F', 'ink.muted harus #576B5F');
     assert.ok(theme.includes("surface: '#ffffff'"));
-    for (const [palette, shades] of [['brand', [50, 100, 200, 300, 400, 600, 700, 800, 900]], ['accent', [50, 100, 200, 300, 600, 700]]]) {
+    for (const [palette, shades] of [['brand', [50, 100, 200, 300, 400, 600, 700, 800, 900]], ['accent', [50, 100, 200, 300, 600, 700, 800, 900]]]) {
       const block = theme.split(`${palette}: {`)[1].split('}')[0];
       for (const shade of shades) assert.ok(block.includes(`${shade}:`), `${palette}.${shade}`);
     }
@@ -555,7 +571,9 @@ const tasks = {
       assert.doesNotMatch(source, /\/jalur-masuk|\/biaya-kuliah/);
       assert.ok(source.includes('rounded-lg'));
     }
-    for (const contract of ['fixed inset-x-0 top-0', 'scrolled', "passive: true", 'motion-reduce:transition-none', 'inert={!open}', 'aria-expanded={open}', 'aria-controls=', 'focus-visible:ring', "'Escape'", 'usePathname', 'useLocale', 'data-public-hero', 'bg-[#D4AF37]', 'text-[#1D2114]']) assert.ok(navbar.includes(contract), contract);
+    for (const contract of ['fixed inset-x-0 top-0', 'scrolled', "passive: true", 'motion-reduce:transition-none', 'inert={!open}', 'aria-expanded={open}', 'aria-controls=', 'focus-visible:ring', "'Escape'", 'usePathname', 'useLocale', 'data-public-hero', 'bg-accent-800', 'text-white']) assert.ok(navbar.includes(contract), contract);
+    assert.doesNotMatch(navbar, /daftarSekarang'\)\} <span aria-hidden>/, 'CTA navbar tanpa ikon');
+    assert.doesNotMatch(baca('src/components/public/Hero.tsx'), /daftarSekarang'\)\} <span aria-hidden/, 'CTA hero tanpa ikon');
     assert.match(navbar, /<a href=\{anchorHref\(l.href\)\}/);
     assert.ok(footer.includes('bg-[#06281D]'));
     assert.ok(footer.includes('text-[#D4AF37]'));
