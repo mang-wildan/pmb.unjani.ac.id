@@ -10,7 +10,7 @@ Ledger pelacakan status, preflight, relasi file bersama (shared files), dan putu
 - **Branch Aktif**: `release/v2.0.0`
 - **Target Versi**: `2.0.0` (`package.json:3`)
 - **Status Sesi**: Persiapan Selesai (Spesifikasi & Dokumen Rencana Dikoreksi; Aplikasi Belum Diimplementasi)
-- **Metode Eksekusi Disetujui**: Native / Task-by-task dengan TDD script builtin `node:assert` (`scripts/check-v2.mjs`) tanpa dependensi tambahan.
+- **Metode Eksekusi Disetujui**: Subagent-driven (implementer + reviewer per task) dengan TDD script builtin `node:assert` (`scripts/check-v2.mjs`) tanpa dependensi tambahan.
 - **Referensi Desain Utama**: `docs/update/v.2.0.0/preview/*.png` (Varian 02 Gold FigCraft), bukan file temporary.
 
 ---
@@ -88,3 +88,55 @@ Untuk mencegah tumpang tindih dan regresi saat eksekusi:
 | `src/app/[locale]/(public)/page.tsx` | Task 3 | Mengintegrasikan seluruh section landing page dengan id anchor dan offset `scroll-mt-24`. Jangan menghilangkan komponen popup dan instagram. |
 | `src/styles/globals.css` | Task 2, Task 8 | Pastikan aturan smooth scroll menghormati `@media (prefers-reduced-motion: reduce)`. |
 | `src/app/admin/login/page.tsx` | Task 7 | Redesign markup/CSS saja; seluruh state, hook, dan alur API login dilarang diubah perilakunya. |
+
+---
+
+## 5. Log Eksekusi
+
+- Task 2: implementasi `c36cb4a`; review spec PASS with minor deviation, quality APPROVE WITH NITS (0 Critical/Important, 2 Minor).
+- Task 2: complete (commits `0ebf540..2d86c8a`, initial review + fix re-review clean APPROVED).
+- Task 3: BASE `2d86c8a`, dispatch implementer.
+- Task 3: implementasi `ce5bede`; review spec belum lulus, quality minta perubahan (0 Critical / 2 Important / 4 Minor). Fix round 1/5 berjalan: kontras hasil kalkulator, drill-down prodi mobile, key HeroGelombangInfo, panel jalur mobile, copy kalkulator ke messages.
+- Task 3: minor (deferred): posisi heading jalur desktop di kolom kiri seperti PNG.
+- Task 3: minor (deferred): badge tanggal pengumuman dipisah hari besar + bulan/tahun.
+- Task 3: minor (deferred): label field & aria-label kalkulator masih bahasa Indonesia (dibawa ke final review).
+- Task 3: fix round 1 `a2b7445` (I2/M1/M2/M4 ADDRESSED, I1 PARTIAL); fix round 2 `f7d7eb1` (disclaimer `text-white/80` 11.99:1, assert eksak + mutation check, plural EN). Re-review round 2 APPROVE.
+- Task 3: complete (commits `2d86c8a..f7d7eb1`; 2 Important + 4 Minor addressed/deferred).
+- Task 4: BASE `f7d7eb1`, dispatch implementer.
+- Task 4: implementer NEEDS_CONTEXT (form kontak tidak ada di SPEC/PNG); klarifikasi dikirim: tanpa form, edit messages id/en diizinkan.
+- Task 4: implementasi `9e9cef6`; review spec PASS, quality REQUEST EVIDENCE/MINORS (0 Critical / 2 Important runtime evidence / 6 Minor).
+- Task 4: verifikasi runtime CDP (mobile emulation 390px + desktop pasca-hidrasi) & perbaikan minor (M1-M6) berjalan di round 1. Belum `[x]`.
+- Task 4: fix round 1 `487b9a7` — I1/I2 bukti CDP terverifikasi (scrollWidth==innerWidth, navbar putih pasca-hidrasi), M1–M6 ADDRESSED. Re-review APPROVE, 0 temuan. Task 4 complete (`f7d7eb1..487b9a7`).
+- Task 5: BASE `487b9a7`, dispatch implementer.
+- Task 5: implementasi `3cc674e`; review spec PASS + quality APPROVE (0 Critical/Important, 3 Minor). Task 5 complete (`487b9a7..3cc674e`).
+- Task 5: minor (deferred): cakupan assert detail belum lengkap; link eksternal tanpa indikasi + alt duplikat kartu highlight. Review visual independen belum melihat piksel; bukti runtime implementer tersedia, cek final tetap diperlukan.
+- Task 5 ruling: usulan ekstrak PageHero tidak dikerjakan otomatis; duplikasi markup kecil bukan alasan abstraksi/refactor di luar scope.
+- Task 6: BASE `3cc674e`, dispatch implementer.
+- Task 6: implementasi `4d83673`; review spec PASS, quality PASS with notes (0 Critical / 1 Important / 6 Minor). Fix `03daac0`: tag chips mobile scroll/nowrap + landmark nav, re-review APPROVE (0 temuan baru). Task 6 complete.
+- Task 6: minor (deferred): query related artikel ganda; tidak direfactor otomatis karena di luar perbaikan wajib.
+- Task 7: BASE `03daac0`, dispatch implementer.
+- Task 7: implementasi `c38353c`; review spec PASS conditional, quality REQUEST CHANGES (0 Critical / 1 Important / 2 Minor). Finding I1: hash guard melewatkan wiring JSX (onSubmit, required, captcha ref, captcha condition). Fix round 1/5 berjalan.
+- Task 7: minor (deferred/reported): testing limitation kredensial riil dinyatakan eksplisit; M2 skala tipografi opsional. Belum `[x]`.
+- Task 7: fix `d5ef8bd` (wiring JSX + 6 negative controls) dan `8590314` (info-pemulihan callback + 3 negative controls). Re-review APPROVE (0 Critical/Important). Task 7 complete (`03daac0..8590314`).
+- Task 7: auth end-to-end sukses + MFA dengan kredensial riil TIDAK diuji (tidak ada kredensial, dilarang di repo). Guard source memastikan logika/wiring tak berubah.
+- Task 8: BASE `8590314`, mulai verifikasi global (check all, lint, build, manual browser).
+- Task 8: fix `85c2bd3` (kontras stepper), `0b2704c` (label i18n); build HEAD `0b2704c` exit 0, route lama hilang, 17 redirect satu hop 308, anchor offset 96px, tanpa overflow 375/390/1440. Review: 3 Blocker / 2 Important / 2 Minor.
+- Task 8: fix `21a3e52` + `f2785ba`: guard kontras tolak `text-ink-soft`, binding i18n dikunci + negative control, 17 key kalkulator id/en.
+- Lint: `0eb5a68` ignore backup, `0d5a4b9` ignore `.agents/**` (disetujui user). `yarn lint` exit 0: 0 error, 17 warning = baseline `9e08148`. `yarn build` HEAD exit 0. Task 8 complete.
+- Task 9: `docs/ARCHITECTURE.md` + `CHANGELOG.md` [2.0.0] di `eeeae8f`. Tag belum ada. Final whole-branch review dijalankan sebelum minta konfirmasi tag/push/merge.
+- Keputusan user (20 Nov 2026): (1) tambah `node_modules-windows-backup/**` ke ignore eslint, folder tidak dihapus; (2) 17 warning eslint dibandingkan dengan baseline `9e08148`, hanya warning baru yang diperbaiki; (3) admin terautentikasi tidak diuji runtime, dicatat sebagai limitation rilis.
+- Task 6: minor (deferred): regex helper rapuh; magic `1_000_000` waktu baca; tipe duplikat; featured muncul di halaman 2+; normalisasi tag campur huruf.
+- Task 3: minor (deferred): step-counter `text-ink-soft/60` kontras ~2:1 (pra-eksis); `aria-live` + focus ganda di JalurAccordion; rail prodi 768–1023px tidak auto-scroll.
+- Catatan luar scope: warning rasio logo di Navbar; error `preview/Gallery` bukan dari Task 3.
+- Lint: `eslint .` OOM exit 134 karena `node_modules-windows-backup/**` (kondisi lingkungan, bukan regresi). Verifikasi lint pakai daftar path spesifik `eslint src scripts`.
+- Kontrak integrasi Task 3–6: hero paling atas wajib `data-public-hero`, mulai y=0, padding konten atas minimal 96px; satu Navbar fixed 80px. Tanpa marker fallback solid. Artikel detail editorial menggunakan header solid hijau gelap.
+- Task 8: admin terautentikasi belum diuji (tidak ada kredensial); browser checks Task 2 bukan klaim pixel parity.
+
+- Commit `180c81d`: koreksi SPEC/TODO + ledger.
+- Commit `bc504bb`: MustBeFixed.txt + preview PNG dilacak git (sebelumnya concern #6).
+- Ruling: checkbox "Ingat saya" TIDAK ditambahkan di login — fitur remember tidak ada di auth dan AGENTS.md melarang ubah config auth — biaya bila salah: fitur auth terpisah nanti.
+- Ruling: script `task-brief` gagal di bash Windows (`pipefail`); brief = bagian Task N di SPEC.md.
+- Ruling: concern AGENTS.md/ARCHITECTURE.md basi (versi/port) hanya dilaporkan, tidak diubah (di luar scope).
+- Task 1: BASE `bc504bb`, implementer menghasilkan commit `0ebf540`; review independen LULUS (spec + quality; 0 temuan). Task 1 complete, range `bc504bb..0ebf540`.
+- Task 1 verifikasi: assert routing PASS; `npx tsc --noEmit` PASS; lint file task PASS. `yarn lint` global exit 1 (41.759 error, 84.064 warning), ikut memindai `node_modules-windows-backup`. Baseline BASE belum diverifikasi; jangan menyebut semua temuan pra-eksis. Tidak mengubah eslint ignore atau menghapus backup.
+- Keputusan user: setuju seluruh ruling di atas. Di akhir (Task 9, sebelum tag) perbarui `docs/ARCHITECTURE.md`: versi 2.0.0, port 9532, Next 16.3.8, daftar route publik tanpa `/jalur-masuk` & `/biaya-kuliah`, tabel redirect ke anchor, font Montserrat/Inter.

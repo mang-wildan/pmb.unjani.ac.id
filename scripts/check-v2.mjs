@@ -476,7 +476,8 @@ const tasks = {
     assert.ok(kalkulator.includes('records.length === 0'));
     const faq = baca('src/components/public/FAQAccordion.tsx');
     assert.ok(faq.includes('aria-pressed'));
-    assert.ok(baca('src/components/public/ProgramStudiExplorer.tsx').includes('lg:grid-cols-4'));
+    // F1 · Explorer Sidebar: rail fakultas kiri, panel prodi kanan (>=lg).
+    assert.ok(baca('src/components/public/ProgramStudiExplorer.tsx').includes('lg:grid-cols-[minmax(0,18rem)_minmax(0,1fr)]'));
     assert.ok(baca('src/components/public/ArtikelSection.tsx').includes('id="artikel"'));
     const slider = baca('src/components/public/HeroSlider.tsx');
     assert.ok(slider.includes("fullBleed ? 'h-full w-full'"));
@@ -531,8 +532,8 @@ const tasks = {
     assert.equal(colorMatch('brand', '900'), '#06281D', 'brand.900 harus #06281D');
     assert.equal(colorMatch('accent', 'DEFAULT'), '#D4AF37', 'accent.DEFAULT harus #D4AF37');
     assert.equal(colorMatch('accent', '600'), '#C4A030', 'accent.600 harus #C4A030');
-    assert.equal(colorMatch('accent', '800'), '#8A6A1E', 'accent.800 harus #8A6A1E');
-    assert.equal(colorMatch('accent', '900'), '#75591A', 'accent.900 harus #75591A');
+    assert.equal(colorMatch('accent', '800'), '#966F19', 'accent.800 harus #966F19');
+    assert.equal(colorMatch('accent', '900'), '#8A6517', 'accent.900 harus #8A6517');
     // CTA navbar/hero: teks putih wajib AA di latar gold gelap; gold terang harus ditolak.
     const luminansi = (hex) => {
       const kanal = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)

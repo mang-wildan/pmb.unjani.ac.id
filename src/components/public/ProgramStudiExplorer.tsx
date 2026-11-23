@@ -7,7 +7,7 @@ import ProgramStudiBaris, { type ProgramStudiItem } from '@/components/public/Pr
 import Reveal from '@/components/public/Reveal';
 import { SectionHeading } from '@/components/ui/Card';
 import { cn } from '@/lib/cn';
-import { darkenForWhiteText, darkenToAA, normalisasiHex, withAlpha } from '@/lib/color';
+import { darkenToAA, normalisasiHex, withAlpha } from '@/lib/color';
 import { useFlip } from '@/lib/useFlip';
 
 // Penjelajah program studi, fakultas dulu (FR-56–FR-60, Keputusan Teknis #24–#25).
@@ -164,29 +164,31 @@ export default function ProgramStudiExplorer({ fakultas, programStudi, urlWhatsA
     >
       <noscript dangerouslySetInnerHTML={{ __html: `<style>${GAYA_NOSCRIPT}</style>` }} />
       <div className="container mx-auto">
-        <Reveal>
-          <SectionHeading eyebrow={teks.eyebrow} title={teks.title} description={teks.desc} id="fakultas-heading" />
-        </Reveal>
+        <div className="lg:flex lg:items-end lg:justify-between lg:gap-10">
+          <Reveal>
+            <SectionHeading eyebrow={teks.eyebrow} title={teks.title} description={teks.desc} id="fakultas-heading" />
+          </Reveal>
 
-        <div className="relative mt-8" data-hanya-js="">
-          <label htmlFor="cari-prodi" className="sr-only">
-            {t('cariLabel')}
-          </label>
-          <i className="fa-solid fa-magnifying-glass pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-ink-soft" aria-hidden="true" />
-          <input
-            id="cari-prodi"
-            ref={inputRef}
-            type="search"
-            value={kata}
-            onChange={(e) => ubahKata(e.target.value)}
-            placeholder={t('cariPlaceholder')}
-            autoComplete="off"
-            aria-controls={idPanel}
-            className="h-12 w-full rounded-lg border border-brand-100 bg-white pl-11 pr-4 text-base text-ink shadow-sm placeholder:text-ink-soft focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/20"
-          />
+          <div className="relative mt-6 lg:mt-0 lg:w-80 lg:shrink-0" data-hanya-js="">
+            <label htmlFor="cari-prodi" className="sr-only">
+              {t('cariLabel')}
+            </label>
+            <i className="fa-solid fa-magnifying-glass pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-ink-soft" aria-hidden="true" />
+            <input
+              id="cari-prodi"
+              ref={inputRef}
+              type="search"
+              value={kata}
+              onChange={(e) => ubahKata(e.target.value)}
+              placeholder={t('cariPlaceholder')}
+              autoComplete="off"
+              aria-controls={idPanel}
+              className="h-12 w-full rounded-lg border border-brand-100 bg-white pl-11 pr-4 text-base text-ink shadow-sm placeholder:text-ink-soft focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/20"
+            />
+          </div>
         </div>
 
-        <div className="mt-6 space-y-6">
+        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,18rem)_minmax(0,1fr)] lg:items-start">
           {/* Rail (>=md) / petak dua kolom (<md). */}
           <nav
             ref={railRef}
@@ -195,7 +197,7 @@ export default function ProgramStudiExplorer({ fakultas, programStudi, urlWhatsA
             aria-label={t('navFakultas')}
             // Di layar pendek rail sticky bisa lebih tinggi dari viewport: batasi tinggi dan beri gulir dalam
             // hanya pada rail (navigasi), bukan pada panel isi.
-            className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 max-md:data-[tingkat=prodi]:hidden"
+            className="grid grid-cols-1 gap-4 sm:grid-cols-2 max-md:data-[tingkat=prodi]:hidden lg:sticky lg:top-24 lg:max-h-[calc(100dvh-8rem)] lg:grid-cols-1 lg:gap-1 lg:overflow-y-auto lg:rounded-lg lg:border lg:border-ln/70 lg:bg-white lg:p-2 lg:shadow-soft"
           >
             <TombolFakultas
               aktif={modeSemua}
@@ -229,7 +231,7 @@ export default function ProgramStudiExplorer({ fakultas, programStudi, urlWhatsA
             ref={flip.ref}
             data-panel=""
             data-tingkat={tingkat}
-            className="mt-4 rounded-lg border border-brand-100 bg-white p-4 shadow-soft max-md:hidden max-md:data-[tingkat=prodi]:block md:mt-0 md:p-5"
+            className="mt-4 max-md:hidden max-md:data-[tingkat=prodi]:block lg:mt-0"
           >
             <div className="flex flex-wrap items-start justify-between gap-3" data-hanya-js="">
               <div className="min-w-0">
@@ -244,7 +246,7 @@ export default function ProgramStudiExplorer({ fakultas, programStudi, urlWhatsA
                 <h3 ref={judulPanelRef} tabIndex={-1} className="font-display text-lg font-bold leading-tight text-ink focus:outline-none">
                   {modeSemua ? (token.length > 0 ? t('hasilSemua') : t('semuaProdi')) : (fakultasAktif?.nama ?? '')}
                 </h3>
-                <p role="status" aria-live="polite" className="mt-0.5 text-sm text-ink-muted">
+                <p role="status" aria-live="polite" className="mt-0.5 text-sm text-brand-800">
                   {t('jumlahHasil', { n: jumlah })}
                 </p>
               </div>
@@ -265,7 +267,7 @@ export default function ProgramStudiExplorer({ fakultas, programStudi, urlWhatsA
             </div>
 
             {jumlah === 0 && (
-              <div className="mt-4 rounded-lg border border-dashed border-brand-200 px-6 py-8 text-center" data-hanya-js="">
+              <div className="mt-4 rounded-lg border border-dashed border-brand-300 bg-white/70 px-6 py-8 text-center" data-hanya-js="">
                 <h4 className="font-display text-base font-bold text-ink">{t('kosongJudul')}</h4>
                 <p className="mx-auto mt-1 max-w-md text-sm text-ink-muted">{t('kosongPesan')}</p>
                 <div className="mt-4 flex flex-col items-stretch justify-center gap-2 sm:flex-row sm:items-center">
@@ -318,7 +320,7 @@ export default function ProgramStudiExplorer({ fakultas, programStudi, urlWhatsA
                       <span className="h-3 w-1 rounded-lg" style={{ backgroundColor: normalisasiHex(f.warna) }} aria-hidden="true" />
                       {t('judulGrup', { nama: f.nama })}
                     </h4>
-                    <ul>
+                    <ul className="mt-3 grid gap-3">
                       {butir.map(({ prodi }) => (
                         <ProgramStudiBaris key={prodi._id} prodi={prodi} tampilkanFakultas={false} hidden={!tampil.has(prodi._id)} />
                       ))}
@@ -357,8 +359,13 @@ function TombolFakultas({
 }) {
   const t = useTranslations('prodiExplorer');
   const dasar = normalisasiHex(warna);
-  const latarAktif = darkenForWhiteText(dasar);
   const teksWarna = darkenToAA(dasar);
+  // F1: tombol aktif selalu hijau brand #063F2A dengan teks putih.
+  const gaya = aktif
+    ? { backgroundColor: '#063F2A', borderColor: '#063F2A', color: '#ffffff' }
+    : semua
+      ? undefined
+      : { borderColor: withAlpha(dasar, 0.35) };
   return (
     <button
       type="button"
@@ -366,44 +373,44 @@ function TombolFakultas({
       aria-pressed={aktif}
       aria-controls={idPanel}
       className={cn(
-        'group relative flex w-full flex-col items-start gap-1 rounded-lg border bg-white p-3 text-left transition-colors duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/25 min-h-[160px]',
-        semua && 'order-last bg-accent',
-        !aktif && 'hover:bg-brand-50/50',
+        'group relative flex w-full flex-col items-start gap-1 rounded-lg border border-ln/70 bg-white p-3 text-left transition-colors duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/25 min-h-[120px] lg:min-h-0 lg:border-transparent lg:py-2.5 lg:pl-4 lg:pr-3',
+        semua && 'order-last lg:order-first',
+        !aktif && 'hover:border-brand-300 lg:hover:bg-brand-50/70 hover:bg-brand-50/50',
       )}
-      style={semua ? { backgroundColor: '#D4AF37', borderColor: '#D4AF37', color: '#1D2114' } : aktif ? { backgroundColor: latarAktif, borderColor: latarAktif, color: '#ffffff' } : { borderColor: withAlpha(dasar, 0.35) }}
+      style={gaya}
     >
       <span
         className="absolute left-0 top-3 hidden h-[calc(100%-1.5rem)] w-1 rounded-r-full md:block"
         style={{ backgroundColor: aktif ? 'rgba(255,255,255,0.6)' : dasar }}
         aria-hidden="true"
       />
-      <span className="flex w-full items-center justify-between gap-2 ">
+      <span className="flex w-full flex-col lg:flex-row lg:items-center lg:gap-3">
         <span
           translate={semua ? undefined : 'no'}
-          className={cn('font-display font-extrabold leading-none', semua ? 'text-4xl' : 'notranslate text-2xl')}
-          style={semua || aktif ? undefined : { color: teksWarna }}
+          className={cn('font-display font-extrabold leading-none lg:hidden', semua ? 'text-4xl' : 'notranslate text-2xl')}
+          style={aktif ? { color: '#ffffff' } : { color: teksWarna }}
         >
           {singkatan}
         </span>
         <span
           className={cn(
-            'inline-flex min-w-6 items-center justify-center rounded-lg px-1.5 text-[11px] font-bold tabular-nums md:order-last',
-            aktif ? 'bg-black/25 text-white' : 'bg-brand-50 text-brand-700',
+            'absolute right-3 top-3 inline-flex min-w-6 items-center justify-center rounded-lg px-1.5 text-[11px] font-bold tabular-nums md:order-last lg:static lg:shrink-0',
+            aktif ? 'bg-white/20 text-white' : 'bg-brand-50 text-brand-700',
           )}
           aria-label={t('jumlahProdi', { n: jumlah })}
         >
           {jumlah}
         </span>
-      </span>
-      <span className={cn('mt-3 text-sm font-semibold leading-snug', aktif && !semua ? 'text-white' : 'text-ink')}>{nama}</span>
-      {!semua && jenjang.length > 0 && (
-        <span className={cn('text-[10px] font-semibold uppercase tracking-wide ', aktif ? 'text-white' : 'text-ink-muted')}>
-          <span className="sr-only">{t('jenjangTersedia')}: </span>
-          <span translate="no" className="notranslate">
-            {jenjang.join(' · ')}
+        <span className={cn('mt-3 text-sm font-semibold leading-snug lg:mt-0 lg:min-w-0 lg:flex-1', aktif ? 'text-white' : 'text-ink')}>{nama}</span>
+        {!semua && jenjang.length > 0 && (
+          <span className={cn('text-[10px] font-semibold uppercase tracking-wide lg:hidden', aktif ? 'text-white/80' : 'text-ink-muted')}>
+            <span className="sr-only">{t('jenjangTersedia')}: </span>
+            <span translate="no" className="notranslate">
+              {jenjang.join(' · ')}
+            </span>
           </span>
-        </span>
-      )}
+        )}
+      </span>
     </button>
   );
 }

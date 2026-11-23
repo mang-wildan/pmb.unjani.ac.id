@@ -270,8 +270,8 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
       </section>
 
       <section id="jadwal" className="scroll-mt-24 py-16 md:py-24" aria-labelledby="jadwal-heading">
-        <div className="container mx-auto grid items-start gap-10 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1.5fr)]">
-          <aside><SectionHeading id="jadwal-heading" eyebrow={t('jadwalEyebrow')} title={t('jadwalTitle')} description={t('jadwalDesc')} /></aside>
+        <div className="container mx-auto">
+          <div className="mb-10 max-w-xl"><SectionHeading id="jadwal-heading" title={t('jadwalTitle')} description={t('jadwalDesc')} /></div>
           <JadwalHighlights items={jadwal as any} locale={locale} />
         </div>
       </section>

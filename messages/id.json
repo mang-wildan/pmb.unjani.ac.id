@@ -42,7 +42,7 @@
     "jalurLink": "Lihat semua jalur seleksi →",
     "jadwalEyebrow": "Tandai Kalender",
     "jadwalTitle": "Jadwal Penerimaan",
-    "jadwalDesc": "Pantau setiap fase mulai dari pendaftaran, ujian, pengumuman, hingga registrasi ulang.",
+    "jadwalDesc": "Periode yang sedang berjalan dan yang akan datang.",
     "jadwalLink": "Lihat semua jadwal →",
     "dokumenEyebrow": "Dokumen Resmi",
     "dokumenTitle": "Biaya Pendidikan & Buku Panduan",
@@ -148,6 +148,7 @@
     "jalurKosong": "Jalur belum ditentukan.",
     "durasiHari": "{count} hari",
     "sedangBerlangsung": "Sedang berlangsung",
+    "sisaHari": "Sisa {days} hari",
     "mulaiDalam": "Mulai dalam {days} hari",
     "berakhirHariIni": "Berakhir hari ini",
     "berakhirDalam": "Berakhir dalam {days} hari",
@@ -159,7 +160,13 @@
     "fasePengumuman": "Pengumuman",
     "faseRegistrasi": "Registrasi",
     "faseLainnya": "Lainnya",
-    "status": "Status"
+    "status": "Status",
+    "akanDatang": "Akan datang",
+    "jumlahPeriode": "{count} periode",
+    "kosongAkanDatang": "Belum ada periode berikutnya",
+    "kosongAkanDatangDesc": "Periode baru akan tampil di sini setelah dijadwalkan panitia.",
+    "lihatDetail": "Lihat detail →",
+    "lihatJadwal": "Lihat jadwal"
   },
   "biayaPage": {
     "metaTitle": "Biaya Kuliah UNJANI per Program Studi",

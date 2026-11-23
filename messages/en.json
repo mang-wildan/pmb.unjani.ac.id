@@ -42,7 +42,7 @@
     "jalurLink": "View all admission paths →",
     "jadwalEyebrow": "Mark Your Calendar",
     "jadwalTitle": "Admission Schedule",
-    "jadwalDesc": "Track every phase from registration, exams, announcements, to re-registration.",
+    "jadwalDesc": "Periods that are running now and coming next.",
     "jadwalLink": "View full schedule →",
     "dokumenEyebrow": "Official Documents",
     "dokumenTitle": "Tuition Fees & Guidebook",
@@ -148,6 +148,7 @@
     "jalurKosong": "No path has been assigned yet.",
     "durasiHari": "{count, plural, one {# day} other {# days}}",
     "sedangBerlangsung": "In progress",
+    "sisaHari": "{days, plural, one {# day left} other {# days left}}",
     "mulaiDalam": "Starts in {days, plural, one {# day} other {# days}}",
     "berakhirHariIni": "Ends today",
     "berakhirDalam": "Ends in {days, plural, one {# day} other {# days}}",
@@ -159,7 +160,13 @@
     "fasePengumuman": "Announcement",
     "faseRegistrasi": "Re-registration",
     "faseLainnya": "Other",
-    "status": "Status"
+    "status": "Status",
+    "akanDatang": "Upcoming",
+    "jumlahPeriode": "{count, plural, =0 {No periods} one {# period} other {# periods}}",
+    "kosongAkanDatang": "No upcoming periods yet",
+    "kosongAkanDatangDesc": "New periods appear here once the committee schedules them.",
+    "lihatDetail": "View details →",
+    "lihatJadwal": "View schedule"
   },
   "biayaPage": {
     "metaTitle": "UNJANI Tuition Fees by Study Program",

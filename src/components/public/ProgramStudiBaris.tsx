@@ -22,14 +22,6 @@ export type ProgramStudiItem = {
   fakultas_id: { _id: string; nama: string; singkatan: string };
 };
 
-const PIL_JENJANG: Record<string, string> = {
-  S1: 'bg-brand-50 text-brand-700',
-  S2: 'bg-emerald-50 text-emerald-700',
-  S3: 'bg-blue-50 text-blue-700',
-  D3: 'bg-violet-50 text-violet-700',
-  D4: 'bg-indigo-50 text-indigo-700',
-};
-
 // Warna chip akreditasi konsisten per tingkat (FR-57). Nilai lain memakai abu.
 function kelasAkreditasi(nilai: string): string {
   const v = nilai.trim().toLowerCase();
@@ -52,7 +44,6 @@ export default function ProgramStudiBaris({
 }) {
   const t = useTranslations('prodiExplorer');
   const syarat = prodi.persyaratan ?? [];
-  const pil = PIL_JENJANG[prodi.jenjang] ?? 'bg-amber-50 text-amber-700';
 
   // FR-46: pilih prodi ini di kalkulator lalu gulir ke sana (logika sama dengan T-63).
   const hitungBiaya = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -64,49 +55,48 @@ export default function ProgramStudiBaris({
   };
 
   return (
-    <li data-flip-key={prodi._id} hidden={hidden} className="border-b border-brand-100 last:border-b-0">
-      <div className="flex items-start gap-3 py-2.5 sm:items-center">
-        <span
-          translate="no"
-          className={cn(
-            'notranslate mt-0.5 inline-flex h-7 min-w-10 flex-none items-center justify-center rounded-full px-2 text-[11px] font-bold uppercase tracking-wide sm:mt-0',
-            pil,
-          )}
-        >
-          {prodi.jenjang}
-        </span>
-
+    <li
+      data-flip-key={prodi._id}
+      hidden={hidden}
+      className="rounded-lg border border-ln/70 bg-white p-4 shadow-soft transition hover:border-brand-300 md:p-5"
+    >
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0 flex-1">
-          {/* h4: di bawah h3 judul panel dan h4 judul kelompok fakultas (hierarki tidak terbalik). */}
-          <h4 className="text-sm font-bold leading-snug text-ink sm:text-[15px]">
-            {prodi.nama}
+          <div className="flex items-baseline gap-2">
+            <h4 className="font-display text-base font-bold leading-snug text-ink sm:text-lg">
+              {prodi.nama}
+            </h4>
             {prodi.singkatan && (
+              <abbr
+                className="notranslate rounded-md bg-gray-100 px-1.5 py-0.5 text-[11px] font-semibold text-ink-muted no-underline"
+                translate="no"
+                title={prodi.nama}
+              >
+                {prodi.singkatan}
+              </abbr>
+            )}
+          </div>
+          <div className="mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-ink-muted">
+            <span className="font-semibold text-brand-700">{prodi.jenjang}</span>
+            {prodi.akreditasi && (
               <>
-                {' '}
-                <abbr
-                  className="notranslate ml-1 rounded-md bg-gray-100 px-1.5 py-0.5 align-middle text-[11px] font-semibold text-ink-muted no-underline"
-                  translate="no"
-                  title={prodi.nama}
-                >
-                  {prodi.singkatan}
-                </abbr>
+                <span aria-hidden="true" className="text-ln">·</span>
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="sr-only">{t('akreditasi')}: </span>
+                  <span className={cn('rounded-full px-2.5 py-0.5 text-[11px] font-bold', kelasAkreditasi(prodi.akreditasi))}>
+                    {t('akreditasi')} {prodi.akreditasi}
+                  </span>
+                </span>
               </>
             )}
-          </h4>
-          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-muted">
             {tampilkanFakultas && prodi.fakultas_id.nama && (
-              <span className="inline-flex items-center gap-1.5">
-                <i className="fa-solid fa-building-columns text-[0.65rem]" aria-hidden="true" />
-                {prodi.fakultas_id.nama}
-              </span>
-            )}
-            {prodi.akreditasi && (
-              <span className="inline-flex items-center gap-1.5">
-                <span className="sr-only">{t('akreditasi')}: </span>
-                <span className={cn('rounded-full px-2.5 py-0.5 text-[11px] font-bold', kelasAkreditasi(prodi.akreditasi))}>
-                  {prodi.akreditasi}
+              <>
+                <span aria-hidden="true" className="text-ln">·</span>
+                <span className="inline-flex items-center gap-1.5">
+                  <i className="fa-solid fa-building-columns text-[0.65rem]" aria-hidden="true" />
+                  {prodi.fakultas_id.nama}
                 </span>
-              </span>
+              </>
             )}
             {syarat.length > 0 && (
               <details className="detail-persyaratan group inline">
@@ -131,32 +121,29 @@ export default function ProgramStudiBaris({
           </div>
         </div>
 
-        {(prodi.hasAkreditasiFile || prodi.punyaBiaya) && (
-          <div className="flex flex-none flex-col items-end gap-1.5 sm:flex-row sm:items-center sm:gap-2">
-            {prodi.hasAkreditasiFile && (
-              <a
-                href={`/api/program-studi/${prodi._id}/akreditasi?download=1`}
-                download
-                aria-label={t('sertifikatLabel', { nama: prodi.nama })}
-                title={t('sertifikatLabel', { nama: prodi.nama })}
-                className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-brand-200 px-2.5 text-xs font-semibold text-brand-700 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/25"
-              >
-                <i className="fa-solid fa-file-arrow-down text-[0.7rem]" aria-hidden="true" />
-                <span className="hidden sm:inline">{t('sertifikat')}</span>
-              </a>
-            )}
-            {prodi.punyaBiaya && (
-              <a
-                href="#kalkulator"
-                onClick={hitungBiaya}
-                className="inline-flex min-h-9 items-center gap-1.5 whitespace-nowrap rounded-lg bg-brand-50 px-2.5 text-xs font-semibold text-brand-700 hover:bg-brand-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/25"
-              >
-                <i className="fa-solid fa-calculator text-[0.7rem]" aria-hidden="true" />
-                {t('hitungBiaya')}
-              </a>
-            )}
-          </div>
-        )}
+        <div className="flex flex-wrap items-center gap-2 sm:shrink-0">
+          {prodi.hasAkreditasiFile && (
+            <a
+              href={`/api/program-studi/${prodi._id}/akreditasi?download=1`}
+              download
+              aria-label={t('sertifikatLabel', { nama: prodi.nama })}
+              title={t('sertifikatLabel', { nama: prodi.nama })}
+              className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-brand-200 bg-white px-2.5 text-xs font-semibold text-brand-700 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/25"
+            >
+              <i className="fa-solid fa-file-arrow-down text-[0.7rem]" aria-hidden="true" />
+              <span>{t('sertifikat')}</span>
+            </a>
+          )}
+          {prodi.punyaBiaya && (
+            <a
+              href="#kalkulator"
+              onClick={hitungBiaya}
+              className="inline-flex min-h-10 items-center gap-1 text-sm font-semibold text-brand hover:text-brand-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/25"
+            >
+              <span>{t('hitungBiaya')} →</span>
+            </a>
+          )}
+        </div>
       </div>
     </li>
   );
