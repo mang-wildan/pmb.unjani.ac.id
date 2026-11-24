@@ -33,6 +33,7 @@ type BiayaItem = {
   biayaPerSemester?: number | null;
   biayaTambahan?: number | null;
   persentase?: string[];
+  aktif?: boolean;
 };
 
 type ImportResult = {
@@ -243,6 +244,17 @@ export default function BiayaPage() {
     else await swalError('Gagal Menghapus');
   }
 
+  async function onToggleAktif(item: BiayaItem) {
+    const next = item.aktif !== true;
+    const res = await fetch(`/api/admin/biaya/${item._id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ aktif: next }),
+    });
+    if (!res.ok) { await swalError('Gagal Mengubah Status'); return; }
+    setItems((prev) => prev.map((it) => (it._id === item._id ? { ...it, aktif: next } : it)));
+  }
+
   async function onImportFile(file: File) {
     setImporting(true);
     const fd = new FormData();
@@ -375,7 +387,7 @@ export default function BiayaPage() {
     const terbuka = !!belumTerbuka[kunci];
     return (
       <tr data-grup-biaya={kunci} className="bg-brand-50/60">
-        <td colSpan={9} className="px-4 py-3">
+        <td colSpan={10} className="px-4 py-3">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             {st !== 'yatim' && <LabelStatus status={st} />}
             <h3 className="text-sm font-bold text-ink">
@@ -597,14 +609,15 @@ export default function BiayaPage() {
               <th className="text-right px-4 py-3 font-semibold whitespace-nowrap">Biaya/Semester</th>
               <th className="text-right px-4 py-3 font-semibold whitespace-nowrap">SPT</th>
               <th className="text-left px-4 py-3 font-semibold whitespace-nowrap">Persentase</th>
+              <th className="text-left px-4 py-3 font-semibold whitespace-nowrap">Aktif</th>
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-brand-50">
             {loading ? (
-              <TableLoadingRow colSpan={9} />
+              <TableLoadingRow colSpan={10} />
             ) : filtered.length === 0 ? (
-              <tr><td colSpan={9} className="px-4 py-8 text-center text-ink-muted">
+              <tr><td colSpan={10} className="px-4 py-8 text-center text-ink-muted">
                 {hasActiveFilters ? 'Tidak ada data yang cocok dengan filter saat ini.' : tab === 'arsip' ? 'Belum ada data biaya di arsip.' : 'Belum ada data biaya untuk jadwal berjalan maupun akan datang.'}
               </td></tr>
             ) : (
@@ -631,6 +644,24 @@ export default function BiayaPage() {
                         </span>
                       ))}
                     </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={b.aktif === true}
+                      aria-label={`${b.aktif === true ? 'Nonaktifkan' : 'Aktifkan'} biaya ${getLabel(b.programStudi_id, prodiList)}`}
+                      onClick={() => onToggleAktif(b)}
+                      className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-brand/30 ${
+                        b.aktif === true ? 'bg-brand' : 'bg-gray-200'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+                          b.aktif === true ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
                   </td>
                   <td className="px-4 py-3 text-right space-x-2 whitespace-nowrap">
                     <button

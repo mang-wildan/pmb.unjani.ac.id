@@ -52,6 +52,7 @@ Timestamps: hanya `createdAt` (updatedAt dimatikan, baris 16). Index: `{ created
 | biayaPerSemester | Number | tidak | — | min 0 |
 | biayaTambahan | Number | tidak | — | min 0 |
 | persentase | [String] | tidak | `['100%']` | skema cicilan |
+| aktif | Boolean | tidak | `true` | index; filter eksplisit `aktif: true` |
 | createdBy / updatedBy | ObjectId → AdminUser | tidak | — | |
 
 Tidak ada unique constraint gabungan (mis. kombinasi prodi+jalur+jadwal+kelas tidak dipaksa unik di skema).
@@ -186,6 +187,7 @@ Index gabungan: `{ aktif: 1, publishedAt: -1 }` (baris 23).
 | fakultas_id | ObjectId → Fakultas | ya | — | TANPA index |
 | akreditasi | String | tidak | `''` | |
 | persyaratan | [String] | tidak | `[]` | |
+| aktif | Boolean | tidak | `true` | index; filter eksplisit `aktif: true` |
 | fileAkreditasi | subdok `{filename, originalName, ukuranByte}` | tidak | `''`/`''`/`0` | file di disk |
 | createdBy / updatedBy | ObjectId → AdminUser | tidak | — | |
 

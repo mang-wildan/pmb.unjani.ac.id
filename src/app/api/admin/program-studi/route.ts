@@ -19,6 +19,7 @@ const createSchema = z.object({
   fakultas_id: z.string().min(1),
   akreditasi: z.string().max(60).optional().default(''),
   persyaratan: z.array(z.string().max(300)).default([]),
+  aktif: z.boolean().optional(),
 });
 
 const bulkDeleteSchema = z.object({

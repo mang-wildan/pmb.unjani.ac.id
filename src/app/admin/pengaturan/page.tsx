@@ -4,9 +4,26 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import PageHeader from '@/components/admin/PageHeader';
 import RippleLoader from '@/components/ui/RippleLoader';
-import { Field, inputClass, textareaClass } from '@/components/admin/Field';
+import { Field, inputClass, textareaClass, selectClass } from '@/components/admin/Field';
 
 type SosmedItem = { nama: string; url: string };
+
+type ChatbotSettings = {
+  aktif?: boolean;
+  provider?: 'openrouter' | 'deepseek' | 'gemini';
+  modelOpenRouter?: string;
+  modelDeepSeek?: string;
+  modelGemini?: string;
+  // Server tidak pernah mengirim key; hanya status terisi. Input selalu dikosongkan.
+  apiKeyOpenRouter?: string;
+  apiKeyDeepSeek?: string;
+  apiKeyGemini?: string;
+  apiKeyOpenRouterTerisi?: boolean;
+  apiKeyDeepSeekTerisi?: boolean;
+  apiKeyGeminiTerisi?: boolean;
+  ambangPuasTanya?: number;
+  pesanPembuka?: string;
+};
 
 type Settings = {
   siteName?: string;
@@ -31,10 +48,12 @@ type Settings = {
     secretKey?: string;
     secretKeyTerisi?: boolean;
   };
+  chatbot?: ChatbotSettings;
 };
 
 export default function PengaturanPage() {
   const [data, setData] = useState<Settings>({});
+  const [role, setRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploadingOgImage, setUploadingOgImage] = useState(false);
@@ -42,21 +61,36 @@ export default function PengaturanPage() {
   const [err, setErr] = useState<string | null>(null);
   // Secret tidak pernah dikirim utuh oleh server (FR-23): hanya bentuk tersamar untuk placeholder.
   // Input secret selalu kosong; kosong saat menyimpan berarti "tidak berubah".
-  const [samar, setSamar] = useState({ instagram: '', recaptcha: '' });
+  const [samar, setSamar] = useState({ instagram: '', recaptcha: '', openrouter: '', deepseek: '', gemini: '' });
 
   function terapkan(item: Settings) {
     setSamar({
       instagram: item.instagramAccessTokenTerisi ? item.instagramAccessToken || '' : '',
       recaptcha: item.recaptcha?.secretKeyTerisi ? item.recaptcha.secretKey || '' : '',
+      openrouter: item.chatbot?.apiKeyOpenRouterTerisi ? '(tersimpan)' : '',
+      deepseek: item.chatbot?.apiKeyDeepSeekTerisi ? '(tersimpan)' : '',
+      gemini: item.chatbot?.apiKeyGeminiTerisi ? '(tersimpan)' : '',
     });
     setData({
       ...item,
       instagramAccessToken: '',
       recaptcha: { ...item.recaptcha, secretKey: '' },
+      chatbot: item.chatbot
+        ? {
+            ...item.chatbot,
+            apiKeyOpenRouter: '',
+            apiKeyDeepSeek: '',
+            apiKeyGemini: '',
+          }
+        : undefined,
     });
   }
 
   useEffect(() => {
+    fetch('/api/auth/me', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => setRole(d?.user?.role ?? null))
+      .catch(() => setRole(null));
     fetch('/api/admin/pengaturan', { cache: 'no-store' })
       .then((r) => r.json())
       .then((d) => {
@@ -98,10 +132,12 @@ export default function PengaturanPage() {
     setSaving(true);
     setErr(null);
     setMsg(null);
+    // Peran selain superadmin tidak mengirim field chatbot sama sekali (bukan state tersembunyi).
+    const payload: Settings = role === 'superadmin' ? data : { ...data, chatbot: undefined };
     const res = await fetch('/api/admin/pengaturan', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      body: JSON.stringify(payload),
     });
     const d = await res.json();
     setSaving(false);
@@ -112,6 +148,18 @@ export default function PengaturanPage() {
     if (d.item) terapkan(d.item);
     setMsg('Tersimpan.');
     setTimeout(() => setMsg(null), 3000);
+  }
+
+  const providerAktif = data.chatbot?.provider ?? 'openrouter';
+  const fieldModelAktif =
+    providerAktif === 'deepseek'
+      ? 'modelDeepSeek'
+      : providerAktif === 'gemini'
+        ? 'modelGemini'
+        : 'modelOpenRouter';
+
+  function ubahChatbot(patch: Partial<ChatbotSettings>) {
+    setData((prev) => ({ ...prev, chatbot: { ...(prev.chatbot || {}), ...patch } }));
   }
 
   return (
@@ -434,6 +482,127 @@ export default function PengaturanPage() {
                 </div>
               )}
             </div>
+
+            {/* Chatbot — hanya superadmin; peran lain tidak melihat maupun mengirim field ini. */}
+            {role === 'superadmin' && (
+              <div className="md:col-span-2 border-t border-brand-100 pt-5">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className="text-sm font-semibold text-ink">Chatbot Admisi</p>
+                    <p className="text-xs text-ink-muted mt-0.5">
+                      Asisten virtual untuk pengunjung. API key disimpan terenkripsi dan tidak pernah dikirim ke browser.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={!!data.chatbot?.aktif}
+                    aria-label={data.chatbot?.aktif ? 'Nonaktifkan chatbot' : 'Aktifkan chatbot'}
+                    onClick={() => ubahChatbot({ aktif: !data.chatbot?.aktif })}
+                    className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-brand/30 ${
+                      data.chatbot?.aktif ? 'bg-brand' : 'bg-gray-200'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+                        data.chatbot?.aktif ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+                <div className="grid gap-4 md:grid-cols-2 rounded-2xl bg-brand-50/60 border border-brand-100 p-4">
+                  <Field label="Provider Aktif" hint="Hanya satu provider yang dipakai chatbot.">
+                    <select
+                      className={selectClass}
+                      value={providerAktif}
+                      onChange={(e) =>
+                        ubahChatbot({ provider: e.target.value as ChatbotSettings['provider'] })
+                      }
+                    >
+                      <option value="openrouter">OpenRouter</option>
+                      <option value="deepseek">DeepSeek</option>
+                      <option value="gemini">Google Gemini</option>
+                    </select>
+                  </Field>
+                  <Field
+                    label="Nama Model"
+                    hint={`Model untuk ${providerAktif}; tiap provider menyimpan model sendiri.`}
+                  >
+                    <input
+                      className={inputClass}
+                      value={data.chatbot?.[fieldModelAktif] || ''}
+                      onChange={(e) => ubahChatbot({ [fieldModelAktif]: e.target.value })}
+                      placeholder="mis. google/gemini-2.0-flash-001"
+                      spellCheck={false}
+                    />
+                  </Field>
+                  <Field
+                    label="API Key OpenRouter"
+                    hint="Kosongkan bila tidak ingin mengubah key yang tersimpan."
+                  >
+                    <input
+                      type="password"
+                      className={inputClass}
+                      value={data.chatbot?.apiKeyOpenRouter || ''}
+                      onChange={(e) => ubahChatbot({ apiKeyOpenRouter: e.target.value })}
+                      placeholder={samar.openrouter || 'sk-or-...'}
+                      autoComplete="new-password"
+                      spellCheck={false}
+                    />
+                  </Field>
+                  <Field
+                    label="API Key DeepSeek"
+                    hint="Kosongkan bila tidak ingin mengubah key yang tersimpan."
+                  >
+                    <input
+                      type="password"
+                      className={inputClass}
+                      value={data.chatbot?.apiKeyDeepSeek || ''}
+                      onChange={(e) => ubahChatbot({ apiKeyDeepSeek: e.target.value })}
+                      placeholder={samar.deepseek || 'sk-...'}
+                      autoComplete="new-password"
+                      spellCheck={false}
+                    />
+                  </Field>
+                  <Field
+                    label="API Key Gemini"
+                    hint="Kosongkan bila tidak ingin mengubah key yang tersimpan."
+                  >
+                    <input
+                      type="password"
+                      className={inputClass}
+                      value={data.chatbot?.apiKeyGemini || ''}
+                      onChange={(e) => ubahChatbot({ apiKeyGemini: e.target.value })}
+                      placeholder={samar.gemini || 'AIza...'}
+                      autoComplete="new-password"
+                      spellCheck={false}
+                    />
+                  </Field>
+                  <Field
+                    label="Ambang Tanya"
+                    hint="Jumlah balasan sebelum widget menawarkan WhatsApp (1–10)."
+                  >
+                    <input
+                      type="number"
+                      min={1}
+                      max={10}
+                      className={inputClass}
+                      value={data.chatbot?.ambangPuasTanya ?? 3}
+                      onChange={(e) =>
+                        ubahChatbot({ ambangPuasTanya: Number(e.target.value) })
+                      }
+                    />
+                  </Field>
+                  <Field label="Pesan Pembuka" className="md:col-span-2">
+                    <textarea
+                      className={textareaClass}
+                      value={data.chatbot?.pesanPembuka || ''}
+                      onChange={(e) => ubahChatbot({ pesanPembuka: e.target.value })}
+                    />
+                  </Field>
+                </div>
+              </div>
+            )}
 
             <div className="md:col-span-2 flex items-center gap-3 pt-2">
               <button

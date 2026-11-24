@@ -8,6 +8,7 @@ const ProgramStudiSchema = new Schema(
     fakultas_id: { type: Schema.Types.ObjectId, ref: 'Fakultas', required: true },
     akreditasi: { type: String, default: '', trim: true },
     persyaratan: { type: [String], default: [] },
+    aktif: { type: Boolean, default: true, index: true },
     fileAkreditasi: {
       filename: { type: String, default: '' },
       originalName: { type: String, default: '' },

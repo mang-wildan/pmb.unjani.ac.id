@@ -377,6 +377,27 @@
     "kosong": "Documents are being prepared by the committee.",
     "kosongKontak": "Contact PMB"
   },
+  "chatbot": {
+    "judul": "UNJANI Admissions Assistant",
+    "subjudul": "New Student Admissions Information",
+    "bukaChat": "Open admissions chat",
+    "tutupChat": "Close admissions chat",
+    "riwayatLabel": "Conversation with the admissions assistant",
+    "labelInput": "Question for the admissions assistant",
+    "placeholderInput": "Ask about admissions…",
+    "kirim": "Send question",
+    "menunggu": "The assistant is preparing a reply…",
+    "sumber": "Official sources",
+    "bukaSumber": "Open source: {judul} (new tab)",
+    "kepuasanPertanyaan": "Was this helpful?",
+    "kepuasanYa": "Yes",
+    "kepuasanBelum": "Not yet",
+    "terimaKasih": "Thank you! You can continue asking questions.",
+    "kontakHint": "Need more help? Contact the admissions team.",
+    "ctaWhatsApp": "Contact via WhatsApp",
+    "ctaKontak": "View admissions contacts",
+    "galatKoneksi": "The chatbot is temporarily unavailable. Please try again or contact the admissions team."
+  },
   "faqPage": {
     "metaTitle": "Admissions FAQ",
     "metaDesc": "Answers to frequently asked questions about UNJANI new student admissions: how to apply, the CBT exam, One Day Services, fees, and schedules.",

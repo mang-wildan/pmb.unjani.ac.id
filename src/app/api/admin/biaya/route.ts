@@ -21,6 +21,7 @@ const createSchema = z.object({
   biayaPerSemester: z.number().min(0).nullable().optional(),
   biayaTambahan: z.number().min(0).nullable().optional(),
   persentase: z.array(z.string().min(1)).optional(),
+  aktif: z.boolean().optional(),
 });
 
 export async function GET(req: NextRequest) {

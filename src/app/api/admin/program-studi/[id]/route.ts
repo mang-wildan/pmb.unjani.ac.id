@@ -18,6 +18,7 @@ const updateSchema = z.object({
   fakultas_id: z.string().min(1).optional(),
   akreditasi: z.string().max(60).optional(),
   persyaratan: z.array(z.string().max(300)).optional(),
+  aktif: z.boolean().optional(),
 });
 
 function badId() {

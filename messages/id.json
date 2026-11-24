@@ -377,6 +377,27 @@
     "kosong": "Dokumen sedang disiapkan panitia.",
     "kosongKontak": "Hubungi PMB"
   },
+  "chatbot": {
+    "judul": "Asisten Admisi UNJANI",
+    "subjudul": "Informasi Penerimaan Mahasiswa Baru",
+    "bukaChat": "Buka chat admisi",
+    "tutupChat": "Tutup chat admisi",
+    "riwayatLabel": "Percakapan dengan asisten admisi",
+    "labelInput": "Pertanyaan untuk asisten admisi",
+    "placeholderInput": "Tanya seputar pendaftaran…",
+    "kirim": "Kirim pertanyaan",
+    "menunggu": "Asisten sedang menyiapkan jawaban…",
+    "sumber": "Sumber resmi",
+    "bukaSumber": "Buka sumber: {judul} (tab baru)",
+    "kepuasanPertanyaan": "Sudah membantu?",
+    "kepuasanYa": "Ya",
+    "kepuasanBelum": "Belum",
+    "terimaKasih": "Terima kasih! Kamu bisa melanjutkan bertanya.",
+    "kontakHint": "Butuh bantuan lebih lanjut? Hubungi tim PMB.",
+    "ctaWhatsApp": "Hubungi via WhatsApp",
+    "ctaKontak": "Lihat kontak PMB",
+    "galatKoneksi": "Layanan chatbot sedang tidak tersedia. Silakan coba lagi atau hubungi tim PMB."
+  },
   "faqPage": {
     "metaTitle": "Pertanyaan Seputar Pendaftaran (FAQ)",
     "metaDesc": "Jawaban atas pertanyaan yang sering diajukan tentang pendaftaran mahasiswa baru UNJANI: cara daftar, ujian CBT, One Day Services, biaya, dan jadwal.",

@@ -23,6 +23,7 @@ type ProgramStudi = {
   akreditasi?: string;
   persyaratan?: string[];
   fileAkreditasi?: FileAkreditasi;
+  aktif?: boolean;
 };
 
 type ImportResult = {
@@ -222,6 +223,17 @@ export default function ProgramStudiPage() {
     const res = await fetch(`/api/admin/program-studi/${id}`, { method: 'DELETE' });
     if (res.ok) { swalSuccess('Berhasil Dihapus'); await load(); }
     else await swalError('Gagal Menghapus');
+  }
+
+  async function onToggleAktif(item: ProgramStudi) {
+    const next = item.aktif !== true;
+    const res = await fetch(`/api/admin/program-studi/${item._id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ aktif: next }),
+    });
+    if (!res.ok) { await swalError('Gagal Mengubah Status'); return; }
+    setItems((prev) => prev.map((it) => (it._id === item._id ? { ...it, aktif: next } : it)));
   }
 
   async function onBulkDelete() {
@@ -448,15 +460,16 @@ export default function ProgramStudiPage() {
               <th className="px-5 py-3 text-left font-semibold">Fakultas</th>
               <th className="px-5 py-3 text-left font-semibold">Akreditasi</th>
               <th className="px-5 py-3 text-left font-semibold">File Akreditasi</th>
+              <th className="px-5 py-3 text-left font-semibold">Aktif</th>
               <th className="px-5 py-3" />
             </tr>
           </thead>
           <tbody className="divide-y divide-brand-50">
             {loading ? (
-              <TableLoadingRow colSpan={8} />
+              <TableLoadingRow colSpan={9} />
             ) : filtered.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-5 py-8 text-center text-ink-muted">
+                <td colSpan={9} className="px-5 py-8 text-center text-ink-muted">
                   {search ? 'Tidak ada hasil untuk pencarian ini.' : 'Belum ada program studi.'}
                 </td>
               </tr>
@@ -526,6 +539,24 @@ export default function ProgramStudiPage() {
                         />
                       </label>
                     )}
+                  </td>
+                  <td className="px-5 py-3">
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={p.aktif === true}
+                      aria-label={`${p.aktif === true ? 'Nonaktifkan' : 'Aktifkan'} ${p.nama}`}
+                      onClick={() => onToggleAktif(p)}
+                      className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-brand/30 ${
+                        p.aktif === true ? 'bg-brand' : 'bg-gray-200'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+                          p.aktif === true ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
                   </td>
                   <td className="space-x-2 whitespace-nowrap px-5 py-3 text-right">
                     <button

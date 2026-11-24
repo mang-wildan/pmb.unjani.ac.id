@@ -10,6 +10,7 @@ const BiayaSchema = new Schema(
     biayaPerSemester: { type: Number, min: 0 },
     biayaTambahan: { type: Number, min: 0 },
     persentase: { type: [String], default: ['100%'] },
+    aktif: { type: Boolean, default: true, index: true },
     createdBy: { type: Schema.Types.ObjectId, ref: 'AdminUser' },
     updatedBy: { type: Schema.Types.ObjectId, ref: 'AdminUser' },
   },

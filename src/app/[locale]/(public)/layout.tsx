@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Navbar from '@/components/public/Navbar';
 import Footer from '@/components/public/Footer';
 import WhatsAppFloatingButton from '@/components/public/WhatsAppFloatingButton';
+import ChatWidget from '@/components/public/ChatWidget';
 import DaftarFloatingButton from '@/components/public/DaftarFloatingButton';
 import { loadSiteSettings } from '@/lib/siteSettings';
 
@@ -43,7 +44,15 @@ export default async function PublicLayout({ children }: { children: React.React
       <main id="main">{children}</main>
       <Footer settings={publicSettings} />
       <DaftarFloatingButton url={publicSettings?.urlPendaftaran || 'https://pendaftaran.unjani.ac.id/loginnew'} />
-      <WhatsAppFloatingButton />
+      {settings?.chatbot.aktif ? (
+        <ChatWidget
+          pesanPembuka={settings.chatbot.pesanPembuka}
+          ambangPuasTanya={settings.chatbot.ambangPuasTanya}
+          whatsappUrl={settings.chatbot.whatsappUrl}
+        />
+      ) : (
+        <WhatsAppFloatingButton />
+      )}
     </>
   );
 }
