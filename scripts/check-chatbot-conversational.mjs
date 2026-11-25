@@ -95,4 +95,17 @@ assert.equal(rResmi.status, 'answered');
 assert.equal(rResmi.sumber.length, 2);
 console.log('6. Jawaban berbasis bukti resmi OK');
 
+// 7. Pengujian celah lanjutan: nominal kata dan tanggal teks
+const celahLanjutan = [
+  'Biaya pendaftaran sebesar lima ratus ribu rupiah.',
+  'Pendaftaran gelombang satu dibuka Februari 2027.',
+  'UNJANI membuka Fakultas Ilmu Komunikasi.',
+  'Semua fakultas di UNJANI terakreditasi A.',
+];
+for (const c of celahLanjutan) {
+  const r = susunHasilChat(JSON.stringify({ status: 'answered', jawaban: c }), []);
+  assert.equal(r.status, 'no_source', `celah "${c}" wajib no_source`);
+}
+console.log('7. Uji celah nominal kata & tanggal teks OK');
+
 console.log('check-chatbot-conversational: all assertions passed');

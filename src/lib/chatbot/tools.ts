@@ -25,7 +25,7 @@ export function hanyaAktif<T extends { aktif?: unknown }>(rows: T[]): T[] {
 export function regexAman(s: string) { return new RegExp(s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'); }
 const bersih = (s: unknown) => String(s ?? '').replace(/<[^>]*>/g, ' ').replace(/https?:\/\/\S+|www\.\S+/gi, '[tautan pada sumber]').replace(/\s+/g, ' ').trim().slice(0, 1800);
 const bukti = (jenis: string, id: unknown, judul: string, ringkas: string, url: string): Bukti => ({ id: `${jenis}:${id}`, judul: bersih(judul), ringkas: bersih(ringkas), url });
-function batasi<T>(rows: T[]): T[] { if (rows.length > 20) throw new KlarifikasiError(); return rows; }
+function batasi<T>(rows: T[]): T[] { if (rows.length > 21) throw new KlarifikasiError(); return rows; }
 const cocok = (s: unknown, q?: string) => !q || regexAman(q).test(String(s ?? ''));
 const hari = (d: Date | string) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(d));
 export function statusJadwal(mulai: Date | string, selesai: Date | string, now = new Date()): 'dibuka' | 'ditutup' | 'belum' {

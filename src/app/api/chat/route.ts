@@ -114,7 +114,7 @@ export async function POST(req: Request) {
             return balas({ jawaban: 'Sumber biaya resmi untuk pilihan itu saling bertentangan. Bagian yang berbeda tidak saya jawab; silakan hubungi Admin PMB.', sumber: [], status: 'no_source', tawarkanWhatsApp: true });
           }
           if (error instanceof KlarifikasiError) {
-            return balas({ ...hasilStatus('clarification_needed'), jawaban: 'Saya menemukan lebih dari satu data yang mungkin cocok. Mohon sebutkan program studi, tahun/periode, jalur, dan kelas.' });
+            return balas({ ...hasilStatus('clarification_needed'), jawaban: 'Ada beberapa data yang cocok. Boleh sebutkan program studi dan jalur pendaftaran yang kakak maksud?' });
           }
           isi = JSON.stringify([{ id: 'error', judul: 'argumen_tidak_valid', ringkas: 'Tool tidak dijalankan. Perbaiki argumen atau minta klarifikasi.' }]);
         }
@@ -132,7 +132,7 @@ export async function POST(req: Request) {
   const akhir = susunHasilChat(hasil.pesan, [...bukti.values()]);
   // Sapaan tidak boleh dijawab dengan penolakan; ganti hanya bila model menyerah.
   if (akhir.status === 'no_source' && adalahSapaan(parsed.data.pesan)) {
-    return balas({ ...hasilStatus('clarification_needed'), jawaban: JAWABAN_SAPAAN });
+    return balas({ jawaban: JAWABAN_SAPAAN, sumber: [], status: 'answered', tawarkanWhatsApp: false });
   }
   return balas(akhir);
 }

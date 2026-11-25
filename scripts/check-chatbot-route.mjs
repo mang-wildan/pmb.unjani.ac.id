@@ -251,6 +251,24 @@ function setSettings(chatbot) {
   }
 }
 
+// 5f. Sapaan murni yang gagal dijawab model tetap dibalas ramah dengan status answered.
+{
+  const kunci = enkripsiChatbotSecret('sk-or-sapa');
+  const fetchAsli = globalThis.fetch;
+  globalThis.fetch = async () => new Response(JSON.stringify({ choices: [{ message: { content: '{"status":"no_source"}' } }] }), { headers: { 'content-type': 'application/json' } });
+  setSettings({ aktif: true, provider: 'openrouter', apiKeyOpenRouter: kunci });
+  try {
+    const res = await POST(buatRequest({ pesan: 'hai' }, { headers: { 'x-forwarded-for': '10.0.0.70' } }));
+    const json = await res.json();
+    assert.equal(res.status, 200);
+    assert.equal(json.status, 'answered', 'sapaan harus answered, bukan clarification_needed');
+    assert.match(json.jawaban, /Halo/);
+    assert.equal(json.tawarkanWhatsApp, false);
+  } finally {
+    globalThis.fetch = fetchAsli;
+  }
+}
+
 // 6. Rate limit per IP (15 request per menit) -> 429
 {
   setSettings({ aktif: false });

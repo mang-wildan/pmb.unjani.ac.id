@@ -288,6 +288,55 @@ assert.equal(
   'Mohon lengkapi program studi, tahun/periode, jalur, dan kelas yang dimaksud agar saya dapat memilih data resmi yang tepat.',
   'klarifikasi berangka jatuh ke template',
 );
+
+// Celah halusinasi lanjutan: nominal kata, fakultas karangan, klaim akreditasi, dan tanggal bulan-tahun.
+assert.equal(
+  susunHasilChat(JSON.stringify({ status: 'answered', jawaban: 'Biaya kuliah kedokteran lima juta rupiah per semester.' }), []).status,
+  'no_source',
+  'nominal berbentuk kata tetap ditolak tanpa bukti',
+);
+assert.equal(
+  susunHasilChat(JSON.stringify({ status: 'answered', jawaban: 'UNJANI punya Fakultas Hukum.' }), []).status,
+  'no_source',
+  'fakultas karangan harus ditolak',
+);
+assert.equal(
+  susunHasilChat(JSON.stringify({ status: 'answered', jawaban: 'Semua prodi UNJANI terakreditasi Unggul.' }), []).status,
+  'no_source',
+  'klaim akreditasi tanpa bukti harus ditolak',
+);
+assert.equal(
+  susunHasilChat(JSON.stringify({ status: 'clarification_needed', jawaban: 'Apakah biaya lima juta rupiah yang dimaksud?' }), []).jawaban,
+  'Mohon lengkapi program studi, tahun/periode, jalur, dan kelas yang dimaksud agar saya dapat memilih data resmi yang tepat.',
+  'klarifikasi nominal berbentuk kata jatuh ke template',
+);
+
+assert.equal(
+  susunHasilChat(JSON.stringify({ status: 'answered', buktiIds: ['faq:1'], jawaban: 'Biaya kuliah lima juta rupiah per semester.' }), buktiFaq).status,
+  'no_source',
+  'nominal kata juga tidak boleh lolos lewat bukti FAQ',
+);
+
+// Nominal harus berpasangan dengan labelnya, bukan sekadar muncul di salah satu bukti.
+const buktiDuaLabel = [{ id: 'biaya:b9', judul: 'Biaya', ringkas: 'Biaya pokok: Rp150.000.000. SPT per unit: Rp1.000.000.', url: '/#kalkulator' }];
+assert.equal(
+  susunHasilChat(JSON.stringify({ status: 'answered', buktiIds: ['biaya:b9'], jawaban: 'SPT per unit: Rp150.000.000.' }), buktiDuaLabel).status,
+  'no_source',
+  'label tertukar nilai harus ditolak',
+);
+assert.equal(
+  susunHasilChat(JSON.stringify({ status: 'answered', buktiIds: ['biaya:b9'], jawaban: 'SPT per unit: Rp1.000.000.' }), buktiDuaLabel).status,
+  'answered',
+  'pasangan label-nilai yang benar tetap diterima',
+);
+
+// Tanggal bulan-tahun dari FAQ tidak boleh dipakai sebagai jadwal resmi.
+const faqTanggalTeks = [{ id: 'faq:t1', judul: 'Jadwal', ringkas: 'Pendaftaran dibuka Januari 2027.', url: '/faq' }];
+assert.equal(
+  susunHasilChat(JSON.stringify({ status: 'answered', buktiIds: ['faq:t1'], jawaban: 'Pendaftaran dibuka Januari 2027.' }), faqTanggalTeks).status,
+  'no_source',
+  'tanggal bulan-tahun hanya dari tabel jadwal',
+);
 assert.equal(susunHasilChat(JSON.stringify({ status: 'out_of_scope' }), buktiFaq).tawarkanWhatsApp, true);
 assert.equal(susunHasilChat(JSON.stringify({ status: 'clarification_needed', klarifikasi: 'Sebutkan prodi.' }), buktiFaq).tawarkanWhatsApp, false);
 assert.equal(hasilStatus('temporarily_unavailable').tawarkanWhatsApp, true);

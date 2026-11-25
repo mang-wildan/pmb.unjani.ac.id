@@ -11,13 +11,32 @@ const PESAN: Record<Exclude<StatusChat, 'answered'>, string> = {
   temporarily_unavailable: 'Layanan chatbot sedang tidak tersedia. Silakan coba lagi atau hubungi Admin PMB.',
 };
 
-// ponytail: klaim sensitif adalah kalimat yang MEMUAT ANGKA bersama konteks biaya/jadwal/kalender,
-// atau klaim nominal/gratis eksplisit. Menyebut kata "biaya" pada sapaan tanpa angka bukan klaim fakta.
-const BIAYA_TANGGAL = /%|\b(?:gratis|beasiswa|potongan|diskon)\b|(?:(?:biaya|tarif|harga|rupiah|rp|idr|semester|juta|ribu|miliar|gelombang)\b.*?\d|\d.*?\b(?:biaya|tarif|harga|rupiah|rp|idr|semester|juta|ribu|miliar|gelombang)\b)|\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b|\b\d{1,2}\s+(?:januari|februari|maret|april|mei|juni|juli|agustus|september|oktober|november|desember)\b/i;
+const BULAN = 'januari|februari|maret|april|mei|juni|juli|agustus|september|oktober|november|desember';
+const KATA_NILAI = 'dua|tiga|empat|lima|enam|tujuh|delapan|sembilan|sepuluh|sebelas|belas|puluh|ratus|ribu|juta|miliar|triliun';
+// ponytail: pada jawaban berbukti, kalimat sensitif = memuat nilai uang/tanggal yang menyertai labelnya.
+// Menyebut topik ("seputar biaya dan jadwal") tanpa nilai bukan klaim fakta.
+const BIAYA_TANGGAL = new RegExp(
+  `%|\\b(?:gratis|beasiswa)\\b|\\b(?:rp|idr)\\.?\\s*\\d|\\b(?:${KATA_NILAI})\\s+(?:juta|ribu|miliar|rupiah)\\b`
+  + `|(?:\\b(?:biaya|tarif|harga|rupiah|rp|idr|semester|juta|ribu|miliar|gelombang)\\b[^.]{0,20}\\d|\\d[^.]{0,20}\\b(?:biaya|tarif|harga|rupiah|rp|idr|semester|juta|ribu|miliar|gelombang)\\b)`
+  + `|\\b(?:dibuka|ditutup|deadline|tanggal)\\b|\\b(?:${BULAN})\\b`
+  + `|\\b\\d{4}-\\d{2}-\\d{2}\\b|\\b\\d{1,2}[/-]\\d{1,2}[/-]\\d{2,4}\\b`,
+  'i',
+);
+/**
+ * Teks tanpa bukti tidak boleh memuat nilai apa pun: angka, kata bilangan, nama bulan,
+ * atau klaim bebas biaya. Sebutan jenjang seperti S1/D3 bukan nilai.
+ */
+const NILAI_TANPA_BUKTI = new RegExp(`(?<![SD])\\d|\\b(?:${KATA_NILAI})\\b|\\b(?:${BULAN})\\b|\\b(?:gratis|beasiswa|diskon|potongan)\\b`, 'i');
+/** Fakultas yang boleh disebut dari pengetahuan statis tanpa bukti. */
+const FAKULTAS_DIKENAL = ['kedokteran gigi', 'kedokteran', 'farmasi', 'teknik', 'sains dan informatika', 'sains & informatika', 'ekonomi dan bisnis', 'ekonomi & bisnis', 'ilmu sosial dan ilmu politik', 'ilmu sosial & ilmu politik', 'psikologi', 'ilmu dan teknologi kesehatan', 'ilmu & teknologi kesehatan', 'pascasarjana'];
+/** Jawaban tanpa bukti tidak boleh mengarang fakultas atau mengklaim akreditasi. */
+function klaimTanpaBuktiTerlarang(teks: string): boolean {
+  if (/\b(?:akreditasi|terakreditasi)\b/i.test(teks)) return true;
+  return [...teks.matchAll(/\bfakultas\s+([\p{L}&]+(?:\s+[\p{L}&]+){0,2})/giu)]
+    .some(m => { const nama = m[1].toLowerCase(); return !FAKULTAS_DIKENAL.some(d => nama.startsWith(d) || d.startsWith(nama)); });
+}
 /** Token angka tanpa pemisah ribuan/desimal agar "Rp5.500.000" dibandingkan sebagai 5500000. */
 const angka = (teks: string): string[] => (teks.match(/\d[\d.,]*/g) ?? []).map(n => n.replace(/[.,]/g, '')).filter(Boolean);
-/** Teks tanpa bukti tidak boleh berangka, kecuali sebutan jenjang seperti S1/D3. */
-const adaAngkaFakta = (teks: string): boolean => /\d/.test(teks.replace(/\b[SD]\d\b/g, ' '));
 const TERLARANG = /total\s+(?:biaya|pengeluaran)|(?:sampai|hingga)\s+lulus|(?:selama|sepanjang)\s+kuliah|masa\s+studi/i;
 const jenis = (id: string) => id.split(':')[0];
 // Bandingkan hanya label klaim identik, bukan seluruh angka dalam sumber lain.
@@ -28,10 +47,21 @@ function klaimBerlabel(teks: string): { label: string; nilai: string } | null {
   if (d) return { label: d[1].replace(/[^\p{L}\p{N}]+/gu, ' ').trim(), nilai: d[2] };
   return null;
 }
+const KATA_UMUM = ['biaya', 'rupiah', 'idr', 'adalah', 'sebesar', 'untuk', 'yang', 'dan', 'dengan', 'pada', 'dari', 'ini', 'itu'];
+const penting = (label: string) => label.split(' ').filter(t => t.length > 2 && !KATA_UMUM.includes(t));
+/** Klaim berlabel yang labelnya ada di tabel tetapi nilainya milik label lain. */
+function labelTertukar(klaim: string, tabel: Bukti[]): boolean {
+  const acuan = klaimBerlabel(klaim);
+  if (!acuan) return false;
+  const tokenAcuan = penting(acuan.label);
+  if (!tokenAcuan.length) return false;
+  const serupa = tabel.flatMap(b => kalimat(aman(b.ringkas, 1800))).map(klaimBerlabel)
+    .filter((k): k is { label: string; nilai: string } => !!k && penting(k.label).some(t => tokenAcuan.includes(t)));
+  return serupa.length > 0 && !serupa.some(k => k.nilai === acuan.nilai);
+}
 function konflikSumberSensitif(klaim: string, buktiDipakai: Bukti[]): boolean {
   const acuan = klaimBerlabel(klaim);
   if (!acuan?.label) return false;
-  const penting = (label: string) => label.split(' ').filter(t => t.length > 2 && !['biaya', 'rupiah', 'idr', 'adalah', 'sebesar', 'untuk', 'yang', 'dan', 'dengan', 'pada', 'dari', 'ini', 'itu'].includes(t));
   const tokenAcuan = penting(acuan.label);
   return buktiDipakai.filter(b => ['faq', 'pengumuman'].includes(jenis(b.id)))
     .flatMap(b => kalimat(aman(b.ringkas, 1800)))
@@ -75,8 +105,8 @@ export function susunHasilChat(teksModel: string, buktiDipakai: Bukti[]): HasilC
   if (status === 'clarification_needed') {
     // Pertanyaan balik buatan model lebih luwes daripada template; `klarifikasi` dipertahankan untuk keluaran lama.
     const khusus = aman(data.jawaban ?? data.klarifikasi, 400);
-    // Klarifikasi bukan klaim fakta: tolak nominal/tanggal/jadwal. Sebutan jenjang seperti S1/D3 diizinkan.
-    const bersih = khusus && !adaAngkaFakta(khusus) && !BIAYA_TANGGAL.test(khusus) && !TERLARANG.test(khusus) ? khusus : '';
+    // Klarifikasi bukan klaim fakta: tolak bila menyelipkan nilai (angka, kata bilangan, bulan) atau tanggal.
+    const bersih = khusus && !NILAI_TANPA_BUKTI.test(khusus) && !BIAYA_TANGGAL.test(khusus) && !TERLARANG.test(khusus) ? khusus : '';
     return { jawaban: bersih || PESAN.clarification_needed, sumber: [], status, tawarkanWhatsApp: false };
   }
   if (status !== 'answered') return hasilStatus('no_source');
@@ -94,9 +124,9 @@ export function susunHasilChat(teksModel: string, buktiDipakai: Bukti[]): HasilC
   const pilihan = kalimat(jawaban);
   if (!pilihan.length || pilihan.length > 3) return hasilStatus('no_source');
   if (!dipilih.length) {
-    // ponytail: jawaban tanpa bukti hanya untuk percakapan. Larangan digit menutup
-    // jalur termurah menebak nominal; klasifikasi topik percakapan tidak ditambahkan.
-    if (adaAngkaFakta(jawaban) || BIAYA_TANGGAL.test(jawaban)) return hasilStatus('no_source');
+    // ponytail: jawaban tanpa bukti hanya untuk percakapan dan profil statis kampus.
+    // Semua nilai, tanggal, akreditasi, dan fakultas di luar daftar statis wajib lewat tool.
+    if (NILAI_TANPA_BUKTI.test(jawaban) || BIAYA_TANGGAL.test(jawaban) || klaimTanpaBuktiTerlarang(jawaban)) return hasilStatus('no_source');
     return { jawaban, sumber: [], status: 'answered', tawarkanWhatsApp: false };
   }
   // Setiap angka pada jawaban harus berasal dari bukti terpilih; sisanya boleh parafrasa.
@@ -110,6 +140,10 @@ export function susunHasilChat(teksModel: string, buktiDipakai: Bukti[]): HasilC
     // Nominal/tanggal resmi hanya boleh diklaim bila bukti biaya/jadwal ikut dipilih.
     if (!dipilih.some(b => ['biaya', 'jadwal'].includes(jenis(b.id)))) return hasilStatus('no_source');
     if (!angka(klaim).every(n => angkaTerstruktur.has(n))) return hasilStatus('no_source');
+    // Nominal berbentuk kata (mis. "lima juta rupiah") wajib didukung angka pada tabel biaya/jadwal terpilih.
+    if (new RegExp(`\\b(?:${KATA_NILAI})\\b`, 'i').test(klaim) && !angkaTerstruktur.size) return hasilStatus('no_source');
+    // Nominal harus berpasangan dengan labelnya di tabel: "SPT per unit" tidak boleh memakai nilai "Biaya pokok".
+    if (labelTertukar(klaim, dipilih.filter(b => ['biaya', 'jadwal'].includes(jenis(b.id))))) return hasilStatus('no_source');
     // Konflik nominal terbukti antara tabel vs FAQ/Pengumuman: tolak klaim biaya.
     if (konflikSumberSensitif(klaim, buktiDipakai)) return hasilStatus('no_source');
   }
