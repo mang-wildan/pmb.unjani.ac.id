@@ -35,10 +35,28 @@ export function statusJadwal(mulai: Date | string, selesai: Date | string, now =
 const tanggal = (d: Date | string) => new Intl.DateTimeFormat('id-ID', { timeZone: 'Asia/Jakarta', dateStyle: 'long' }).format(new Date(d));
 const rupiah = (n: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(n);
 
+/**
+ * Akar kata kasar bahasa Indonesia: "kedokteran" -> "dokter" agar cocok dengan
+ * "Pendidikan Dokter". Cukup untuk imbuhan umum, bukan stemmer penuh.
+ */
+const akarKata = (s: string): string[] => s.toLowerCase().split(/[^\p{L}\p{N}]+/u)
+  .flatMap(w => [w, w.replace(/^(ke|pe|per|ber|me|di|ter)/, '').replace(/(an|kan|nya)$/, '')])
+  .filter(w => w.length >= 3);
+
 export async function cariProdi(arg: Arg): Promise<Bukti[]> {
   const a = argSchema.parse(arg); await connectDb();
-  const rows = await ProgramStudi.find({ aktif: true, ...(a.nama ? { nama: regexAman(a.nama) } : {}) })
-    .select('aktif nama singkatan akreditasi persyaratan jenjang_id fakultas_id').populate('jenjang_id', 'nama singkatan').populate('fakultas_id', 'nama').limit(21).maxTimeMS(5000).lean();
+  const kueri = (filter: Record<string, unknown>) => ProgramStudi.find(filter)
+    .select('aktif nama singkatan akreditasi persyaratan jenjang_id fakultas_id')
+    .populate('jenjang_id', 'nama singkatan').populate('fakultas_id', 'nama')
+    .limit(21).maxTimeMS(5000).lean();
+  let rows = await kueri({ aktif: true, ...(a.nama ? { nama: regexAman(a.nama) } : {}) });
+  // ponytail: fallback akar kata hanya saat hasil kosong; pencarian penuh lebih lambat.
+  if (a.nama && !rows.length) {
+    const akar = akarKata(a.nama);
+    if (akar.length) {
+      rows = await kueri({ aktif: true, $or: akar.flatMap(k => [{ nama: regexAman(k) }, { singkatan: regexAman(k) }]) });
+    }
+  }
   return batasi(hanyaAktif(rows)).filter(p => cocok((p.jenjang_id as unknown as { nama?: string })?.nama, a.jenjang) && cocok((p.fakultas_id as unknown as { nama?: string })?.nama, a.fakultas))
     .map(p => bukti('prodi', p._id, p.nama, `${p.nama} (${p.singkatan}). Akreditasi: ${p.akreditasi || 'belum tersedia'}. Persyaratan: ${p.persyaratan.join('; ')}`, '/#program-studi'));
 }

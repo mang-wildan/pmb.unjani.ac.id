@@ -54,7 +54,7 @@ const mongoose = (await import('mongoose')).default;
 mongoose.connect = async () => mongoose;
 const { statusJadwal, regexAman, hanyaAktif, argSchema, jalankanTool, TOOLS, KlarifikasiError, KonflikError } = await import('../src/lib/chatbot/tools.ts');
 const { panggilModel, normalisasiOpenAI, normalisasiGemini } = await import('../src/lib/chatbot/providers.ts');
-const { susunHasilChat, hasilStatus, batasiRiwayat } = await import('../src/lib/chatbot/hasil.ts');
+const { susunHasilChat, hasilStatus, batasiRiwayat, adalahSapaan } = await import('../src/lib/chatbot/hasil.ts');
 for (const klarifikasi of ['Apakah maksud Anda biaya Rp50.000.000 per semester?', 'Apakah maksud Anda kuliah gratis?', 'Berapa masa studi yang dimaksud?']) {
   const respons = susunHasilChat(JSON.stringify({ status: 'clarification_needed', klarifikasi }), []);
   assert.equal(respons.jawaban, hasilStatus('clarification_needed').jawaban, 'klarifikasi sensitif harus memakai pesan aman');
@@ -175,6 +175,23 @@ assert.equal(hasil.length, 1, 'Pengumuman nonaktif harus tersaring');
 assert.equal(hasil[0].id, 'pengumuman:n1');
 console.log('Task 3: enam query tool + populate + filter aktif OK');
 
+// Pencarian akar kata: "kedokteran" harus menemukan "Pendidikan Dokter".
+{
+  const dokter = { _id: 'p9', nama: 'Pendidikan Dokter S-1', singkatan: 'PD', akreditasi: 'Unggul', persyaratan: [], aktif: true, jenjang_id: { nama: 'Sarjana' }, fakultas_id: { nama: 'Kedokteran' } };
+  let panggilan = 0;
+  ProgramStudi.find = () => {
+    panggilan++;
+    const hasil = panggilan === 1 ? [] : [dokter];
+    const rantai = { select: () => rantai, populate: () => rantai, limit: () => rantai, sort: () => rantai, maxTimeMS: () => rantai, lean: async () => hasil };
+    return rantai;
+  };
+  const hasil = await cariProdi({ nama: 'kedokteran' });
+  assert.equal(panggilan, 2, 'hasil kosong harus mencoba akar kata');
+  assert.equal(hasil.length, 1, 'akar kata "dokter" harus menemukan Pendidikan Dokter');
+  assert.equal(hasil[0].id, 'prodi:p9');
+}
+console.log('Task 3: fallback akar kata prodi OK');
+
 // Normalisasi keluaran provider.
 const openai = normalisasiOpenAI({
   choices: [{ message: { content: '', tool_calls: [{ id: 'c1', type: 'function', function: { name: 'cari_faq', arguments: '{"kataKunci":"biaya"}' } }] } }],
@@ -286,6 +303,28 @@ assert.equal(susunHasilChat(JSON.stringify({ status: 'answered', buktiIds: ['faq
   assert.ok(!r.jawaban.includes('PDF'), 'baris bukti lain tidak boleh ikut sebagai dump');
 }
 console.log('Task 3: evidence, klaim angka, status, dan proyeksi sumber OK');
+
+// Parafrasa boleh, asal tidak menambah angka baru.
+assert.equal(
+  susunHasilChat(JSON.stringify({ status: 'answered', buktiIds: ['faq:1'], jawaban: 'Pendaftaran dikerjakan lewat situs resmi UNJANI.' }), buktiFaq).status,
+  'answered',
+  'jawaban yang diringkas dengan kata sendiri harus diterima',
+);
+assert.equal(
+  susunHasilChat(JSON.stringify({ status: 'answered', buktiIds: ['faq:1'], jawaban: 'Pendaftaran online, biayanya Rp75.000.' }), buktiFaq).status,
+  'no_source',
+  'parafrasa yang menyelipkan angka baru tetap ditolak',
+);
+console.log('Task 3: parafrasa tanpa angka karangan OK');
+
+// Sapaan diganti balasan ramah, bukan penolakan; pertanyaan pendek tetap diproses.
+for (const pesan of ['hai', 'Halo!', 'halo selamat pagi', 'terima kasih', 'p']) {
+  assert.equal(adalahSapaan(pesan), true, `sapaan "${pesan}" harus dikenali`);
+}
+for (const pesan of ['apakah ada program studi kedokteran?', 'halo, berapa biaya TI?', 'hai, jadwal gelombang 5 kapan?', 'apa itu UNJANI']) {
+  assert.equal(adalahSapaan(pesan), false, `"${pesan}" bukan sapaan murni`);
+}
+console.log('Task 3: deteksi sapaan OK');
 
 // Riwayat: hanya user/assistant, dibatasi 12 pesan dan 4.000 karakter.
 const riwayat = Array.from({ length: 20 }, (_, i) => ({ peran: i % 3 === 0 ? 'system' : i % 2 ? 'user' : 'assistant', isi: 'x'.repeat(500) }));

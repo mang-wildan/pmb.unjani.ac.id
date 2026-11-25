@@ -11,9 +11,11 @@ const PESAN: Record<Exclude<StatusChat, 'answered'>, string> = {
   temporarily_unavailable: 'Layanan chatbot sedang tidak tersedia. Silakan coba lagi atau hubungi Admin PMB.',
 };
 
-// ponytail: tanpa validator semantik, hanya kalimat utuh sumber boleh dipilih.
-// Parafrasa bebas memerlukan verifikasi klaim terstruktur terpisah, bukan pencocokan angka.
+// ponytail: parafrasa bebas diizinkan, tetapi setiap token angka wajib ada di bukti terpilih.
+// Batas ini menahan nominal/tanggal karangan tanpa memaksa model menyalin kalimat verbatim.
 const BIAYA_TANGGAL = /%|\b(biaya|tarif|harga|rupiah|rp|idr|diskon|potongan|beasiswa|gratis|jadwal|dibuka|ditutup|deadline|tanggal|semester|gelombang|juta|ribu|miliar|januari|februari|maret|april|mei|juni|juli|agustus|september|oktober|november|desember)\b|\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b/i;
+/** Token angka tanpa pemisah ribuan/desimal agar "Rp5.500.000" dibandingkan sebagai 5500000. */
+const angka = (teks: string): string[] => (teks.match(/\d[\d.,]*/g) ?? []).map(n => n.replace(/[.,]/g, '')).filter(Boolean);
 const TERLARANG = /total\s+(?:biaya|pengeluaran)|(?:sampai|hingga)\s+lulus|(?:selama|sepanjang)\s+kuliah|masa\s+studi/i;
 const jenis = (id: string) => id.split(':')[0];
 // Bandingkan hanya label klaim identik, bukan seluruh angka dalam sumber lain.
@@ -88,14 +90,19 @@ export function susunHasilChat(teksModel: string, buktiDipakai: Bukti[]): HasilC
   if (TERLARANG.test(jawaban)) return hasilStatus('no_source');
   const pilihan = kalimat(jawaban);
   if (!pilihan.length || pilihan.length > 3) return hasilStatus('no_source');
+  // Setiap angka pada jawaban harus berasal dari bukti terpilih; sisanya boleh parafrasa.
+  const angkaBukti = new Set(dipilih.flatMap(b => angka(aman(b.ringkas, 1800))));
+  if (!angka(jawaban).every(n => angkaBukti.has(n))) return hasilStatus('no_source');
+  // Angka pada kalimat biaya/jadwal wajib berasal dari baris biaya/jadwal, bukan FAQ/pengumuman.
+  const angkaTerstruktur = new Set(dipilih.filter(b => ['biaya', 'jadwal'].includes(jenis(b.id))).flatMap(b => angka(aman(b.ringkas, 1800))));
   for (const klaim of pilihan) {
     const sensitif = BIAYA_TANGGAL.test(klaim);
-    const pendukung = dipilih.filter(b => kalimat(aman(b.ringkas, 1800)).includes(klaim));
-    if (!pendukung.length) return hasilStatus('no_source');
-    // Nominal/tanggal resmi hanya boleh kalimat tabel biaya/jadwal, label tidak boleh diubah.
-    if (sensitif && !pendukung.some(b => ['biaya', 'jadwal'].includes(jenis(b.id)))) return hasilStatus('no_source');
+    if (!sensitif) continue;
+    // Nominal/tanggal resmi hanya boleh diklaim bila bukti biaya/jadwal ikut dipilih.
+    if (!dipilih.some(b => ['biaya', 'jadwal'].includes(jenis(b.id)))) return hasilStatus('no_source');
+    if (!angka(klaim).every(n => angkaTerstruktur.has(n))) return hasilStatus('no_source');
     // Konflik nominal terbukti antara tabel vs FAQ/Pengumuman: tolak klaim biaya.
-    if (sensitif && konflikSumberSensitif(klaim, buktiDipakai)) return hasilStatus('no_source');
+    if (konflikSumberSensitif(klaim, buktiDipakai)) return hasilStatus('no_source');
   }
 
   const sumber: SumberChat[] = [];
@@ -105,6 +112,17 @@ export function susunHasilChat(teksModel: string, buktiDipakai: Bukti[]): HasilC
 
 export function hasilStatus(status: Exclude<StatusChat, 'answered'>): HasilChat {
   return { jawaban: PESAN[status], sumber: [], status, tawarkanWhatsApp: status !== 'clarification_needed' };
+}
+
+const SAPAAN = /^(?:assalamualaikum|salam|hai+|halo+|hallo+|hi+|hey+|pagi|siang|sore|malam|permisi|min|kak|admin|tes|test|p|oke?|siap|terima\s?kasih|makasih|thanks?|thank\s?you)\b/i;
+export const JAWABAN_SAPAAN = 'Halo! Saya asisten PMB UNJANI. Silakan tanya soal program studi, jalur seleksi, jadwal, biaya, atau cara mendaftar.';
+/**
+ * Sapaan murni tanpa isi pertanyaan. Dipakai hanya untuk mengganti `no_source`
+ * pada pesan singkat, sehingga sapaan tidak pernah dijawab dengan penolakan.
+ */
+export function adalahSapaan(pesan: string): boolean {
+  const bersih = pesan.replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
+  return bersih.length <= 25 && SAPAAN.test(bersih) && !/\d/.test(bersih) && !BIAYA_TANGGAL.test(bersih);
 }
 
 /** Batasi riwayat klien: hanya user/assistant, maks 12 pesan dan 4.000 karakter total. */

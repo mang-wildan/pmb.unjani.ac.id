@@ -8,7 +8,7 @@ import { KEY_API_PROVIDER, PROVIDER_CHATBOT, Settings, modelUntukProvider, type 
 import { PROMPT_CHATBOT } from '@/lib/chatbot/prompt';
 import { TOOLS, KonflikError, KlarifikasiError, jalankanTool, type Bukti } from '@/lib/chatbot/tools';
 import { panggilModel, type PesanModel } from '@/lib/chatbot/providers';
-import { batasiRiwayat, hasilStatus, susunHasilChat, type HasilChat } from '@/lib/chatbot/hasil';
+import { batasiRiwayat, hasilStatus, susunHasilChat, adalahSapaan, JAWABAN_SAPAAN, type HasilChat } from '@/lib/chatbot/hasil';
 
 export const runtime = 'nodejs';
 
@@ -109,7 +109,7 @@ export async function POST(req: Request) {
           const rows = await jalankanTool(panggilan.nama, panggilan.argumen);
           for (const b of rows) if (bukti.size < 24) bukti.set(b.id, b);
           // Jangan pilih sebagian baris diam-diam; hasil luas = klarifikasi.
-          if (rows.length > 4) return terlaluLuas();
+          if (rows.length > 8) return terlaluLuas();
           isi = JSON.stringify(rows.map(({ id, judul, ringkas }) => ({ id, judul, ringkas })));
         } catch (error) {
           if (error instanceof KonflikError) {
@@ -131,5 +131,10 @@ export async function POST(req: Request) {
     // Jangan catat penyebab upstream/prompt/history; tutup aman tanpa detail.
     return balas(hasilStatus('temporarily_unavailable'), 503);
   }
-  return balas(susunHasilChat(hasil.pesan, [...bukti.values()]));
+  const akhir = susunHasilChat(hasil.pesan, [...bukti.values()]);
+  // Sapaan tidak boleh dijawab dengan penolakan; ganti hanya bila model menyerah.
+  if (akhir.status === 'no_source' && adalahSapaan(parsed.data.pesan)) {
+    return balas({ ...hasilStatus('clarification_needed'), jawaban: JAWABAN_SAPAAN });
+  }
+  return balas(akhir);
 }
