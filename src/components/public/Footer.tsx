@@ -185,32 +185,22 @@ export default async function Footer({ settings }: { settings: PublicSettings | 
       </div>
 
       <div className="container mx-auto pb-10">
-        <h3 className="font-semibold text-white mb-4">{t('lokasiKampus')}</h3>
-        <div className="grid gap-4 md:grid-cols-2">
+        <h3 className="text-sm font-semibold text-white/60">{t('lokasiKampus')}</h3>
+        <div className="mt-5 grid gap-x-10 gap-y-6 sm:grid-cols-2">
           {campusLocations.map((campus) => (
-            <div
-              key={campus.name}
-              className="rounded-lg border border-white/20 bg-white/5 p-5"
-            >
-              <p className="text-sm font-semibold text-[#D4AF37]">{campus.name}</p>
-              <div className="mt-3 flex flex-wrap items-start gap-3">
-                <a
-                  href={campus.mapUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="min-w-0 flex-1 text-sm leading-relaxed text-white/80 transition hover:text-[#D4AF37] hover:underline"
-                >
-                  {campus.address}
-                </a>
-                <a
-                  href={campus.mapUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center rounded-lg border border-white/20 px-3 py-1 text-xs font-semibold text-[#D4AF37] hover:underline"
-                >
-                  {t('bukaDiMaps')}
-                </a>
-              </div>
+            <div key={campus.name}>
+              <p className="text-base font-semibold text-white">{campus.name}</p>
+              <p className="mt-1.5 max-w-md text-sm leading-relaxed text-white/70">
+                {campus.address}
+              </p>
+              <a
+                href={campus.mapUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 inline-block text-sm font-semibold text-[#D4AF37] hover:underline"
+              >
+                {t('bukaDiMaps')} <span aria-hidden>↗</span>
+              </a>
             </div>
           ))}
         </div>
