@@ -97,7 +97,7 @@ export async function POST(req: Request) {
   const bukti = new Map<string, Bukti>();
   let hasil = null;
   let totalBukti = 0;
-  const terlaluLuas = () => balas({ ...hasilStatus('clarification_needed'), jawaban: 'Pertanyaan terlalu luas untuk diproses aman. Mohon sebutkan program studi, tahun/periode, jalur, dan kelas yang dimaksud.' });
+  const terlaluLuas = () => balas({ ...hasilStatus('clarification_needed'), jawaban: 'Pertanyaan ini mencakup terlalu banyak data sekaligus. Mohon sebutkan program studi dan jalurnya agar saya bisa mengambil angka yang tepat.' });
   try {
     for (let ronde = 0; ronde < 3; ronde++) {
       const keluaran = await panggilModel({ provider, model, apiKey, messages, tools: TOOLS });
@@ -108,8 +108,6 @@ export async function POST(req: Request) {
         try {
           const rows = await jalankanTool(panggilan.nama, panggilan.argumen);
           for (const b of rows) if (bukti.size < 24) bukti.set(b.id, b);
-          // Jangan pilih sebagian baris diam-diam; hasil luas = klarifikasi.
-          if (rows.length > 8) return terlaluLuas();
           isi = JSON.stringify(rows.map(({ id, judul, ringkas }) => ({ id, judul, ringkas })));
         } catch (error) {
           if (error instanceof KonflikError) {

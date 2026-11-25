@@ -224,6 +224,33 @@ function setSettings(chatbot) {
   }
 }
 
+// 5e. Daftar prodi wajar (12 baris) diteruskan ke model untuk dirangkum, bukan dipotong klarifikasi.
+{
+  const kunci = enkripsiChatbotSecret('sk-or-daftar');
+  const fetchAsli = globalThis.fetch;
+  const urutan = [
+    { choices: [{ message: { content: '', tool_calls: [{ id: 'p1', type: 'function', function: { name: 'cari_prodi', arguments: '{}' } }] } }] },
+    { choices: [{ message: { content: '{"status":"answered","jawaban":"Ada beberapa program studi, di antaranya Informatika dan Pendidikan Dokter."}' } }] },
+  ];
+  globalThis.fetch = async () => new Response(JSON.stringify(urutan.shift()), { headers: { 'content-type': 'application/json' } });
+  const { ProgramStudi } = await import('../src/models/ProgramStudi.ts');
+  ProgramStudi.find = () => {
+    const rows = Array.from({ length: 12 }, (_, i) => ({ _id: `p${i}`, nama: `Prodi ${i}`, singkatan: `P${i}`, akreditasi: 'Baik', persyaratan: [], aktif: true, jenjang_id: { nama: 'Sarjana' }, fakultas_id: { nama: 'Teknik' } }));
+    const rantai = { select: () => rantai, populate: () => rantai, limit: () => rantai, maxTimeMS: () => rantai, lean: async () => rows };
+    return rantai;
+  };
+  setSettings({ aktif: true, provider: 'openrouter', apiKeyOpenRouter: kunci });
+  try {
+    const res = await POST(buatRequest({ pesan: 'ada prodi apa saja?' }, { headers: { 'x-forwarded-for': '10.0.0.60' } }));
+    const json = await res.json();
+    assert.equal(res.status, 200);
+    assert.equal(json.status, 'answered', 'daftar 12 prodi harus dirangkum model, bukan klarifikasi');
+    assert.match(json.jawaban, /Pendidikan Dokter/);
+  } finally {
+    globalThis.fetch = fetchAsli;
+  }
+}
+
 // 6. Rate limit per IP (15 request per menit) -> 429
 {
   setSettings({ aktif: false });
