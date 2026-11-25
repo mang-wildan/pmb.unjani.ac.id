@@ -11,9 +11,9 @@ const PESAN: Record<Exclude<StatusChat, 'answered'>, string> = {
   temporarily_unavailable: 'Layanan chatbot sedang tidak tersedia. Silakan coba lagi atau hubungi Admin PMB.',
 };
 
-// ponytail: parafrasa bebas diizinkan, tetapi setiap token angka wajib ada di bukti terpilih.
-// Batas ini menahan nominal/tanggal karangan tanpa memaksa model menyalin kalimat verbatim.
-const BIAYA_TANGGAL = /%|\b(biaya|tarif|harga|rupiah|rp|idr|diskon|potongan|beasiswa|gratis|jadwal|dibuka|ditutup|deadline|tanggal|semester|gelombang|juta|ribu|miliar|januari|februari|maret|april|mei|juni|juli|agustus|september|oktober|november|desember)\b|\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b/i;
+// ponytail: klaim sensitif adalah kalimat yang MEMUAT ANGKA bersama konteks biaya/jadwal/kalender,
+// atau klaim nominal/gratis eksplisit. Menyebut kata "biaya" pada sapaan tanpa angka bukan klaim fakta.
+const BIAYA_TANGGAL = /%|\b(?:gratis|beasiswa|potongan|diskon)\b|(?:(?:biaya|tarif|harga|rupiah|rp|idr|semester|juta|ribu|miliar|gelombang)\b.*?\d|\d.*?\b(?:biaya|tarif|harga|rupiah|rp|idr|semester|juta|ribu|miliar|gelombang)\b)|\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b|\b\d{1,2}\s+(?:januari|februari|maret|april|mei|juni|juli|agustus|september|oktober|november|desember)\b/i;
 /** Token angka tanpa pemisah ribuan/desimal agar "Rp5.500.000" dibandingkan sebagai 5500000. */
 const angka = (teks: string): string[] => (teks.match(/\d[\d.,]*/g) ?? []).map(n => n.replace(/[.,]/g, '')).filter(Boolean);
 /** Teks tanpa bukti tidak boleh berangka, kecuali sebutan jenjang seperti S1/D3. */
@@ -123,15 +123,15 @@ export function hasilStatus(status: Exclude<StatusChat, 'answered'>): HasilChat 
   return { jawaban: PESAN[status], sumber: [], status, tawarkanWhatsApp: status !== 'clarification_needed' };
 }
 
-const SAPAAN = /^(?:assalamualaikum|salam|hai+|halo+|hallo+|hi+|hey+|pagi|siang|sore|malam|permisi|min|kak|admin|tes|test|p|oke?|siap|terima\s?kasih|makasih|thanks?|thank\s?you)\b/i;
+const KATA_SAPAAN = /^(?:assalamualaikum|salam|selamat|hai|halo|hallo|hi|hey|pagi|siang|sore|malam|permisi|min|kak|admin|tes|test|p|oke|ok|siap|terima|kasih|makasih|thanks|thank|you|semua|semuanya|bapak|ibu|pak|bu|bang|mas|mbak|ya|nih|dong|deh|aja|saja)$/;
 export const JAWABAN_SAPAAN = 'Halo! Saya asisten PMB UNJANI. Silakan tanya soal program studi, jalur seleksi, jadwal, biaya, atau cara mendaftar.';
 /**
- * Sapaan murni tanpa isi pertanyaan. Dipakai hanya untuk mengganti `no_source`
- * pada pesan singkat, sehingga sapaan tidak pernah dijawab dengan penolakan.
+ * Sapaan murni: seluruh kata pesan adalah kata sapaan. Pesan yang menyelipkan
+ * pertanyaan ("halo, berapa biaya TI?") bukan sapaan dan tetap diproses normal.
  */
 export function adalahSapaan(pesan: string): boolean {
-  const bersih = pesan.replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
-  return bersih.length <= 25 && SAPAAN.test(bersih) && !/\d/.test(bersih) && !BIAYA_TANGGAL.test(bersih);
+  const kata = pesan.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, ' ').split(/\s+/).filter(Boolean);
+  return kata.length > 0 && kata.length <= 5 && kata.every(k => KATA_SAPAAN.test(k));
 }
 
 /** Batasi riwayat klien: hanya user/assistant, maks 12 pesan dan 4.000 karakter total. */
