@@ -22,7 +22,7 @@ Siklus tiap task: tulis assert di `scripts/check-v2.mjs` → `node scripts/check
 
 ## Task 3: Beranda
 - [x] Assert Task 3 (section id + `scroll-mt-24`, InstagramFeed/LandingPopup tetap diimpor, empty state kalkulator tetap bersyarat `records.length === 0`) gagal
-- [x] Hero 900/1100px, data dari PageContent/Jadwal/count DB
+- [x] Hero 900px desktop (mobile mengikuti isi), data dari PageContent/Jadwal/count DB
 - [x] Dokumen aside/list, Jalur aside, Jadwal wide, Kalkulator band hijau (form tetap), Fakultas grid + kartu count gold, Pengumuman+Artikel combo, FAQ tab kategori, CTA gold
 - [x] Assert lulus; commit `ce5bede` + fix `a2b7445`, `f7d7eb1`; re-review APPROVED (kontras disclaimer 8.24:1, assert mutation-verified)
 

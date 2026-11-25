@@ -40,7 +40,7 @@ Dokumen perencanaan teknis pembaruan versi 2.0.0: Redesign antarmuka publik dan 
 | `--font-body` | `Inter` | Font body teks via `next/font/google` |
 | `--radius` | `8px` (`0.5rem`) | **Radius kartu dan kontainer** (bukan 20px) |
 | `--radius-btn` | `8px` (`0.5rem`) | **Radius tombol** |
-| Tinggi Hero Beranda | `900px` (desktop), `1100px` (mobile) | Banner visual utama beranda |
+| Tinggi Hero Beranda | `900px` (desktop), mengikuti isi (mobile) | Banner visual utama beranda |
 | Tinggi Hero Subhalaman | `480px` (desktop), `440px` (mobile) | Banner halaman kontak, pengumuman list, artikel list |
 | Tinggi Hero Detail Pengumuman | `520px` (desktop), `480px` (mobile) | Banner detail pengumuman |
 
@@ -180,7 +180,7 @@ Dokumen perencanaan teknis pembaruan versi 2.0.0: Redesign antarmuka publik dan 
 
 **Aturan Khusus Task 3 (Konsistensi `variant-02.png`):**
 - **Navbar Transparan**: Terintegrasi di bagian atas hero tanpa duplikasi tag `<Navbar>`.
-- **Hero**: Tinggi 900px desktop (1100px mobile), latar = `heroImages` dari `PageContent` kunci `hero` (via `HeroSlider` existing; jangan hardcode path upload), gradient gelap, badge `t('badge', { tahun: tahunAjaran })`, judul/subjudul dari `PageContent`, CTAs (Daftar Sekarang gold, Hitung Biaya outline putih ke `/#kalkulator`), statistik `jumlahFakultas`/`jumlahProgramStudi` (angka 11/48 di PNG hanya contoh data), dan kartu aktif = `HeroGelombangInfo` dari `activeJadwal`. Tidak ada tahun/periode/angka hardcode.
+- **Hero**: Tinggi 900px desktop; di mobile tinggi mengikuti isi (tanpa tinggi minimum tetap) agar tidak ada ruang kosong besar di atas konten, latar = `heroImages` dari `PageContent` kunci `hero` (via `HeroSlider` existing; jangan hardcode path upload), gradient gelap, badge `t('badge', { tahun: tahunAjaran })`, judul/subjudul dari `PageContent`, CTAs (Daftar Sekarang gold, Hitung Biaya outline putih ke `/#kalkulator`), statistik `jumlahFakultas`/`jumlahProgramStudi` (angka 11/48 di PNG hanya contoh data), dan kartu aktif = `HeroGelombangInfo` dari `activeJadwal`. Tidak ada tahun/periode/angka hardcode.
 - **Data CMS**: daftar jalur + persyaratan dari `JalurSeleksi` (`persyaratan[]`, `badge`, `ringkasan`), jadwal dari `Jadwal`, dokumen dari `Dokumen`, kartu fakultas dari `Fakultas`/`ProgramStudi`, tab FAQ dari enum `FAQ.kategori` (`Teknis|Biaya|Jadwal`), pengumuman/artikel dari model. Teks statis UI (judul section, label tombol) via `messages/*.json`.
 - **Section IDs & Scroll Offset**: Setiap section beranda memiliki ID anchor dan `scroll-mt-24` (agar tidak tertutup navbar saat scroll):
   - Dokumen Resmi: `id="manual-book"`

@@ -464,7 +464,8 @@ const tasks = {
     const hero = baca('src/components/public/Hero.tsx');
     for (const id of ['manual-book', 'jalur-seleksi', 'jadwal', 'kalkulator', 'pengumuman', 'faq', 'cta']) assert.ok(page.includes(`id="${id}"`), id);
     assert.ok(hero.includes('data-public-hero'), 'Hero harus menandai overlay navbar');
-    for (const css of ['min-h-[1100px]', 'md:min-h-[900px]', 'pt-24', 'bg-accent-800', 'text-white']) assert.ok(hero.includes(css), css);
+    assert.ok(!hero.includes('min-h-[1100px]'), 'Hero mobile tanpa tinggi minimum tetap');
+    for (const css of ['md:min-h-[900px]', 'pt-24', 'bg-accent-800', 'text-white']) assert.ok(hero.includes(css), css);
     assert.doesNotMatch(hero, /2026\/2027/);
     assert.doesNotMatch(page, /href="\/(jalur-masuk|biaya-kuliah)"|<Navbar/);
     for (const feature of ['InstagramFeed', 'LandingPopup', 'kalkulatorRecords', 'activeJadwal', 'jumlahFakultas', 'jumlahProgramStudi']) assert.ok(page.includes(feature));

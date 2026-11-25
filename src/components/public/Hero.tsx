@@ -11,7 +11,7 @@ export default async function Hero({ urlPendaftaran, judul, subJudul, tahunAjara
 }) {
   const t = await getTranslations('hero');
   return (
-    <section id="hero" data-public-hero className="relative isolate flex min-h-[1100px] flex-col justify-end bg-brand-900 text-white md:min-h-[900px]" aria-labelledby="hero-title">
+    <section id="hero" data-public-hero className="relative isolate flex flex-col justify-end bg-brand-900 text-white md:min-h-[900px]" aria-labelledby="hero-title">
       <div className="absolute inset-0 -z-20"><HeroSlider images={heroImages} judul={judul || t('judul')} fullBleed /></div>
       <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-black via-black/55 to-black/30" aria-hidden />
       <div className="container mx-auto grid gap-10 pt-24 pb-16 md:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] md:items-end md:pb-20">
