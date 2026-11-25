@@ -251,6 +251,43 @@ assert.equal(sah.jawaban, 'Pendaftaran dilakukan secara online melalui situs res
 assert.equal(susunHasilChat(JSON.stringify({ status: 'answered', buktiIds: ['faq:1'] }), []).status, 'no_source', 'answered tanpa bukti harus no_source');
 assert.equal(susunHasilChat(JSON.stringify({ status: 'answered', buktiIds: ['karangan:9'], jawaban: 'Halo.' }), buktiFaq).status, 'no_source', 'ID bukti karangan harus no_source');
 assert.equal(susunHasilChat('bukan json', buktiFaq).status, 'no_source', 'keluaran rusak harus no_source');
+
+// Jawaban percakapan tanpa tool: ramah, tetapi tidak boleh memuat angka.
+const sapa = susunHasilChat(JSON.stringify({ status: 'answered', jawaban: 'Halo! Saya asisten PMB UNJANI. Ada yang bisa saya bantu soal pendaftaran?' }), []);
+assert.equal(sapa.status, 'answered', 'sapaan tanpa bukti harus answered');
+assert.deepEqual(sapa.sumber, [], 'sapaan tanpa bukti tidak punya sumber');
+assert.equal(sapa.tawarkanWhatsApp, false);
+assert.equal(
+  susunHasilChat(JSON.stringify({ status: 'answered', jawaban: 'Kampus utama UNJANI ada di Cimahi.' }), []).status,
+  'answered',
+  'profil umum kampus boleh dijawab tanpa bukti',
+);
+assert.equal(
+  susunHasilChat(JSON.stringify({ status: 'answered', jawaban: 'UNJANI punya program S1, D3, dan Profesi.' }), []).status,
+  'answered',
+  'sebutan jenjang S1/D3 bukan angka fakta',
+);
+assert.equal(
+  susunHasilChat(JSON.stringify({ status: 'answered', jawaban: 'Biaya kuliahnya Rp5.000.000.' }), []).status,
+  'no_source',
+  'angka tanpa bukti tetap ditolak',
+);
+assert.equal(
+  susunHasilChat(JSON.stringify({ status: 'answered', jawaban: 'Pendaftaran dibuka 1 Januari 2027.' }), []).status,
+  'no_source',
+  'tanggal tanpa bukti tetap ditolak',
+);
+// Klarifikasi buatan model dipakai, bukan template kaku.
+assert.equal(
+  susunHasilChat(JSON.stringify({ status: 'clarification_needed', jawaban: 'Boleh sebutkan jenjang yang diminati, S1 atau D3?' }), []).jawaban,
+  'Boleh sebutkan jenjang yang diminati, S1 atau D3?',
+  'klarifikasi model harus dipakai',
+);
+assert.equal(
+  susunHasilChat(JSON.stringify({ status: 'clarification_needed', jawaban: 'Biayanya Rp1.000.000 ya.' }), []).jawaban,
+  'Mohon lengkapi program studi, tahun/periode, jalur, dan kelas yang dimaksud agar saya dapat memilih data resmi yang tepat.',
+  'klarifikasi berangka jatuh ke template',
+);
 assert.equal(susunHasilChat(JSON.stringify({ status: 'out_of_scope' }), buktiFaq).tawarkanWhatsApp, true);
 assert.equal(susunHasilChat(JSON.stringify({ status: 'clarification_needed', klarifikasi: 'Sebutkan prodi.' }), buktiFaq).tawarkanWhatsApp, false);
 assert.equal(hasilStatus('temporarily_unavailable').tawarkanWhatsApp, true);

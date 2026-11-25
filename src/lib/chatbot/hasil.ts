@@ -16,6 +16,8 @@ const PESAN: Record<Exclude<StatusChat, 'answered'>, string> = {
 const BIAYA_TANGGAL = /%|\b(biaya|tarif|harga|rupiah|rp|idr|diskon|potongan|beasiswa|gratis|jadwal|dibuka|ditutup|deadline|tanggal|semester|gelombang|juta|ribu|miliar|januari|februari|maret|april|mei|juni|juli|agustus|september|oktober|november|desember)\b|\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b/i;
 /** Token angka tanpa pemisah ribuan/desimal agar "Rp5.500.000" dibandingkan sebagai 5500000. */
 const angka = (teks: string): string[] => (teks.match(/\d[\d.,]*/g) ?? []).map(n => n.replace(/[.,]/g, '')).filter(Boolean);
+/** Teks tanpa bukti tidak boleh berangka, kecuali sebutan jenjang seperti S1/D3. */
+const adaAngkaFakta = (teks: string): boolean => /\d/.test(teks.replace(/\b[SD]\d\b/g, ' '));
 const TERLARANG = /total\s+(?:biaya|pengeluaran)|(?:sampai|hingga)\s+lulus|(?:selama|sepanjang)\s+kuliah|masa\s+studi/i;
 const jenis = (id: string) => id.split(':')[0];
 // Bandingkan hanya label klaim identik, bukan seluruh angka dalam sumber lain.
@@ -71,9 +73,10 @@ export function susunHasilChat(teksModel: string, buktiDipakai: Bukti[]): HasilC
   const status = data.status;
   if (status === 'no_source' || status === 'out_of_scope') return hasilStatus(status);
   if (status === 'clarification_needed') {
-    const khusus = aman(data.klarifikasi, 400);
-    // Klarifikasi bukan klaim fakta: tolak bila menyelipkan angka/nominal/tanggal karangan.
-    const bersih = khusus && !/[\d]/.test(khusus) && !BIAYA_TANGGAL.test(khusus) && !TERLARANG.test(khusus) ? khusus : '';
+    // Pertanyaan balik buatan model lebih luwes daripada template; `klarifikasi` dipertahankan untuk keluaran lama.
+    const khusus = aman(data.jawaban ?? data.klarifikasi, 400);
+    // Klarifikasi bukan klaim fakta: tolak nominal/tanggal/jadwal. Sebutan jenjang seperti S1/D3 diizinkan.
+    const bersih = khusus && !adaAngkaFakta(khusus) && !BIAYA_TANGGAL.test(khusus) && !TERLARANG.test(khusus) ? khusus : '';
     return { jawaban: bersih || PESAN.clarification_needed, sumber: [], status, tawarkanWhatsApp: false };
   }
   if (status !== 'answered') return hasilStatus('no_source');
@@ -83,13 +86,19 @@ export function susunHasilChat(teksModel: string, buktiDipakai: Bukti[]): HasilC
     const b = peta.get(id);
     if (b && !dipilih.some(x => x.id === b.id)) dipilih.push(b);
   }
-  if (!dipilih.length) return hasilStatus('no_source');
+  if (ids.length && !dipilih.length) return hasilStatus('no_source');
   const jawaban = aman(data.jawaban, 1200);
   if (jawaban.length < 2) return hasilStatus('no_source');
 
   if (TERLARANG.test(jawaban)) return hasilStatus('no_source');
   const pilihan = kalimat(jawaban);
   if (!pilihan.length || pilihan.length > 3) return hasilStatus('no_source');
+  if (!dipilih.length) {
+    // ponytail: jawaban tanpa bukti hanya untuk percakapan. Larangan digit menutup
+    // jalur termurah menebak nominal; klasifikasi topik percakapan tidak ditambahkan.
+    if (adaAngkaFakta(jawaban) || BIAYA_TANGGAL.test(jawaban)) return hasilStatus('no_source');
+    return { jawaban, sumber: [], status: 'answered', tawarkanWhatsApp: false };
+  }
   // Setiap angka pada jawaban harus berasal dari bukti terpilih; sisanya boleh parafrasa.
   const angkaBukti = new Set(dipilih.flatMap(b => angka(aman(b.ringkas, 1800))));
   if (!angka(jawaban).every(n => angkaBukti.has(n))) return hasilStatus('no_source');
