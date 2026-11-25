@@ -80,11 +80,11 @@ export default function Navbar({ settings }: { settings: PublicSettings | null }
       )}>
         <nav aria-label={t('navigasiUtama')} className="container mx-auto flex h-20 items-center justify-between gap-2">
           <Link href="/" className={`flex shrink-0 items-center gap-2 rounded-lg ${focus}`} aria-label={t('berandaLabel')}>
-            <Image src="/logo-pmb-unjani (1).png" alt="Logo PMB UNJANI" width={40} height={40} className="h-10 w-auto object-contain" priority />
-            <Image src="/LOGO-AKREDITASI-UNGGUL.png" alt="Akreditasi Unggul" width={40} height={40} className="h-10 w-auto object-contain" priority />
-            <span className="hidden xl:block font-display font-bold leading-tight">
-              <span className="block text-xs">{t('penerimaanMahasiswaBaru')}</span>
-              <span className="block text-lg">UNJANI</span>
+            <Image src="/logo-pmb-unjani (1).png" alt="Logo PMB UNJANI" width={40} height={40} className="h-8 sm:h-10 w-auto object-contain" priority />
+            <Image src="/LOGO-AKREDITASI-UNGGUL.png" alt="Akreditasi Unggul" width={40} height={40} className="h-8 sm:h-10 w-auto object-contain" priority />
+            <span className="block lg:hidden xl:block font-display font-bold leading-tight">
+              <span className="block text-[10px] sm:text-xs">{t('penerimaanMahasiswaBaru')}</span>
+              <span className="block text-sm sm:text-lg">UNJANI</span>
             </span>
           </Link>
           <ul className="hidden lg:flex items-center gap-1">
