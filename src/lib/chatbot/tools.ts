@@ -24,6 +24,8 @@ export function hanyaAktif<T extends { aktif?: unknown }>(rows: T[]): T[] {
 }
 export function regexAman(s: string) { return new RegExp(s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'); }
 const bersih = (s: unknown) => String(s ?? '').replace(/<[^>]*>/g, ' ').replace(/https?:\/\/\S+|www\.\S+/gi, '[tautan pada sumber]').replace(/\s+/g, ' ').trim().slice(0, 1800);
+/** Dokumen lama bisa tanpa field array; `.lean()` tidak menerapkan default skema. */
+const daftar = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
 const bukti = (jenis: string, id: unknown, judul: string, ringkas: string, url: string): Bukti => ({ id: `${jenis}:${id}`, judul: bersih(judul), ringkas: bersih(ringkas), url });
 function batasi<T>(rows: T[]): T[] { if (rows.length > 21) throw new KlarifikasiError(); return rows; }
 const cocok = (s: unknown, q?: string) => !q || regexAman(q).test(String(s ?? ''));
@@ -58,7 +60,7 @@ export async function cariProdi(arg: Arg): Promise<Bukti[]> {
     }
   }
   return batasi(hanyaAktif(rows)).filter(p => cocok((p.jenjang_id as unknown as { nama?: string })?.nama, a.jenjang) && cocok((p.fakultas_id as unknown as { nama?: string })?.nama, a.fakultas))
-    .map(p => bukti('prodi', p._id, p.nama, `${p.nama} (${p.singkatan}). Akreditasi: ${p.akreditasi || 'belum tersedia'}. Persyaratan: ${p.persyaratan.join('; ')}`, '/#program-studi'));
+    .map(p => bukti('prodi', p._id, p.nama, `${p.nama} (${p.singkatan}). Akreditasi: ${p.akreditasi || 'belum tersedia'}. Persyaratan: ${daftar(p.persyaratan).join('; ')}`, '/#program-studi'));
 }
 
 export async function cariJadwal(arg: Arg): Promise<Bukti[]> {
@@ -67,7 +69,7 @@ export async function cariJadwal(arg: Arg): Promise<Bukti[]> {
   batasi(jalur);
   const rows = await Jadwal.find({ status: true, jalur: { $in: jalur.map(j => j._id) }, ...(a.tahun ? { tahun: a.tahun } : {}), ...(a.periode ? { judul: regexAman(a.periode) } : {}) })
     .select('judul tahun ke mulai selesai jalur').sort({ mulai: 1 }).limit(21).maxTimeMS(5000).lean();
-  return batasi(rows).map(j => bukti('jadwal', j._id, `${j.judul} ${j.tahun}`, `Gelombang ${j.ke}, ${j.tahun}. Jalur: ${jalur.filter(p => j.jalur.some(id => String(id) === String(p._id))).map(p => p.nama).join(', ')}. ${tanggal(j.mulai)} sampai ${tanggal(j.selesai)} WIB. Status pendaftaran: ${statusJadwal(j.mulai, j.selesai)}.`, '/jadwal-pmb'));
+  return batasi(rows).map(j => bukti('jadwal', j._id, `${j.judul} ${j.tahun}`, `Gelombang ${j.ke}, ${j.tahun}. Jalur: ${jalur.filter(p => daftar(j.jalur).some(id => String(id) === String(p._id))).map(p => p.nama).join(', ')}. ${tanggal(j.mulai)} sampai ${tanggal(j.selesai)} WIB. Status pendaftaran: ${statusJadwal(j.mulai, j.selesai)}.`, '/jadwal-pmb'));
 }
 
 export async function cariBiaya(arg: Arg): Promise<Bukti[]> {
@@ -85,7 +87,7 @@ export async function cariBiaya(arg: Arg): Promise<Bukti[]> {
     prodi: b.programStudi_id as unknown as { nama: string }, jalur: b.jalur_id as unknown as { _id: unknown; nama: string },
     jadwal: b.jadwal_id as unknown as { judul: string; tahun: string; ke: number; mulai: Date; selesai: Date; jalur: unknown[] },
     kelas: b.kelas_id as unknown as { nama: string } | null,
-  })).filter(b => cocok(b.kelas?.nama, a.kelas) && b.jadwal.jalur.some(id => String(id) === String(b.jalur._id)));
+  })).filter(b => cocok(b.kelas?.nama, a.kelas) && daftar(b.jadwal.jalur).some(id => String(id) === String(b.jalur._id)));
   if (valid.length > 1) {
     const identitas = (v: unknown): string => String((v as { _id?: unknown } | null)?._id ?? v ?? '');
     const kombinasi = new Map<string, string>();
@@ -97,7 +99,7 @@ export async function cariBiaya(arg: Arg): Promise<Bukti[]> {
     }
     throw new KlarifikasiError();
   }
-  return valid.map(b => bukti('biaya', b._id, `Biaya ${b.prodi.nama}`, `${b.prodi.nama}; jalur ${b.jalur.nama}; kelas ${b.kelas?.nama || 'tanpa kelas khusus'}; ${b.jadwal.judul}, ${b.jadwal.tahun}, gelombang ${b.jadwal.ke}. Status pendaftaran: ${statusJadwal(b.jadwal.mulai, b.jadwal.selesai)} (${tanggal(b.jadwal.mulai)}–${tanggal(b.jadwal.selesai)} WIB). Biaya pokok: ${rupiah(b.biaya)}. ${b.biayaPerSemester != null ? `Estimasi biaya per semester: ${rupiah(b.biayaPerSemester)}.` : 'Estimasi biaya per semester belum tersedia.'} ${b.biayaTambahan != null ? `SPT per unit: ${rupiah(b.biayaTambahan)}; minimal unit mengikuti gelombang (${b.jadwal.ke}).` : ''} Pilihan persentase pembayaran: ${b.persentase.join(', ')}. Kalkulator: bulatkan((biaya pokok + unit × SPT) × persentase/100).`, '/#kalkulator'));
+  return valid.map(b => bukti('biaya', b._id, `Biaya ${b.prodi.nama}`, `${b.prodi.nama}; jalur ${b.jalur.nama}; kelas ${b.kelas?.nama || 'tanpa kelas khusus'}; ${b.jadwal.judul}, ${b.jadwal.tahun}, gelombang ${b.jadwal.ke}. Status pendaftaran: ${statusJadwal(b.jadwal.mulai, b.jadwal.selesai)} (${tanggal(b.jadwal.mulai)}–${tanggal(b.jadwal.selesai)} WIB). Biaya pokok: ${rupiah(b.biaya)}. ${b.biayaPerSemester != null ? `Estimasi biaya per semester: ${rupiah(b.biayaPerSemester)}.` : 'Estimasi biaya per semester belum tersedia.'} ${b.biayaTambahan != null ? `SPT per unit: ${rupiah(b.biayaTambahan)}; minimal unit mengikuti gelombang (${b.jadwal.ke}).` : ''} Pilihan persentase pembayaran: ${daftar(b.persentase).join(', ') || 'belum tersedia'}. Kalkulator: bulatkan((biaya pokok + unit × SPT) × persentase/100).`, '/#kalkulator'));
 }
 
 export async function cariFaq(arg: Arg): Promise<Bukti[]> {

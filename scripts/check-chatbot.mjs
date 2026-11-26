@@ -192,6 +192,21 @@ console.log('Task 3: enam query tool + populate + filter aktif OK');
 }
 console.log('Task 3: fallback akar kata prodi OK');
 
+// Dokumen lama tanpa field array: `.lean()` tidak menerapkan default skema, tool tidak boleh crash.
+{
+  const lawas = { _id: 'p10', nama: 'Teknik Informatika S-1', singkatan: 'IF', aktif: true, jenjang_id: { nama: 'Sarjana' }, fakultas_id: { nama: 'Teknik' } };
+  ProgramStudi.find = () => {
+    const rantai = { select: () => rantai, populate: () => rantai, limit: () => rantai, sort: () => rantai, maxTimeMS: () => rantai, lean: async () => [lawas] };
+    return rantai;
+  };
+  const rows = await cariProdi({ nama: 'informatika' });
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].id, 'prodi:p10');
+  assert.match(rows[0].ringkas, /Persyaratan:/);
+  assert.match(rows[0].ringkas, /Akreditasi: belum tersedia/);
+}
+console.log('Task 3: dokumen lama tanpa persyaratan OK');
+
 // Normalisasi keluaran provider.
 const openai = normalisasiOpenAI({
   choices: [{ message: { content: '', tool_calls: [{ id: 'c1', type: 'function', function: { name: 'cari_faq', arguments: '{"kataKunci":"biaya"}' } }] } }],
